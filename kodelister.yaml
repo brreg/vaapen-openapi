@@ -1,0 +1,306 @@
+openapi: 3.1.0
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+- url: https://vaapen.ppe.brreg.no
+  description: Eksternt testmiljø (Pre Prod Ekstern)
+- url: https://vaapen.ut1.brreg.no
+  description: Utviklingsmiljø
+paths:
+  /kodelister/vaapenstatus:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findVaapenstatus
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/vaapendeltyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findVaapendeltype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/sluttstykketyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSluttstykketype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/skytterorganisasjoner:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSkytterorganisasjoner
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/skytevaapentyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSkytevaapentype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/skyteprogram:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSkyteprogram
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skyteprogram"
+  /kodelister/naeringstyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findTypenaering
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/loyvestatus:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findLoyvestatus
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/lademekanismer:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findLademekanisme
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/laaskassetyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findLaaskassetype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/kaliber:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findKaliber
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kaliber"
+  /kodelister/grunnlagstyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findGrunnlagstype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/funksjonsmaater:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findFunksjonsmaate
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/fabrikkmerker:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findFabrikkmerke
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Fabrikkmerke"
+  /kodelister/ervervstyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findErvervstype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/avfyringsmekanismer:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findAvfyringmekanisme
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+components:
+  schemas:
+    Kodeliste:
+      type: object
+      properties:
+        key:
+          type: string
+        displayValue:
+          $ref: "#/components/schemas/KodelisteNavn"
+      required:
+      - displayValue
+      - key
+    KodelisteNavn:
+      type: object
+      properties:
+        nb:
+          type: string
+      required:
+      - nb
+    Skyteprogram:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+        arrangertAv:
+          type: string
+        skytevaapentyper:
+          type: array
+          items:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+      required:
+      - arrangertAv
+      - navn
+    Kaliber:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
+      - navn
+    Fabrikkmerke:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
+      - navn
