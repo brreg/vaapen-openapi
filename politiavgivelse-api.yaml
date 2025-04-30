@@ -9,6 +9,68 @@ servers:
 - url: https://vaapen.ut1.brreg.no
   description: Utviklingsmiljø
 paths:
+  /vaapendel/search:
+    post:
+      tags:
+      - search
+      summary: Search for vaapendeler using SearchQuery
+      operationId: findVaapendelBySearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaapenSearchQuery"
+        required: true
+      responses:
+        "200":
+          description: Alle vaapendeler filtrert i henhold til VaapenSearchQuery
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapendel"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: "#/components/schemas/Laaskasse"
+                  - $ref: "#/components/schemas/Pipe"
+                  - $ref: "#/components/schemas/Revolvertonne"
+                  - $ref: "#/components/schemas/Sluttstykke"
+  /vaapen/search:
+    post:
+      tags:
+      - search
+      summary: Search for vaapen using SearchQuery
+      operationId: findVaapenBySearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/VaapenSearchQuery"
+        required: true
+      responses:
+        "200":
+          description: Alle skytevaapen filtrert i henhold til VaapenSearchQuery
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skytevaapen"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skytevaapen"
   /avgivelse/korreksjon:
     get:
       tags:
@@ -91,6 +153,165 @@ paths:
                 type: string
 components:
   schemas:
+    BooleanFilter:
+      allOf:
+      - $ref: "#/components/schemas/SkytevaapenSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+          value:
+            type: boolean
+      required:
+      - field
+      - type
+      - value
+    DateFilter:
+      allOf:
+      - $ref: "#/components/schemas/SkytevaapenSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+          value:
+            type: string
+            format: date
+          operator:
+            type: string
+            enum:
+            - EQUALS
+            - BEFORE
+            - AFTER
+      required:
+      - field
+      - operator
+      - type
+      - value
+    NumberFilter:
+      allOf:
+      - $ref: "#/components/schemas/SkytevaapenSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+            enum:
+            - ID
+          value:
+            type: integer
+            format: int32
+          operator:
+            type: string
+            enum:
+            - EQUALS
+      required:
+      - field
+      - operator
+      - type
+      - value
+    SearchField:
+      type: object
+    SkytevaapenFieldBoolean:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+    SkytevaapenFieldDate:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+    SkytevaapenFieldNumber:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+      enum:
+      - ID
+    SkytevaapenFieldString:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+      enum:
+      - SERIENUMMER
+      - EIERPERSON
+      - EIERVIRKSOMHET
+    SkytevaapenSearchFilter:
+      type: object
+      discriminator:
+        propertyName: type
+      properties:
+        field:
+          oneOf:
+          - $ref: "#/components/schemas/SkytevaapenFieldBoolean"
+          - $ref: "#/components/schemas/SkytevaapenFieldDate"
+          - $ref: "#/components/schemas/SkytevaapenFieldNumber"
+          - $ref: "#/components/schemas/SkytevaapenFieldString"
+        type:
+          type: string
+          enum:
+          - STRING
+          - NUMBER
+          - BOOLEAN
+          - DATE
+      required:
+      - field
+      - type
+    StringFilter:
+      allOf:
+      - $ref: "#/components/schemas/SkytevaapenSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+            enum:
+            - SERIENUMMER
+            - EIERPERSON
+            - EIERVIRKSOMHET
+          value:
+            type: string
+          operator:
+            type: string
+            enum:
+            - EQUALS
+            - STARTS_WITH
+            - CONTAINS
+      required:
+      - field
+      - operator
+      - type
+      - value
+    VaapenSearchQuery:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/BooleanFilter"
+            - $ref: "#/components/schemas/DateFilter"
+            - $ref: "#/components/schemas/NumberFilter"
+            - $ref: "#/components/schemas/StringFilter"
+        combineWith:
+          type: string
+          enum:
+          - AND
+          - OR
+        sortBy:
+          oneOf:
+          - $ref: "#/components/schemas/SkytevaapenFieldBoolean"
+          - $ref: "#/components/schemas/SkytevaapenFieldDate"
+          - $ref: "#/components/schemas/SkytevaapenFieldNumber"
+          - $ref: "#/components/schemas/SkytevaapenFieldString"
+        sortDir:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+      required:
+      - combineWith
+      - filters
+      - limit
+      - offset
+      - sortDir
     AmmunisjonForeningsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -179,6 +400,7 @@ components:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
         vedtaksdato:
           type: string
           format: date
@@ -467,14 +689,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
         loyveId:
           type: string
         vedtaksdato:
@@ -491,6 +705,15 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
       required:
       - innehaver
       - loyveId
@@ -568,64 +791,6 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    Proposal:
-      type: object
-      discriminator:
-        propertyName: proposalType
-      oneOf:
-      - $ref: "#/components/schemas/SkyteVaapenProposal"
-      - $ref: "#/components/schemas/VaapendelProposal"
-      properties:
-        proposalId:
-          type: string
-        submittedBy:
-          $ref: "#/components/schemas/Submitter"
-        previousData:
-          oneOf:
-          - $ref: "#/components/schemas/Skytevaapen"
-          - $ref: "#/components/schemas/Vaapendel"
-          - $ref: "#/components/schemas/Laaskasse"
-          - $ref: "#/components/schemas/Pipe"
-          - $ref: "#/components/schemas/Revolvertonne"
-          - $ref: "#/components/schemas/Sluttstykke"
-        proposedData:
-          oneOf:
-          - $ref: "#/components/schemas/Skytevaapen"
-          - $ref: "#/components/schemas/Vaapendel"
-          - $ref: "#/components/schemas/Laaskasse"
-          - $ref: "#/components/schemas/Pipe"
-          - $ref: "#/components/schemas/Revolvertonne"
-          - $ref: "#/components/schemas/Sluttstykke"
-        proposalType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-      required:
-      - previousData
-      - proposalId
-      - proposalType
-      - proposedData
-      - submittedBy
-    Registreringsobjekt:
-      type: object
-      description: En korreksjon kan enten være et skytevåpen eller en våpendel
-      discriminator:
-        propertyName: registreringsobjektType
-        mapping:
-          SkyteVaapen: "#/components/schemas/Skytevaapen"
-          Vaapendel: "#/components/schemas/Vaapendel"
-      properties:
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        id:
-          type: integer
-          format: int64
-      required:
-      - registreringsobjektType
     ReplikaLuftOgFjaergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -673,15 +838,13 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
         beskrivelse:
           type: string
-        vaapen:
-          type: array
-          items:
-            $ref: "#/components/schemas/Samlervaapen"
+        antallVaapen:
+          type: integer
+          format: int32
       required:
       - beskrivelse
       - id
       - innehaver
-      - vaapen
     Samlergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -692,34 +855,6 @@ components:
       required:
       - grunnlagsType
       - samlerOmraade
-    Samlervaapen:
-      type: object
-      properties:
-        merke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-      required:
-      - merke
-    SkyteVaapenProposal:
-      allOf:
-      - $ref: "#/components/schemas/Proposal"
-      - type: object
-        properties:
-          proposalId:
-            type: string
-            example: UUID
-          previousData:
-            $ref: "#/components/schemas/Skytevaapen"
-          proposedData:
-            $ref: "#/components/schemas/Skytevaapen"
-      description: Skytevåpen-forslag
-      required:
-      - previousData
-      - proposalId
-      - proposalType
-      - proposedData
-      - submittedBy
     Skyteprogram:
       type: object
       properties:
@@ -751,6 +886,125 @@ components:
       required:
       - arrangertAv
       - navn
+    Sluttstykke:
+      allOf:
+      - $ref: "#/components/schemas/Vaapendel"
+      - type: object
+        properties:
+          sluttstykketype:
+            type: string
+            enum:
+            - SLUTTSTYKKE
+            - GLIDESTYKKE
+            - LAASEBLOKK
+      required:
+      - innehavsloyve
+      - korrigeringsstatus
+      - skytevaapentype
+    Sportsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          skyteprogram:
+            $ref: "#/components/schemas/Skyteprogram"
+          reservevaapen:
+            type: boolean
+          annetSkyteprogram:
+            type: string
+      required:
+      - grunnlagsType
+      - reservevaapen
+    TestOgUtviklingsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Tjenestepersonsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    UkjentGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
+      required:
+      - grunnlagsType
+    UtlaanForeningsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Vaapendel:
+      allOf:
+      - $ref: "#/components/schemas/Registreringsobjekt"
+      - type: object
+        properties:
+          skytevaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          vaapenstatus:
+            type: string
+            enum:
+            - AKTIV
+            - DESTRUERT
+            - DEAKTIVERT
+            - UTFORT
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
+          innehavsloyve:
+            oneOf:
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
+          korrigeringsstatus:
+            type: string
+            enum:
+            - OK
+            - TRENGER_GJENNOMGANG
+            - UNDER_KORRIGERING
+          vaapendeltype:
+            type: string
+            enum:
+            - PIPE
+            - LAASKASSE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+          modell:
+            type: string
+      description: Våpendel-modellene
+      discriminator:
+        propertyName: vaapendeltype
+        mapping:
+          LAASKASSE: "#/components/schemas/Laaskasse"
+          PIPE: "#/components/schemas/Pipe"
+          REVOLVERTONNE: "#/components/schemas/Revolvertonne"
+          SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
+      required:
+      - innehavsloyve
+      - korrigeringsstatus
+      - registreringsobjektType
+      - skytevaapentype
     Skytevaapen:
       type: object
       description: Skytevåpen-modellen
@@ -843,35 +1097,83 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
-    Sluttstykke:
+    Proposal:
+      type: object
+      discriminator:
+        propertyName: proposalType
+      oneOf:
+      - $ref: "#/components/schemas/SkyteVaapenProposal"
+      - $ref: "#/components/schemas/VaapendelProposal"
+      properties:
+        proposalId:
+          type: string
+        submittedBy:
+          $ref: "#/components/schemas/Submitter"
+        previousData:
+          oneOf:
+          - $ref: "#/components/schemas/Skytevaapen"
+          - $ref: "#/components/schemas/Vaapendel"
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        proposedData:
+          oneOf:
+          - $ref: "#/components/schemas/Skytevaapen"
+          - $ref: "#/components/schemas/Vaapendel"
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        proposalType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+      required:
+      - previousData
+      - proposalId
+      - proposalType
+      - proposedData
+      - submittedBy
+    Registreringsobjekt:
+      type: object
+      description: En korreksjon kan enten være et skytevåpen eller en våpendel
+      discriminator:
+        propertyName: registreringsobjektType
+        mapping:
+          SkyteVaapen: "#/components/schemas/Skytevaapen"
+          Vaapendel: "#/components/schemas/Vaapendel"
+      properties:
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+        id:
+          type: integer
+          format: int64
+      required:
+      - registreringsobjektType
+    SkyteVaapenProposal:
       allOf:
-      - $ref: "#/components/schemas/Vaapendel"
+      - $ref: "#/components/schemas/Proposal"
       - type: object
         properties:
-          sluttstykketype:
+          proposalId:
             type: string
-            enum:
-            - SLUTTSTYKKE
-            - GLIDESTYKKE
-            - LAASEBLOKK
+            example: UUID
+          previousData:
+            $ref: "#/components/schemas/Skytevaapen"
+          proposedData:
+            $ref: "#/components/schemas/Skytevaapen"
+      description: Skytevåpen-forslag
       required:
-      - innehavsloyve
-      - korrigeringsstatus
-      - skytevaapentype
-    Sportsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          skyteprogram:
-            $ref: "#/components/schemas/Skyteprogram"
-          reservevaapen:
-            type: boolean
-          annetSkyteprogram:
-            type: string
-      required:
-      - grunnlagsType
-      - reservevaapen
+      - previousData
+      - proposalId
+      - proposalType
+      - proposedData
+      - submittedBy
     Submitter:
       type: object
       properties:
@@ -879,96 +1181,6 @@ components:
           type: string
       required:
       - personalId
-    TestOgUtviklingsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Tjenestepersonsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    UkjentGrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          beskrivelse:
-            type: string
-      required:
-      - grunnlagsType
-    UtlaanForeningsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Vaapendel:
-      allOf:
-      - $ref: "#/components/schemas/Registreringsobjekt"
-      - type: object
-        properties:
-          skytevaapentype:
-            type: string
-            enum:
-            - RIFLE
-            - HAGLE
-            - KOMBINASJONSVAAPEN
-            - PISTOL
-            - REVOLVER
-            - MASKINGEVAER
-            - MASKINPISTOL
-            - SALUTT
-            - KNALL
-            - LUFTFJAER
-            - MUSKETT
-            - ARMBROST
-            - UKJENT
-          vaapenstatus:
-            type: string
-            enum:
-            - AKTIV
-            - DESTRUERT
-            - DEAKTIVERT
-            - UTFORT
-          innehavsloyve:
-            oneOf:
-            - $ref: "#/components/schemas/Innehavsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-          korrigeringsstatus:
-            type: string
-            enum:
-            - OK
-            - TRENGER_GJENNOMGANG
-            - UNDER_KORRIGERING
-          vaapendeltype:
-            type: string
-            enum:
-            - PIPE
-            - LAASKASSE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
-      description: Våpendel-modellene
-      discriminator:
-        propertyName: vaapendeltype
-        mapping:
-          LAASKASSE: "#/components/schemas/Laaskasse"
-          PIPE: "#/components/schemas/Pipe"
-          REVOLVERTONNE: "#/components/schemas/Revolvertonne"
-          SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
-      required:
-      - innehavsloyve
-      - korrigeringsstatus
-      - registreringsobjektType
-      - skytevaapentype
     VaapendelProposal:
       allOf:
       - $ref: "#/components/schemas/Proposal"

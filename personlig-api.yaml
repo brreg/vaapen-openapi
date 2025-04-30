@@ -360,7 +360,9 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Eieroverforingsforslag"
+                  oneOf:
+                  - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagView"
+                  - $ref: "#/components/schemas/VaapendelEieroverforingsforslagView"
 components:
   schemas:
     RejectLoyvedeling:
@@ -1500,12 +1502,9 @@ components:
             type: string
       required:
       - orgnr
-    Eieroverforingsforslag:
+    EieroverforingsforslagView:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
@@ -1514,20 +1513,12 @@ components:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
-        skytevaapen:
-          $ref: "#/components/schemas/Skytevaapen"
-        vaapendeler:
-          type: array
-          items:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
+        id:
+          type: integer
+          format: int64
       required:
       - id
       - mottakersLoyve
-      - vaapendeler
       - vaapeneier
     LoyveForErverv:
       type: object
@@ -1567,3 +1558,31 @@ components:
       - loyvetype
       - status
       - vedtaksdato
+    SkytevaapenEieroverforingsforslagView:
+      allOf:
+      - $ref: "#/components/schemas/EieroverforingsforslagView"
+      - type: object
+        properties:
+          skytevaapen:
+            $ref: "#/components/schemas/Skytevaapen"
+      required:
+      - id
+      - mottakersLoyve
+      - skytevaapen
+      - vaapeneier
+    VaapendelEieroverforingsforslagView:
+      allOf:
+      - $ref: "#/components/schemas/EieroverforingsforslagView"
+      - type: object
+        properties:
+          vaapendel:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+      required:
+      - id
+      - mottakersLoyve
+      - vaapendel
+      - vaapeneier

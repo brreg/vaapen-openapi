@@ -10,12 +10,15 @@ paths:
     post:
       tags:
       - loyveendring-controller
+      summary: "Lagre nytt eller endring på ervervsløyve, næringsløyve eller avslag\
+        \ på ervervsløyve"
       operationId: lagreEndring
       requestBody:
         content:
           application/json:
             schema:
               oneOf:
+              - $ref: "#/components/schemas/AvslattSoknadEndring"
               - $ref: "#/components/schemas/ErvervsloyveEndring"
               - $ref: "#/components/schemas/NaeringsloyveEndring"
         required: true
@@ -30,6 +33,7 @@ paths:
     post:
       tags:
       - korrigerings-event-controller
+      summary: Lagre at en korreksjon har blitt plukket opp av Blink
       operationId: updatePickedUpByBlink
       requestBody:
         content:
@@ -48,6 +52,8 @@ paths:
     post:
       tags:
       - korrigerings-event-controller
+      summary: "Lagre nytt våpen, våpendel, eller endring på våpen/våpendel, samt\
+        \ innehavsløyve"
       operationId: lagreEndring_1
       requestBody:
         content:
@@ -90,6 +96,36 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    AvslattSoknad:
+      type: object
+      description: Spesifisering for avslått søknad
+      properties:
+        ervervsloyve:
+          $ref: "#/components/schemas/Ervervsloyve"
+        imiSak:
+          type: boolean
+        imiSaksnummer:
+          type: string
+        avslagsgrunnlag:
+          type: string
+          enum:
+          - VANDEL
+          - EDRUELIGHET
+          - SKIKKETHET
+          - BEHOV
+      required:
+      - avslagsgrunnlag
+      - ervervsloyve
+    AvslattSoknadEndring:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
+      - type: object
+        properties:
+          avslag:
+            $ref: "#/components/schemas/AvslattSoknad"
+      required:
+      - avslag
+      - changeType
     EierPerson:
       type: object
       description: Representerer en person
@@ -158,6 +194,7 @@ components:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
         vedtaksdato:
           type: string
           format: date
@@ -449,6 +486,7 @@ components:
           enum:
           - NAERINGSLOYVE
           - ERVERVSLOYVE
+          - AVSLAG_SOKNAD_ERVERV
       required:
       - changeType
     SamlerOmraade:
@@ -463,15 +501,13 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
         beskrivelse:
           type: string
-        vaapen:
-          type: array
-          items:
-            $ref: "#/components/schemas/Samlervaapen"
+        antallVaapen:
+          type: integer
+          format: int32
       required:
       - beskrivelse
       - id
       - innehaver
-      - vaapen
     Samlergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -482,15 +518,6 @@ components:
       required:
       - grunnlagsType
       - samlerOmraade
-    Samlervaapen:
-      type: object
-      properties:
-        merke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-      required:
-      - merke
     Skyteprogram:
       type: object
       properties:
@@ -672,6 +699,7 @@ components:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
       required:
       - innehaver
       - loyveId
