@@ -9,7 +9,7 @@ servers:
 - url: https://vaapen.ut1.brreg.no
   description: Utviklingsmiljø
 paths:
-  /vaapendel/search:
+  /avgivelse/vaapendel/search:
     post:
       tags:
       - search
@@ -42,7 +42,7 @@ paths:
                   - $ref: "#/components/schemas/Pipe"
                   - $ref: "#/components/schemas/Revolvertonne"
                   - $ref: "#/components/schemas/Sluttstykke"
-  /vaapen/search:
+  /avgivelse/vaapen/search:
     post:
       tags:
       - search
@@ -689,6 +689,15 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
         loyveId:
           type: string
         vedtaksdato:
@@ -705,15 +714,6 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
       required:
       - innehaver
       - loyveId
