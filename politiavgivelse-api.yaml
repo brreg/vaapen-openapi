@@ -71,6 +71,55 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Skytevaapen"
+  /avgivelse/ervervsloyve/search:
+    post:
+      tags:
+      - search
+      summary: Search for ervervsloyve using LoyveSearchQuery
+      operationId: findErvervsloyveBySearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoyveSearchQuery"
+        required: true
+      responses:
+        "200":
+          description: Alle ervervsloyver filtrert i henhold til LoyveSearchQuery
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ervervsloyve"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ervervsloyve"
+  /avgivelse/naeringsloyver:
+    get:
+      tags:
+      - naeringsloyve-controller
+      operationId: findAllNaeringsloyver
+      parameters:
+      - name: organisasjonsnummer
+        in: query
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Naeringsloyve"
   /avgivelse/korreksjon:
     get:
       tags:
@@ -160,6 +209,17 @@ components:
         properties:
           field:
             type: string
+            enum:
+            - INCLUDE_CONNECTED_VAAPENDELER
+          value:
+            type: boolean
+      - $ref: "#/components/schemas/LoyveSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+            enum:
+            - FRITAK_FRA_ALDER
           value:
             type: boolean
       required:
@@ -180,13 +240,58 @@ components:
             type: string
             enum:
             - EQUALS
-            - BEFORE
-            - AFTER
+            - GREATER_EQUAL
+            - LESS_EQUAL
+      - $ref: "#/components/schemas/LoyveSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+            enum:
+            - VEDTAKSDATO
+          value:
+            type: string
+            format: date
+          operator:
+            type: string
+            enum:
+            - EQUALS
+            - GREATER_EQUAL
+            - LESS_EQUAL
       required:
       - field
       - operator
       - type
       - value
+    LoyveFieldBoolean:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+      enum:
+      - FRITAK_FRA_ALDER
+    LoyveFieldDate:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+      enum:
+      - VEDTAKSDATO
+    LoyveFieldString:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+      enum:
+      - EIERPERSON
+      - OPPBEVARINGSANSVARLIG
+      - OPPBEVARINGSANSVARLIG_VIRKSOMHET
+      - EIERVIRKSOMHET
+      - PAA_VEGNE_AV
+      - SAKSREFERANSE
+      - ID
+    LoyveFieldType:
+      allOf:
+      - $ref: "#/components/schemas/SearchField"
+      enum:
+      - SKYTEVAAPENTYPE
+      - VAAPENDELTYPE
+      - ERVERVSTYPE
+      - GRUNNLAGSTYPE
     NumberFilter:
       allOf:
       - $ref: "#/components/schemas/SkytevaapenSearchFilter"
@@ -213,6 +318,8 @@ components:
     SkytevaapenFieldBoolean:
       allOf:
       - $ref: "#/components/schemas/SearchField"
+      enum:
+      - INCLUDE_CONNECTED_VAAPENDELER
     SkytevaapenFieldDate:
       allOf:
       - $ref: "#/components/schemas/SearchField"
@@ -227,6 +334,7 @@ components:
       enum:
       - SERIENUMMER
       - EIERPERSON
+      - OPPBEVARINGSANSVARLIG
       - EIERVIRKSOMHET
     SkytevaapenSearchFilter:
       type: object
@@ -235,6 +343,10 @@ components:
       properties:
         field:
           oneOf:
+          - $ref: "#/components/schemas/LoyveFieldBoolean"
+          - $ref: "#/components/schemas/LoyveFieldDate"
+          - $ref: "#/components/schemas/LoyveFieldString"
+          - $ref: "#/components/schemas/LoyveFieldType"
           - $ref: "#/components/schemas/SkytevaapenFieldBoolean"
           - $ref: "#/components/schemas/SkytevaapenFieldDate"
           - $ref: "#/components/schemas/SkytevaapenFieldNumber"
@@ -246,6 +358,7 @@ components:
           - NUMBER
           - BOOLEAN
           - DATE
+          - TYPE
       required:
       - field
       - type
@@ -259,7 +372,29 @@ components:
             enum:
             - SERIENUMMER
             - EIERPERSON
+            - OPPBEVARINGSANSVARLIG
             - EIERVIRKSOMHET
+          value:
+            type: string
+          operator:
+            type: string
+            enum:
+            - EQUALS
+            - STARTS_WITH
+            - CONTAINS
+      - $ref: "#/components/schemas/LoyveSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+            enum:
+            - EIERPERSON
+            - OPPBEVARINGSANSVARLIG
+            - OPPBEVARINGSANSVARLIG_VIRKSOMHET
+            - EIERVIRKSOMHET
+            - PAA_VEGNE_AV
+            - SAKSREFERANSE
+            - ID
           value:
             type: string
           operator:
@@ -291,6 +426,10 @@ components:
           - OR
         sortBy:
           oneOf:
+          - $ref: "#/components/schemas/LoyveFieldBoolean"
+          - $ref: "#/components/schemas/LoyveFieldDate"
+          - $ref: "#/components/schemas/LoyveFieldString"
+          - $ref: "#/components/schemas/LoyveFieldType"
           - $ref: "#/components/schemas/SkytevaapenFieldBoolean"
           - $ref: "#/components/schemas/SkytevaapenFieldDate"
           - $ref: "#/components/schemas/SkytevaapenFieldNumber"
@@ -332,6 +471,25 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    Eier:
+      type: object
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
+          PERSON: "#/components/schemas/EierPerson"
+      properties:
+        eiertype:
+          type: string
+          description: Type eier
+          enum:
+          - PERSON
+          - VIRKSOMHET
+        id:
+          type: integer
+          format: int64
+      required:
+      - eiertype
     EierPerson:
       type: object
       description: Representerer en person
@@ -360,29 +518,31 @@ components:
       - eiertype
       - personidentifikator
     EierVirksomhet:
-      type: object
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 1234
+          organisasjonsnummer:
+            type: string
+            description: Organisasjonsnummer
+            example: 123456789
+          navn:
+            type: string
+            description: Navn på virksomhet - kun visning ved behov
+            example: PANGPANG AS
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            example: VIRKSOMHET
       description: Representerer en virksomhet
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unik identifikator for eieren
-          example: 1234
-        organisasjonsnummer:
-          type: string
-          description: Organisasjonsnummer
-          example: 123456789
-        navn:
-          type: string
-          description: Navn på virksomhet - kun visning ved behov
-          example: PANGPANG AS
-        eiertype:
-          type: string
-          description: Type eier
-          enum:
-          - PERSON
-          - VIRKSOMHET
-          example: VIRKSOMHET
       required:
       - eiertype
       - organisasjonsnummer
@@ -944,6 +1104,17 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
+          vaapenstatus:
+            type: string
+            enum:
+            - AKTIV
+            - DESTRUERT
+            - DEAKTIVERT
+            - UTFORT
+          innehavsloyve:
+            oneOf:
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
           skytevaapentype:
             type: string
             enum:
@@ -960,29 +1131,6 @@ components:
             - MUSKETT
             - ARMBROST
             - UKJENT
-          vaapenstatus:
-            type: string
-            enum:
-            - AKTIV
-            - DESTRUERT
-            - DEAKTIVERT
-            - UTFORT
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          innehavsloyve:
-            oneOf:
-            - $ref: "#/components/schemas/Innehavsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-          korrigeringsstatus:
-            type: string
-            enum:
-            - OK
-            - TRENGER_GJENNOMGANG
-            - UNDER_KORRIGERING
           vaapendeltype:
             type: string
             enum:
@@ -990,6 +1138,18 @@ components:
             - LAASKASSE
             - REVOLVERTONNE
             - SLUTTSTYKKE
+          korrigeringsstatus:
+            type: string
+            enum:
+            - OK
+            - TRENGER_GJENNOMGANG
+            - UNDER_KORRIGERING
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
           modell:
             type: string
       description: Våpendel-modellene
@@ -1097,6 +1257,95 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
+    LoyveSearchFilter:
+      type: object
+      discriminator:
+        propertyName: type
+      properties:
+        field:
+          oneOf:
+          - $ref: "#/components/schemas/LoyveFieldBoolean"
+          - $ref: "#/components/schemas/LoyveFieldDate"
+          - $ref: "#/components/schemas/LoyveFieldString"
+          - $ref: "#/components/schemas/LoyveFieldType"
+          - $ref: "#/components/schemas/SkytevaapenFieldBoolean"
+          - $ref: "#/components/schemas/SkytevaapenFieldDate"
+          - $ref: "#/components/schemas/SkytevaapenFieldNumber"
+          - $ref: "#/components/schemas/SkytevaapenFieldString"
+        type:
+          type: string
+          enum:
+          - STRING
+          - NUMBER
+          - BOOLEAN
+          - DATE
+          - TYPE
+      required:
+      - field
+      - type
+    LoyveSearchQuery:
+      type: object
+      properties:
+        filters:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/BooleanFilter"
+            - $ref: "#/components/schemas/DateFilter"
+            - $ref: "#/components/schemas/StringFilter"
+            - $ref: "#/components/schemas/TypeFilter"
+        combineWith:
+          type: string
+          enum:
+          - AND
+          - OR
+        sortBy:
+          oneOf:
+          - $ref: "#/components/schemas/LoyveFieldBoolean"
+          - $ref: "#/components/schemas/LoyveFieldDate"
+          - $ref: "#/components/schemas/LoyveFieldString"
+          - $ref: "#/components/schemas/LoyveFieldType"
+          - $ref: "#/components/schemas/SkytevaapenFieldBoolean"
+          - $ref: "#/components/schemas/SkytevaapenFieldDate"
+          - $ref: "#/components/schemas/SkytevaapenFieldNumber"
+          - $ref: "#/components/schemas/SkytevaapenFieldString"
+        sortDir:
+          type: string
+          enum:
+          - ASC
+          - DESC
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+      required:
+      - combineWith
+      - filters
+      - limit
+      - offset
+      - sortDir
+    TypeFilter:
+      allOf:
+      - $ref: "#/components/schemas/LoyveSearchFilter"
+      - type: object
+        properties:
+          field:
+            type: string
+            enum:
+            - SKYTEVAAPENTYPE
+            - VAAPENDELTYPE
+            - ERVERVSTYPE
+            - GRUNNLAGSTYPE
+          values:
+            type: array
+            items:
+              type: string
+      required:
+      - field
+      - type
+      - values
     Proposal:
       type: object
       discriminator:
