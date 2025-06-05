@@ -8,6 +8,37 @@ servers:
 - url: https://vaapen.ut1.brreg.no
   description: Utviklingsmiljø
 paths:
+  /person/vaapenskap:
+    get:
+      tags:
+      - vaapenskap-controller
+      operationId: getVaapenskapByPerson
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenskap"
+    post:
+      tags:
+      - vaapenskap-controller
+      operationId: createVaapenskap
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVaapenskap"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
   /person/loyver/delloyve/reject:
     post:
       tags:
@@ -178,6 +209,24 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Skytevaapen"
+  /person/vaapenskap/{vaapenskapId}:
+    get:
+      tags:
+      - vaapenskap-controller
+      operationId: getVaapenskapById
+      parameters:
+      - name: vaapenskapId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Vaapenskap"
   /person/vaapendeler:
     get:
       tags:
@@ -285,6 +334,7 @@ paths:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
       responses:
         "200":
           description: OK
@@ -363,8 +413,36 @@ paths:
                   oneOf:
                   - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagView"
                   - $ref: "#/components/schemas/VaapendelEieroverforingsforslagView"
+  /person/vaapenskap/{id}:
+    delete:
+      tags:
+      - vaapenskap-controller
+      operationId: deleteVaapenskap
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
 components:
   schemas:
+    CreateVaapenskap:
+      type: object
+      properties:
+        serienummer:
+          type: string
+        merke:
+          type: string
+      required:
+      - merke
+      - serienummer
     RejectLoyvedeling:
       type: object
       properties:
@@ -464,29 +542,31 @@ components:
       required:
       - eiertype
     EierPerson:
-      type: object
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: Fødselsnummer eller D-nummer
+            example: 12345678901
+          navn:
+            type: string
+            description: Navn på fysisk person - kun visning ved behov
+            example: Kari Ole Normann
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            example: PERSON
       description: Representerer en person
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unik identifikator for eieren
-          example: 5678
-        personidentifikator:
-          type: string
-          description: Fødselsnummer eller D-nummer
-          example: 12345678901
-        navn:
-          type: string
-          description: Navn på fysisk person - kun visning ved behov
-          example: Kari Ole Normann
-        eiertype:
-          type: string
-          description: Type eier
-          enum:
-          - PERSON
-          - VIRKSOMHET
-          example: PERSON
       required:
       - eiertype
       - personidentifikator
@@ -533,6 +613,7 @@ components:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
         vedtaksdato:
           type: string
           format: date
@@ -831,6 +912,7 @@ components:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
         loyveId:
           type: string
         innehaver:
@@ -972,15 +1054,13 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
         beskrivelse:
           type: string
-        vaapen:
-          type: array
-          items:
-            $ref: "#/components/schemas/Samlervaapen"
+        antallVaapen:
+          type: integer
+          format: int32
       required:
       - beskrivelse
       - id
       - innehaver
-      - vaapen
     Samlergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -991,15 +1071,6 @@ components:
       required:
       - grunnlagsType
       - samlerOmraade
-    Samlervaapen:
-      type: object
-      properties:
-        merke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-      required:
-      - merke
     Skyteprogram:
       type: object
       properties:
@@ -1196,6 +1267,8 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
+        annetFabrikkmerke:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1220,11 +1293,9 @@ components:
           - VAAPENDEL
         modell:
           type: string
-        serienummer:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
+        serienummer:
           type: string
         skytevaapentype:
           type: string
@@ -1286,6 +1357,7 @@ components:
         properties:
           id:
             type: string
+            format: uuid
       required:
       - id
     Denied:
@@ -1445,6 +1517,29 @@ components:
       required:
       - eieroverforingId
       - svar
+    Vaapenskap:
+      type: object
+      properties:
+        id:
+          type: string
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+        serienummer:
+          type: string
+        merke:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
+      required:
+      - innehaver
+      - merke
+      - serienummer
     Navn:
       type: object
       properties:
@@ -1536,6 +1631,7 @@ components:
           - TILBAKEKALT
           - FRYST
           - DELVIS_BENYTTET
+          - AVSLAATT
         loyveId:
           type: string
         innehaver:

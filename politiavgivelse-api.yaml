@@ -1138,12 +1138,6 @@ components:
             - LAASKASSE
             - REVOLVERTONNE
             - SLUTTSTYKKE
-          korrigeringsstatus:
-            type: string
-            enum:
-            - OK
-            - TRENGER_GJENNOMGANG
-            - UNDER_KORRIGERING
           serienummer:
             type: string
           fabrikkmerke:
@@ -1152,6 +1146,12 @@ components:
             type: string
           modell:
             type: string
+          korrigeringsstatus:
+            type: string
+            enum:
+            - OK
+            - TRENGER_GJENNOMGANG
+            - UNDER_KORRIGERING
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
