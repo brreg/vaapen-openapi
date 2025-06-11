@@ -59,13 +59,14 @@ paths:
         content:
           application/json:
             schema:
+              type: string
               oneOf:
-              - $ref: "#/components/schemas/SkytevaapenEieroverforingSaksbehandler"
-              - $ref: "#/components/schemas/VaapenEndring"
-              - $ref: "#/components/schemas/VaapenKorreksjon"
-              - $ref: "#/components/schemas/VaapendelEieroverforingSaksbehandler"
-              - $ref: "#/components/schemas/VaapendelEndring"
-              - $ref: "#/components/schemas/VaapendelKorreksjon"
+              - $ref: "#/components/schemas/VAAPEN"
+              - $ref: "#/components/schemas/VAAPENDEL"
+              - $ref: "#/components/schemas/VAAPENKORREKSJON"
+              - $ref: "#/components/schemas/VAAPENDELKORREKSJON"
+              - $ref: "#/components/schemas/EIEROVERFORING_VAAPEN_SAKSBEHANDLER"
+              - $ref: "#/components/schemas/EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER"
         required: true
       responses:
         "200":
@@ -647,45 +648,6 @@ components:
       - innehavsloyve
       - korrigeringsstatus
       - skytevaapentype
-    LoyveForErverv:
-      type: object
-      discriminator:
-        propertyName: loyvetype
-        mapping:
-          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
-          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
-      properties:
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - NAERINGSLOYVE
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-      required:
-      - innehaver
-      - loyveId
-      - loyvetype
-      - status
-      - vedtaksdato
     LoyveForInnehav:
       type: object
       discriminator:
@@ -778,27 +740,6 @@ components:
       - korrigeringsstatus
       - lademekanisme
       - skytevaapentype
-    SaksbehandlerEndring:
-      type: object
-      discriminator:
-        propertyName: changeType
-      properties:
-        changeType:
-          type: string
-          enum:
-          - VAAPEN
-          - VAAPENDEL
-          - VAAPENKORREKSJON
-          - VAAPENDELKORREKSJON
-          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
-          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
-        arkivreferanse:
-          type: string
-        melding:
-          type: string
-      required:
-      - arkivreferanse
-      - changeType
     Skytevaapen:
       type: object
       description: Skytevåpen-modellen
@@ -891,22 +832,6 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
-    SkytevaapenEieroverforingSaksbehandler:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          vaapen:
-            $ref: "#/components/schemas/Skytevaapen"
-          loyveForErverv:
-            oneOf:
-            - $ref: "#/components/schemas/Ervervsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-      required:
-      - arkivreferanse
-      - changeType
-      - loyveForErverv
-      - vaapen
     Sluttstykke:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -922,31 +847,28 @@ components:
       - innehavsloyve
       - korrigeringsstatus
       - skytevaapentype
-    VaapenEndring:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          vaapen:
-            $ref: "#/components/schemas/Skytevaapen"
+    VAAPEN:
+      type: object
+      description: Endring av skytevaapen
+      properties:
+        vaapen:
+          $ref: "#/components/schemas/Skytevaapen"
+        arkivreferanse:
+          type: string
+        melding:
+          type: string
+        changeType:
+          type: string
+          enum:
+          - VAAPEN
+          - VAAPENDEL
+          - VAAPENKORREKSJON
+          - VAAPENDELKORREKSJON
+          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
+          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
       required:
       - arkivreferanse
       - changeType
-      - vaapen
-    VaapenKorreksjon:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          korreksjonsId:
-            type: string
-            format: uuid
-          vaapen:
-            $ref: "#/components/schemas/Skytevaapen"
-      required:
-      - arkivreferanse
-      - changeType
-      - korreksjonsId
       - vaapen
     Vaapendel:
       type: object
@@ -1020,59 +942,189 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
-    VaapendelEieroverforingSaksbehandler:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          vaapendel:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
-          loyveForErverv:
-            oneOf:
-            - $ref: "#/components/schemas/Ervervsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-      required:
-      - arkivreferanse
-      - changeType
-      - loyveForErverv
-      - vaapendel
-    VaapendelEndring:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          vaapendel:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
+    VAAPENDEL:
+      type: object
+      description: Endring av vaapendel
+      properties:
+        vaapendel:
+          oneOf:
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        arkivreferanse:
+          type: string
+        melding:
+          type: string
+        changeType:
+          type: string
+          enum:
+          - VAAPEN
+          - VAAPENDEL
+          - VAAPENKORREKSJON
+          - VAAPENDELKORREKSJON
+          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
+          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
       required:
       - arkivreferanse
       - changeType
       - vaapendel
-    VaapendelKorreksjon:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          korreksjonsId:
-            type: string
-            format: uuid
-          vaapendel:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
+    VAAPENKORREKSJON:
+      type: object
+      description: Korreksjon av skytevaapen
+      properties:
+        korreksjonsId:
+          type: string
+          format: uuid
+        vaapen:
+          $ref: "#/components/schemas/Skytevaapen"
+        arkivreferanse:
+          type: string
+        melding:
+          type: string
+        changeType:
+          type: string
+          enum:
+          - VAAPEN
+          - VAAPENDEL
+          - VAAPENKORREKSJON
+          - VAAPENDELKORREKSJON
+          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
+          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
       required:
       - arkivreferanse
       - changeType
       - korreksjonsId
+      - vaapen
+    VAAPENDELKORREKSJON:
+      type: object
+      description: Korreksjon av vaapendel
+      properties:
+        korreksjonsId:
+          type: string
+          format: uuid
+        vaapendel:
+          oneOf:
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        arkivreferanse:
+          type: string
+        melding:
+          type: string
+        changeType:
+          type: string
+          enum:
+          - VAAPEN
+          - VAAPENDEL
+          - VAAPENKORREKSJON
+          - VAAPENDELKORREKSJON
+          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
+          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
+      required:
+      - arkivreferanse
+      - changeType
+      - korreksjonsId
+      - vaapendel
+    EIEROVERFORING_VAAPEN_SAKSBEHANDLER:
+      type: object
+      description: Eieroverføring av Skytevaapen
+      properties:
+        vaapen:
+          $ref: "#/components/schemas/Skytevaapen"
+        loyveForErverv:
+          oneOf:
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        arkivreferanse:
+          type: string
+        melding:
+          type: string
+        changeType:
+          type: string
+          enum:
+          - VAAPEN
+          - VAAPENDEL
+          - VAAPENKORREKSJON
+          - VAAPENDELKORREKSJON
+          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
+          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
+      required:
+      - arkivreferanse
+      - changeType
+      - loyveForErverv
+      - vaapen
+    LoyveForErverv:
+      type: object
+      discriminator:
+        propertyName: loyvetype
+        mapping:
+          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
+          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
+      properties:
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - NAERINGSLOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+      required:
+      - innehaver
+      - loyveId
+      - loyvetype
+      - status
+      - vedtaksdato
+    EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER:
+      type: object
+      description: Eieroverføring av Vaapendel
+      properties:
+        vaapendel:
+          oneOf:
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        loyveForErverv:
+          oneOf:
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        arkivreferanse:
+          type: string
+        melding:
+          type: string
+        changeType:
+          type: string
+          enum:
+          - VAAPEN
+          - VAAPENDEL
+          - VAAPENKORREKSJON
+          - VAAPENDELKORREKSJON
+          - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
+          - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
+      required:
+      - arkivreferanse
+      - changeType
+      - loyveForErverv
       - vaapendel
     ChangeFailed:
       allOf:
