@@ -52,8 +52,8 @@ paths:
     post:
       tags:
       - korrigerings-event-controller
-      summary: "Lagre nytt våpen, våpendel, eller endring på våpen/våpendel, samt\
-        \ innehavsløyve"
+      summary: "Lagre endring eller korreksjon på våpen eller våpendel, eller eieroverfø\
+        ring på våpen eller våpendel"
       operationId: lagreEndring_1
       requestBody:
         content:
