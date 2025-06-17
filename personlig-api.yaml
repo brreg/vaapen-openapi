@@ -449,8 +449,15 @@ components:
         ervervsloyveForesporselId:
           type: integer
           format: int64
+        svartype:
+          type: string
+          description: Type svar på loyvedelingsforespørsel
+          enum:
+          - ACCEPT
+          - REJECT
       required:
       - ervervsloyveForesporselId
+      - svartype
     DelLoyveError:
       allOf:
       - $ref: "#/components/schemas/DelLoyveStatus"
@@ -481,9 +488,16 @@ components:
         ervervsloyveForesporselId:
           type: integer
           format: int64
+        svartype:
+          type: string
+          description: Type svar på loyvedelingsforespørsel
+          enum:
+          - ACCEPT
+          - REJECT
       required:
       - ervervsloyveForesporselId
       - loyveId
+      - svartype
     LoyveForesporselPayLoad:
       type: object
       properties:
@@ -913,12 +927,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1267,8 +1281,6 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        annetFabrikkmerke:
-          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1295,6 +1307,8 @@ components:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
         serienummer:
           type: string
         skytevaapentype:
@@ -1564,39 +1578,38 @@ components:
       required:
       - foresporrerBeriket
       - id
-    Foresporrer:
-      type: object
-      oneOf:
-      - $ref: "#/components/schemas/VirksomhetsForesporrer"
-      - $ref: "#/components/schemas/PersonForesporrer"
     ForesporrerBeriket:
       type: object
       properties:
         foresporrer:
-          $ref: "#/components/schemas/Foresporrer"
+          oneOf:
+          - $ref: "#/components/schemas/PersonInnehaver"
+          - $ref: "#/components/schemas/VirksomhetInnehaver"
         visningsnavn:
           type: string
       required:
       - foresporrer
       - visningsnavn
-    PersonForesporrer:
+    Innehaver:
+      type: object
+    PersonInnehaver:
       allOf:
-      - $ref: "#/components/schemas/Foresporrer"
+      - $ref: "#/components/schemas/Innehaver"
       - type: object
         properties:
-          fnr:
+          personidentifikator:
             type: string
       required:
-      - fnr
-    VirksomhetsForesporrer:
+      - personidentifikator
+    VirksomhetInnehaver:
       allOf:
-      - $ref: "#/components/schemas/Foresporrer"
+      - $ref: "#/components/schemas/Innehaver"
       - type: object
         properties:
-          orgnr:
+          organisasjonsnummer:
             type: string
       required:
-      - orgnr
+      - organisasjonsnummer
     EieroverforingsforslagView:
       type: object
       properties:
@@ -1632,12 +1645,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
