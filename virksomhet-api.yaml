@@ -89,26 +89,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/JsonMessage"
-  /virksomhet/loyveforesporsel/svar:
-    post:
-      tags:
-      - loyve-controller
-      operationId: svarErvervsloyveForesporsel
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: "#/components/schemas/AcceptLoyvedeling"
-              - $ref: "#/components/schemas/RejectLoyvedeling"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ErvervsloyvedelingValidationResult"
   /virksomhet/eieroverforing:
     post:
       tags:
@@ -1265,26 +1245,6 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        annetFabrikkmerke:
-          type: string
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -1318,6 +1278,26 @@ components:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
           type: string
+        annetFabrikkmerke:
+          type: string
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
+        korrigeringsstatus:
+          type: string
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         id:
           type: integer
           format: int64
@@ -1360,57 +1340,6 @@ components:
           type: string
       required:
       - message
-    AcceptLoyvedeling:
-      allOf:
-      - $ref: "#/components/schemas/Loyvedeling"
-      - type: object
-        properties:
-          loyveId:
-            type: string
-          ervervsloyveForesporselId:
-            type: integer
-            format: int64
-      required:
-      - ervervsloyveForesporselId
-      - loyveId
-      - svartype
-    Loyvedeling:
-      type: object
-      discriminator:
-        propertyName: svartype
-        mapping:
-          ACCEPT: "#/components/schemas/AcceptLoyvedeling"
-          REJECT: "#/components/schemas/RejectLoyvedeling"
-      properties:
-        svartype:
-          type: string
-          description: Type svar på loyvedelingsforespørsel
-          enum:
-          - ACCEPT
-          - REJECT
-      required:
-      - svartype
-    RejectLoyvedeling:
-      allOf:
-      - $ref: "#/components/schemas/Loyvedeling"
-      - type: object
-        properties:
-          ervervsloyveForesporselId:
-            type: integer
-            format: int64
-      required:
-      - ervervsloyveForesporselId
-      - svartype
-    ErvervsloyvedelingValidationResult:
-      type: object
-      properties:
-        status:
-          type: string
-          enum:
-          - OK
-          - ERROR
-      required:
-      - status
     EieroverforingsforslagRequest:
       type: object
     SkytevaapenEieroverforingsforslag:
@@ -1570,9 +1499,7 @@ components:
           type: integer
           format: int64
         foresporrer:
-          oneOf:
-          - $ref: "#/components/schemas/PersonInnehaver"
-          - $ref: "#/components/schemas/VirksomhetInnehaver"
+          $ref: "#/components/schemas/Foresporrer"
         createdDate:
           type: string
           format: date
@@ -1580,3 +1507,26 @@ components:
       - createdDate
       - foresporrer
       - id
+    Foresporrer:
+      type: object
+      oneOf:
+      - $ref: "#/components/schemas/VirksomhetsForesporrer"
+      - $ref: "#/components/schemas/PersonForesporrer"
+    PersonForesporrer:
+      allOf:
+      - $ref: "#/components/schemas/Foresporrer"
+      - type: object
+        properties:
+          fnr:
+            type: string
+      required:
+      - fnr
+    VirksomhetsForesporrer:
+      allOf:
+      - $ref: "#/components/schemas/Foresporrer"
+      - type: object
+        properties:
+          orgnr:
+            type: string
+      required:
+      - orgnr

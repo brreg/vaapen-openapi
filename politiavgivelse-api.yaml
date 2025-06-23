@@ -1104,17 +1104,6 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
-          vaapenstatus:
-            type: string
-            enum:
-            - AKTIV
-            - DESTRUERT
-            - DEAKTIVERT
-            - UTFORT
-          innehavsloyve:
-            oneOf:
-            - $ref: "#/components/schemas/Innehavsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
           skytevaapentype:
             type: string
             enum:
@@ -1138,6 +1127,23 @@ components:
             - LAASKASSE
             - REVOLVERTONNE
             - SLUTTSTYKKE
+          vaapenstatus:
+            type: string
+            enum:
+            - AKTIV
+            - DESTRUERT
+            - DEAKTIVERT
+            - UTFORT
+          innehavsloyve:
+            oneOf:
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
+          korrigeringsstatus:
+            type: string
+            enum:
+            - OK
+            - TRENGER_GJENNOMGANG
+            - UNDER_KORRIGERING
           serienummer:
             type: string
           fabrikkmerke:
@@ -1146,12 +1152,6 @@ components:
             type: string
           modell:
             type: string
-          korrigeringsstatus:
-            type: string
-            enum:
-            - OK
-            - TRENGER_GJENNOMGANG
-            - UNDER_KORRIGERING
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
