@@ -1491,6 +1491,7 @@ components:
           - ERROR_UGYLDIG_VAAPEN
           - ERROR_NAERINGSLOYVE_FINNES_IKKE
           - ERROR_VAAPEN_UTEN_VAAPENDEL
+          - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
       required:
       - errorType
       - loyveFelt
