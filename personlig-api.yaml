@@ -98,12 +98,14 @@ paths:
     post:
       tags:
       - loyve-controller
-      operationId: opprettErvervsloyveForesporsler
+      operationId: opprettErvervsloyveForesporsel
       requestBody:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/LoyveForesporselPayLoad"
+              oneOf:
+              - $ref: "#/components/schemas/PersonInnehaver"
+              - $ref: "#/components/schemas/VirksomhetInnehaver"
         required: true
       responses:
         "200":
@@ -111,8 +113,7 @@ paths:
           content:
             '*/*':
               schema:
-                oneOf:
-                - $ref: "#/components/schemas/ForesporselLoyveOk"
+                $ref: "#/components/schemas/ForesporselErvervsloyveResult"
   /person/korrigeringer:
     post:
       tags:
@@ -498,24 +499,39 @@ components:
       - ervervsloyveForesporselId
       - loyveId
       - svartype
-    LoyveForesporselPayLoad:
+    Innehaver:
       type: object
-      properties:
-        mottakerFnr:
-          type: string
-      required:
-      - mottakerFnr
-    ForesporselLoyveOk:
+    PersonInnehaver:
       allOf:
-      - $ref: "#/components/schemas/ForesporselLoyveStatus"
+      - $ref: "#/components/schemas/Innehaver"
       - type: object
         properties:
-          message:
+          personidentifikator:
             type: string
       required:
-      - message
-    ForesporselLoyveStatus:
+      - personidentifikator
+    VirksomhetInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/Innehaver"
+      - type: object
+        properties:
+          organisasjonsnummer:
+            type: string
+      required:
+      - organisasjonsnummer
+    ForesporselErvervsloyveResult:
       type: object
+      properties:
+        staus:
+          type: string
+          enum:
+          - OK
+          - ERROR
+        message:
+          type: string
+      required:
+      - message
+      - staus
     Aldersgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1675,26 +1691,6 @@ components:
       required:
       - foresporrer
       - visningsnavn
-    Innehaver:
-      type: object
-    PersonInnehaver:
-      allOf:
-      - $ref: "#/components/schemas/Innehaver"
-      - type: object
-        properties:
-          personidentifikator:
-            type: string
-      required:
-      - personidentifikator
-    VirksomhetInnehaver:
-      allOf:
-      - $ref: "#/components/schemas/Innehaver"
-      - type: object
-        properties:
-          organisasjonsnummer:
-            type: string
-      required:
-      - organisasjonsnummer
     EieroverforingsforslagView:
       type: object
       properties:
