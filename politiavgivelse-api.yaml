@@ -982,6 +982,8 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -996,8 +998,6 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
-        loyveId:
-          type: string
       required:
       - innehaver
       - loyveId

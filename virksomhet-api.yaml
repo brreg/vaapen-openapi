@@ -1040,12 +1040,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1829,12 +1829,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
