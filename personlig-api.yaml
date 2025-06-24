@@ -516,7 +516,7 @@ components:
       - message
     ForesporselLoyveStatus:
       type: object
-    AmmunisjonForeningsgrunnlag:
+    Aldersgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -526,12 +526,23 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    ArvOgMinneverdegrunnlag:
+    Amnestigrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    AndreBehovsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Avlivingsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Deaktivertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -670,24 +681,36 @@ components:
           - SLUTTSTYKKE
         grunnlag:
           oneOf:
-          - $ref: "#/components/schemas/AmmunisjonForeningsgrunnlag"
+          - $ref: "#/components/schemas/Aldersgrunnlag"
           - $ref: "#/components/schemas/Ammunisjonssamlergrunnlag"
-          - $ref: "#/components/schemas/ArvOgMinneverdegrunnlag"
+          - $ref: "#/components/schemas/Amnestigrunnlag"
+          - $ref: "#/components/schemas/AndreBehovsgrunnlag"
           - $ref: "#/components/schemas/Avlivingsgrunnlag"
+          - $ref: "#/components/schemas/Deaktivertgrunnlag"
+          - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+          - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
           - $ref: "#/components/schemas/Hoykapasitetsgrunnlag"
           - $ref: "#/components/schemas/IkkeSkytevaapengrunnlag"
           - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
           - $ref: "#/components/schemas/Jaktgrunnlag"
+          - $ref: "#/components/schemas/Minneverdegrunnlag"
           - $ref: "#/components/schemas/Museumsgrunnlag"
-          - $ref: "#/components/schemas/OpplaeringForeningsgrunnlag"
+          - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
           - $ref: "#/components/schemas/Piratgrunnlag"
           - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+          - $ref: "#/components/schemas/SaerskiltGrunnlag"
           - $ref: "#/components/schemas/Samlergrunnlag"
+          - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+          - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+          - $ref: "#/components/schemas/Slaktegrunnlag"
           - $ref: "#/components/schemas/Sportsgrunnlag"
           - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
           - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
           - $ref: "#/components/schemas/UkjentGrunnlag"
-          - $ref: "#/components/schemas/UtlaanForeningsgrunnlag"
+          - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+          - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+          - $ref: "#/components/schemas/SaerskiltGrunnlag"
+          - $ref: "#/components/schemas/UkjentGrunnlag"
         spesifisering:
           $ref: "#/components/schemas/ErvervsloyveSpesifikt"
         paaVegneAv:
@@ -747,6 +770,11 @@ components:
           - PERKUSJON
           - FLINT
           - LUNTE
+    Etterregistrertgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Fabrikkmerke:
       type: object
       properties:
@@ -767,19 +795,21 @@ components:
           SPORT: "#/components/schemas/Sportsgrunnlag"
           SAMLER: "#/components/schemas/Samlergrunnlag"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsgrunnlag"
-          ARV_MINNEVERDE: "#/components/schemas/ArvOgMinneverdegrunnlag"
+          MINNEVERDE: "#/components/schemas/Minneverdegrunnlag"
           AMMUNISJONSSAMLING: "#/components/schemas/Ammunisjonssamlergrunnlag"
           REPLIKA_LUFT_FJAER: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
           ISBJORN: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
           IKKE_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapengrunnlag"
           TJENESTEPERSON: "#/components/schemas/Tjenestepersonsgrunnlag"
-          AMMUNISJON_FORENING: "#/components/schemas/AmmunisjonForeningsgrunnlag"
-          OPPLAERING_FORENING: "#/components/schemas/OpplaeringForeningsgrunnlag"
-          UTLAAN_FORENING: "#/components/schemas/UtlaanForeningsgrunnlag"
+          SKYTTERFORENING: "#/components/schemas/Skytterforeningsgrunnlag"
           AVLIVING_AV_DYR: "#/components/schemas/Avlivingsgrunnlag"
           MUSEUM: "#/components/schemas/Museumsgrunnlag"
           PIRAT: "#/components/schemas/Piratgrunnlag"
           TEST_UTVIKLING: "#/components/schemas/TestOgUtviklingsgrunnlag"
+          ALDER: "#/components/schemas/Aldersgrunnlag"
+          SAERSKILT_TILFELLE: "#/components/schemas/SaerskiltGrunnlag"
+          ANDRE_BEHOV: "#/components/schemas/AndreBehovsgrunnlag"
+          NAERINGSVIRKSOMHET: "#/components/schemas/Naeringsvirksomhetgrunnlag"
           UKJENT: "#/components/schemas/UkjentGrunnlag"
       properties:
         grunnlagsType:
@@ -787,25 +817,42 @@ components:
           enum:
           - JAKT
           - SPORT
-          - HOYKAPASITETSMAGASIN
-          - ARV_MINNEVERDE
+          - MINNEVERDE
           - SAMLER
-          - AMMUNISJONSSAMLING
           - REPLIKA_LUFT_FJAER
           - ISBJORN
-          - IKKE_SKYTEVAAPEN
           - TJENESTEPERSON
-          - AMMUNISJON_FORENING
-          - OPPLAERING_FORENING
-          - UTLAAN_FORENING
+          - UTEN_BEHOVSPROVING
+          - ALDER
+          - AMMUNISJONSSAMLING
+          - SKYTTERFORENING
+          - NAERINGSVIRKSOMHET
           - AVLIVING_AV_DYR
           - MUSEUM
-          - PIRAT
           - TEST_UTVIKLING
+          - PIRAT
+          - ETTERREGISTRERT
+          - DEAKTIVERT
+          - AMNESTI
+          - SAERSKILT_TILFELLE
+          - ANDRE_BEHOV
+          - IKKE_SKYTEVAAPEN
+          - HOYKAPASITETSMAGASIN
+          - UTRYDDELSE_AV_SKADEDYR
+          - SLAKTING
           - UKJENT
         id:
           type: integer
           format: int64
+      required:
+      - grunnlagsType
+    GrunnlagWithBeskrivelse:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
       required:
       - grunnlagsType
     Hoykapasitetsgrunnlag:
@@ -825,24 +872,36 @@ components:
         properties:
           grunnlag:
             oneOf:
-            - $ref: "#/components/schemas/AmmunisjonForeningsgrunnlag"
+            - $ref: "#/components/schemas/Aldersgrunnlag"
             - $ref: "#/components/schemas/Ammunisjonssamlergrunnlag"
-            - $ref: "#/components/schemas/ArvOgMinneverdegrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
             - $ref: "#/components/schemas/Hoykapasitetsgrunnlag"
             - $ref: "#/components/schemas/IkkeSkytevaapengrunnlag"
             - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
             - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
             - $ref: "#/components/schemas/Museumsgrunnlag"
-            - $ref: "#/components/schemas/OpplaeringForeningsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
             - $ref: "#/components/schemas/Piratgrunnlag"
             - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
             - $ref: "#/components/schemas/Sportsgrunnlag"
             - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
-            - $ref: "#/components/schemas/UtlaanForeningsgrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
           paaVegneAv:
             oneOf:
             - $ref: "#/components/schemas/EierPerson"
@@ -949,6 +1008,11 @@ components:
       - loyvetype
       - status
       - vedtaksdato
+    Minneverdegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Museumsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -988,7 +1052,7 @@ components:
       - status
       - typeNaeringsvirksomhet
       - vedtaksdato
-    OpplaeringForeningsgrunnlag:
+    Naeringsvirksomhetgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -1056,7 +1120,22 @@ components:
       - korrigeringsstatus
       - lademekanisme
       - skytevaapentype
-    SamlerOmraade:
+    SaerskiltGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Samlergrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          samlerOmraade:
+            $ref: "#/components/schemas/Samleromraade"
+      required:
+      - grunnlagsType
+    Samleromraade:
       type: object
       properties:
         id:
@@ -1066,6 +1145,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        navn:
+          type: string
         beskrivelse:
           type: string
         antallVaapen:
@@ -1075,16 +1156,12 @@ components:
       - beskrivelse
       - id
       - innehaver
-    Samlergrunnlag:
+      - navn
+    Skadedyrsutryddelsesgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          samlerOmraade:
-            $ref: "#/components/schemas/SamlerOmraade"
       required:
       - grunnlagsType
-      - samlerOmraade
     Skyteprogram:
       type: object
       properties:
@@ -1217,6 +1294,16 @@ components:
             $ref: "#/components/schemas/Skytevaapen"
       required:
       - skytevaapen
+    Skytterforeningsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Slaktegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Sluttstykke:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -1258,14 +1345,11 @@ components:
       - grunnlagsType
     UkjentGrunnlag:
       allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
       - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          beskrivelse:
-            type: string
       required:
       - grunnlagsType
-    UtlaanForeningsgrunnlag:
+    UtenBehovsprovingGrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:

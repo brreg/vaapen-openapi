@@ -176,6 +176,60 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Kodeliste"
+  /kodelister/grunnlagstyper/virksomhet:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findGrunnlagstypeVirksomhet
+      parameters:
+      - name: kunAktive
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      - name: kunForErverv
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /kodelister/grunnlagstyper/person:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findGrunnlagstypePerson
+      parameters:
+      - name: kunAktive
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+      - name: kunForErverv
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
   /kodelister/funksjonsmaater:
     get:
       tags:

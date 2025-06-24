@@ -11,7 +11,7 @@ paths:
   /virksomhet/naering/vaapen/lagerbeholdning:
     post:
       tags:
-      - naering
+      - vaapen-controller-naering
       operationId: sendLagerbeholdning
       parameters:
       - name: innloggetVirksomhet
@@ -35,7 +35,7 @@ paths:
   /virksomhet/naering/vaapen/csv:
     post:
       tags:
-      - naering
+      - vaapen-controller-naering
       operationId: convertLagerbeholdning
       parameters:
       - name: innloggetVirksomhet
@@ -186,7 +186,7 @@ paths:
   /virksomhet/naering/vaapen:
     get:
       tags:
-      - naering
+      - vaapen-controller-naering
       operationId: getVaapen
       parameters:
       - name: innloggetVirksomhet
@@ -211,7 +211,7 @@ paths:
   /virksomhet/naering/vaapendeler:
     get:
       tags:
-      - naering
+      - vaapen-controller-naering
       operationId: getVaapendeler
       parameters:
       - name: innloggetVirksomhet
@@ -240,7 +240,7 @@ paths:
   /virksomhet/naering/vaapendeler/{id}:
     get:
       tags:
-      - naering
+      - vaapen-controller-naering
       operationId: getVaapendelerById
       parameters:
       - name: innloggetVirksomhet
@@ -267,7 +267,7 @@ paths:
   /virksomhet/naering/vaapen/{id}:
     get:
       tags:
-      - naering
+      - vaapen-controller-naering
       operationId: getVaapenById
       parameters:
       - name: innloggetVirksomhet
@@ -334,7 +334,7 @@ paths:
   /virksomhet/ikke-naering/vaapen:
     get:
       tags:
-      - virksomhet
+      - vaapen-controller-virksomhet
       operationId: getVaapenVirksomhet
       parameters:
       - name: innloggetVirksomhet
@@ -354,7 +354,7 @@ paths:
   /virksomhet/ikke-naering/vaapendeler:
     get:
       tags:
-      - virksomhet
+      - vaapen-controller-virksomhet
       operationId: getVaapendelerVirksomhet
       parameters:
       - name: innloggetVirksomhet
@@ -378,7 +378,7 @@ paths:
   /virksomhet/ikke-naering/vaapendeler/{id}:
     get:
       tags:
-      - virksomhet
+      - vaapen-controller-virksomhet
       operationId: getVaapendelerByVirksomhetAndId
       parameters:
       - name: innloggetVirksomhet
@@ -405,7 +405,7 @@ paths:
   /virksomhet/ikke-naering/vaapen/{id}:
     get:
       tags:
-      - virksomhet
+      - vaapen-controller-virksomhet
       operationId: getVaapenByVirksomhetAndId
       parameters:
       - name: innloggetVirksomhet
@@ -425,29 +425,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Skytevaapen"
-  /virksomhet/ervervsloyve:
-    get:
-      tags:
-      - loyve-controller
-      operationId: finnErvervsloyver
-      parameters:
-      - name: status
-        in: query
-        required: true
-        schema:
-          type: string
-          enum:
-          - AKTIVE
-          - ALLE
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Ervervsloyve"
 components:
   schemas:
     AmmunisjonForeningsgrunnlag:
@@ -905,6 +882,11 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
         loyvetype:
           type: string
           description: Type løyve
@@ -912,11 +894,6 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
       required:
       - innehaver
       - loyveId
@@ -1278,8 +1255,11 @@ components:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
           type: string
-        annetFabrikkmerke:
+        registreringsobjektType:
           type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         vaapenstatus:
           type: string
           enum:
@@ -1293,11 +1273,8 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        registreringsobjektType:
+        annetFabrikkmerke:
           type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         id:
           type: integer
           format: int64
