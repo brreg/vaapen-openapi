@@ -11,7 +11,7 @@ paths:
   /virksomhet/naering/vaapen/lagerbeholdning:
     post:
       tags:
-      - vaapen-controller-naering
+      - naering
       operationId: sendLagerbeholdning
       parameters:
       - name: innloggetVirksomhet
@@ -35,7 +35,7 @@ paths:
   /virksomhet/naering/vaapen/csv:
     post:
       tags:
-      - vaapen-controller-naering
+      - naering
       operationId: convertLagerbeholdning
       parameters:
       - name: innloggetVirksomhet
@@ -89,6 +89,52 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/JsonMessage"
+  /virksomhet/loyveforesporsel/svar:
+    post:
+      tags:
+      - loyve-controller
+      operationId: svarErvervsloyveForesporsel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/AcceptLoyvedeling"
+              - $ref: "#/components/schemas/RejectLoyvedeling"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErvervsloyvedelingValidationResult"
+  /virksomhet/korrigeringer:
+    post:
+      tags:
+      - korreksjon-controller
+      operationId: lagKorreksjon
+      parameters:
+      - name: orgnr
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/Skytevaapenmelding"
+              - $ref: "#/components/schemas/Vaapendelmelding"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
   /virksomhet/eieroverforing:
     post:
       tags:
@@ -186,7 +232,7 @@ paths:
   /virksomhet/naering/vaapen:
     get:
       tags:
-      - vaapen-controller-naering
+      - naering
       operationId: getVaapen
       parameters:
       - name: innloggetVirksomhet
@@ -211,7 +257,7 @@ paths:
   /virksomhet/naering/vaapendeler:
     get:
       tags:
-      - vaapen-controller-naering
+      - naering
       operationId: getVaapendeler
       parameters:
       - name: innloggetVirksomhet
@@ -240,7 +286,7 @@ paths:
   /virksomhet/naering/vaapendeler/{id}:
     get:
       tags:
-      - vaapen-controller-naering
+      - naering
       operationId: getVaapendelerById
       parameters:
       - name: innloggetVirksomhet
@@ -267,7 +313,7 @@ paths:
   /virksomhet/naering/vaapen/{id}:
     get:
       tags:
-      - vaapen-controller-naering
+      - naering
       operationId: getVaapenById
       parameters:
       - name: innloggetVirksomhet
@@ -331,10 +377,28 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Ervervsloyve"
+  /virksomhet/korrigeringer/{korreksjonsId}/status:
+    get:
+      tags:
+      - korreksjon-controller
+      operationId: hentKorreksjonsStatus
+      parameters:
+      - name: korreksjonsId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
   /virksomhet/ikke-naering/vaapen:
     get:
       tags:
-      - vaapen-controller-virksomhet
+      - virksomhet
       operationId: getVaapenVirksomhet
       parameters:
       - name: innloggetVirksomhet
@@ -354,7 +418,7 @@ paths:
   /virksomhet/ikke-naering/vaapendeler:
     get:
       tags:
-      - vaapen-controller-virksomhet
+      - virksomhet
       operationId: getVaapendelerVirksomhet
       parameters:
       - name: innloggetVirksomhet
@@ -378,7 +442,7 @@ paths:
   /virksomhet/ikke-naering/vaapendeler/{id}:
     get:
       tags:
-      - vaapen-controller-virksomhet
+      - virksomhet
       operationId: getVaapendelerByVirksomhetAndId
       parameters:
       - name: innloggetVirksomhet
@@ -405,7 +469,7 @@ paths:
   /virksomhet/ikke-naering/vaapen/{id}:
     get:
       tags:
-      - vaapen-controller-virksomhet
+      - virksomhet
       operationId: getVaapenByVirksomhetAndId
       parameters:
       - name: innloggetVirksomhet
@@ -425,9 +489,48 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Skytevaapen"
+  /virksomhet/ervervsloyve:
+    get:
+      tags:
+      - loyve-controller
+      operationId: finnErvervsloyver
+      parameters:
+      - name: status
+        in: query
+        required: true
+        schema:
+          type: string
+          enum:
+          - AKTIVE
+          - ALLE
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ervervsloyve"
+  /virksomhet/eieroverforing/forslag:
+    get:
+      tags:
+      - eieroverforings-controller
+      operationId: finnEieroverforingsforslag
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagView"
+                  - $ref: "#/components/schemas/VaapendelEieroverforingsforslagView"
 components:
   schemas:
-    AmmunisjonForeningsgrunnlag:
+    Aldersgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -437,12 +540,23 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    ArvOgMinneverdegrunnlag:
+    Amnestigrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    AndreBehovsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Avlivingsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Deaktivertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -579,24 +693,36 @@ components:
           - SLUTTSTYKKE
         grunnlag:
           oneOf:
-          - $ref: "#/components/schemas/AmmunisjonForeningsgrunnlag"
+          - $ref: "#/components/schemas/Aldersgrunnlag"
           - $ref: "#/components/schemas/Ammunisjonssamlergrunnlag"
-          - $ref: "#/components/schemas/ArvOgMinneverdegrunnlag"
+          - $ref: "#/components/schemas/Amnestigrunnlag"
+          - $ref: "#/components/schemas/AndreBehovsgrunnlag"
           - $ref: "#/components/schemas/Avlivingsgrunnlag"
+          - $ref: "#/components/schemas/Deaktivertgrunnlag"
+          - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+          - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
           - $ref: "#/components/schemas/Hoykapasitetsgrunnlag"
           - $ref: "#/components/schemas/IkkeSkytevaapengrunnlag"
           - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
           - $ref: "#/components/schemas/Jaktgrunnlag"
+          - $ref: "#/components/schemas/Minneverdegrunnlag"
           - $ref: "#/components/schemas/Museumsgrunnlag"
-          - $ref: "#/components/schemas/OpplaeringForeningsgrunnlag"
+          - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
           - $ref: "#/components/schemas/Piratgrunnlag"
           - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+          - $ref: "#/components/schemas/SaerskiltGrunnlag"
           - $ref: "#/components/schemas/Samlergrunnlag"
+          - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+          - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+          - $ref: "#/components/schemas/Slaktegrunnlag"
           - $ref: "#/components/schemas/Sportsgrunnlag"
           - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
           - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
           - $ref: "#/components/schemas/UkjentGrunnlag"
-          - $ref: "#/components/schemas/UtlaanForeningsgrunnlag"
+          - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+          - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+          - $ref: "#/components/schemas/SaerskiltGrunnlag"
+          - $ref: "#/components/schemas/UkjentGrunnlag"
         spesifisering:
           $ref: "#/components/schemas/ErvervsloyveSpesifikt"
         paaVegneAv:
@@ -656,6 +782,11 @@ components:
           - PERKUSJON
           - FLINT
           - LUNTE
+    Etterregistrertgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Fabrikkmerke:
       type: object
       properties:
@@ -676,19 +807,21 @@ components:
           SPORT: "#/components/schemas/Sportsgrunnlag"
           SAMLER: "#/components/schemas/Samlergrunnlag"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsgrunnlag"
-          ARV_MINNEVERDE: "#/components/schemas/ArvOgMinneverdegrunnlag"
+          MINNEVERDE: "#/components/schemas/Minneverdegrunnlag"
           AMMUNISJONSSAMLING: "#/components/schemas/Ammunisjonssamlergrunnlag"
           REPLIKA_LUFT_FJAER: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
           ISBJORN: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
           IKKE_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapengrunnlag"
           TJENESTEPERSON: "#/components/schemas/Tjenestepersonsgrunnlag"
-          AMMUNISJON_FORENING: "#/components/schemas/AmmunisjonForeningsgrunnlag"
-          OPPLAERING_FORENING: "#/components/schemas/OpplaeringForeningsgrunnlag"
-          UTLAAN_FORENING: "#/components/schemas/UtlaanForeningsgrunnlag"
+          SKYTTERFORENING: "#/components/schemas/Skytterforeningsgrunnlag"
           AVLIVING_AV_DYR: "#/components/schemas/Avlivingsgrunnlag"
           MUSEUM: "#/components/schemas/Museumsgrunnlag"
           PIRAT: "#/components/schemas/Piratgrunnlag"
           TEST_UTVIKLING: "#/components/schemas/TestOgUtviklingsgrunnlag"
+          ALDER: "#/components/schemas/Aldersgrunnlag"
+          SAERSKILT_TILFELLE: "#/components/schemas/SaerskiltGrunnlag"
+          ANDRE_BEHOV: "#/components/schemas/AndreBehovsgrunnlag"
+          NAERINGSVIRKSOMHET: "#/components/schemas/Naeringsvirksomhetgrunnlag"
           UKJENT: "#/components/schemas/UkjentGrunnlag"
       properties:
         grunnlagsType:
@@ -696,25 +829,42 @@ components:
           enum:
           - JAKT
           - SPORT
-          - HOYKAPASITETSMAGASIN
-          - ARV_MINNEVERDE
+          - MINNEVERDE
           - SAMLER
-          - AMMUNISJONSSAMLING
           - REPLIKA_LUFT_FJAER
           - ISBJORN
-          - IKKE_SKYTEVAAPEN
           - TJENESTEPERSON
-          - AMMUNISJON_FORENING
-          - OPPLAERING_FORENING
-          - UTLAAN_FORENING
+          - UTEN_BEHOVSPROVING
+          - ALDER
+          - AMMUNISJONSSAMLING
+          - SKYTTERFORENING
+          - NAERINGSVIRKSOMHET
           - AVLIVING_AV_DYR
           - MUSEUM
-          - PIRAT
           - TEST_UTVIKLING
+          - PIRAT
+          - ETTERREGISTRERT
+          - DEAKTIVERT
+          - AMNESTI
+          - SAERSKILT_TILFELLE
+          - ANDRE_BEHOV
+          - IKKE_SKYTEVAAPEN
+          - HOYKAPASITETSMAGASIN
+          - UTRYDDELSE_AV_SKADEDYR
+          - SLAKTING
           - UKJENT
         id:
           type: integer
           format: int64
+      required:
+      - grunnlagsType
+    GrunnlagWithBeskrivelse:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
       required:
       - grunnlagsType
     Hoykapasitetsgrunnlag:
@@ -734,24 +884,36 @@ components:
         properties:
           grunnlag:
             oneOf:
-            - $ref: "#/components/schemas/AmmunisjonForeningsgrunnlag"
+            - $ref: "#/components/schemas/Aldersgrunnlag"
             - $ref: "#/components/schemas/Ammunisjonssamlergrunnlag"
-            - $ref: "#/components/schemas/ArvOgMinneverdegrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
             - $ref: "#/components/schemas/Hoykapasitetsgrunnlag"
             - $ref: "#/components/schemas/IkkeSkytevaapengrunnlag"
             - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
             - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
             - $ref: "#/components/schemas/Museumsgrunnlag"
-            - $ref: "#/components/schemas/OpplaeringForeningsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
             - $ref: "#/components/schemas/Piratgrunnlag"
             - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
             - $ref: "#/components/schemas/Sportsgrunnlag"
             - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
-            - $ref: "#/components/schemas/UtlaanForeningsgrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
           paaVegneAv:
             oneOf:
             - $ref: "#/components/schemas/EierPerson"
@@ -900,6 +1062,11 @@ components:
       - loyvetype
       - status
       - vedtaksdato
+    Minneverdegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Museumsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -929,6 +1096,7 @@ components:
             type: string
           saksreferanse:
             type: string
+      - $ref: "#/components/schemas/LoyveForErverv"
       description: Løyve for næringsdrivende virksomhet
       required:
       - innehaver
@@ -938,7 +1106,7 @@ components:
       - status
       - typeNaeringsvirksomhet
       - vedtaksdato
-    OpplaeringForeningsgrunnlag:
+    Naeringsvirksomhetgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -1006,7 +1174,22 @@ components:
       - korrigeringsstatus
       - lademekanisme
       - skytevaapentype
-    SamlerOmraade:
+    SaerskiltGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Samlergrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          samlerOmraade:
+            $ref: "#/components/schemas/Samleromraade"
+      required:
+      - grunnlagsType
+    Samleromraade:
       type: object
       properties:
         id:
@@ -1016,6 +1199,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        navn:
+          type: string
         beskrivelse:
           type: string
         antallVaapen:
@@ -1025,16 +1210,12 @@ components:
       - beskrivelse
       - id
       - innehaver
-    Samlergrunnlag:
+      - navn
+    Skadedyrsutryddelsesgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          samlerOmraade:
-            $ref: "#/components/schemas/SamlerOmraade"
       required:
       - grunnlagsType
-      - samlerOmraade
     Skyteprogram:
       type: object
       properties:
@@ -1158,6 +1339,16 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
+    Skytterforeningsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Slaktegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Sluttstykke:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -1199,14 +1390,11 @@ components:
       - grunnlagsType
     UkjentGrunnlag:
       allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
       - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          beskrivelse:
-            type: string
       required:
       - grunnlagsType
-    UtlaanForeningsgrunnlag:
+    UtenBehovsprovingGrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
@@ -1226,6 +1414,12 @@ components:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
+        korrigeringsstatus:
+          type: string
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
         skytevaapentype:
           type: string
           enum:
@@ -1242,6 +1436,18 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         vaapendeltype:
           type: string
           enum:
@@ -1253,27 +1459,9 @@ components:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
         annetFabrikkmerke:
+          type: string
+        modell:
           type: string
         id:
           type: integer
@@ -1317,6 +1505,125 @@ components:
           type: string
       required:
       - message
+    AcceptLoyvedeling:
+      allOf:
+      - $ref: "#/components/schemas/Loyvedeling"
+      - type: object
+        properties:
+          loyveId:
+            type: string
+          ervervsloyveForesporselId:
+            type: integer
+            format: int64
+      required:
+      - ervervsloyveForesporselId
+      - loyveId
+      - svartype
+    Loyvedeling:
+      type: object
+      discriminator:
+        propertyName: svartype
+        mapping:
+          ACCEPT: "#/components/schemas/AcceptLoyvedeling"
+          REJECT: "#/components/schemas/RejectLoyvedeling"
+      properties:
+        svartype:
+          type: string
+          description: Type svar på loyvedelingsforespørsel
+          enum:
+          - ACCEPT
+          - REJECT
+      required:
+      - svartype
+    RejectLoyvedeling:
+      allOf:
+      - $ref: "#/components/schemas/Loyvedeling"
+      - type: object
+        properties:
+          ervervsloyveForesporselId:
+            type: integer
+            format: int64
+      required:
+      - ervervsloyveForesporselId
+      - svartype
+    ErvervsloyvedelingValidationResult:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - OK
+          - ERROR
+      required:
+      - status
+    Korreksjonsmelding:
+      type: object
+    Skytevaapenmelding:
+      allOf:
+      - $ref: "#/components/schemas/Korreksjonsmelding"
+      - type: object
+        properties:
+          skytevaapen:
+            $ref: "#/components/schemas/Skytevaapen"
+      required:
+      - skytevaapen
+    Vaapendelmelding:
+      allOf:
+      - $ref: "#/components/schemas/Korreksjonsmelding"
+      - type: object
+        properties:
+          vaapendel:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+      required:
+      - vaapendel
+    AlreadyExists:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
+      required:
+      - reason
+    Created:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+      required:
+      - id
+    Denied:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
+      required:
+      - reason
+    Failed:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
+      required:
+      - reason
+    KorreksjonResponseStatus:
+      type: object
+      oneOf:
+      - $ref: "#/components/schemas/Created"
+      - $ref: "#/components/schemas/AlreadyExists"
+      - $ref: "#/components/schemas/Denied"
+      - $ref: "#/components/schemas/Failed"
     EieroverforingsforslagRequest:
       type: object
     SkytevaapenEieroverforingsforslag:
@@ -1409,6 +1716,7 @@ components:
           - ERROR_UGYLDIG_VAAPEN
           - ERROR_NAERINGSLOYVE_FINNES_IKKE
           - ERROR_VAAPEN_UTEN_VAAPENDEL
+          - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
       required:
       - errorType
       - loyveFelt
@@ -1476,7 +1784,9 @@ components:
           type: integer
           format: int64
         foresporrer:
-          $ref: "#/components/schemas/Foresporrer"
+          oneOf:
+          - $ref: "#/components/schemas/PersonInnehaver"
+          - $ref: "#/components/schemas/VirksomhetInnehaver"
         createdDate:
           type: string
           format: date
@@ -1484,26 +1794,88 @@ components:
       - createdDate
       - foresporrer
       - id
-    Foresporrer:
+    EieroverforingsforslagView:
       type: object
-      oneOf:
-      - $ref: "#/components/schemas/VirksomhetsForesporrer"
-      - $ref: "#/components/schemas/PersonForesporrer"
-    PersonForesporrer:
+      properties:
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        id:
+          type: integer
+          format: int64
+      required:
+      - id
+      - mottakersLoyve
+      - vaapeneier
+    LoyveForErverv:
+      type: object
+      discriminator:
+        propertyName: loyvetype
+        mapping:
+          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
+          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
+      properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - NAERINGSLOYVE
+      required:
+      - innehaver
+      - loyveId
+      - loyvetype
+      - status
+      - vedtaksdato
+    SkytevaapenEieroverforingsforslagView:
       allOf:
-      - $ref: "#/components/schemas/Foresporrer"
+      - $ref: "#/components/schemas/EieroverforingsforslagView"
       - type: object
         properties:
-          fnr:
-            type: string
+          skytevaapen:
+            $ref: "#/components/schemas/Skytevaapen"
       required:
-      - fnr
-    VirksomhetsForesporrer:
+      - id
+      - mottakersLoyve
+      - skytevaapen
+      - vaapeneier
+    VaapendelEieroverforingsforslagView:
       allOf:
-      - $ref: "#/components/schemas/Foresporrer"
+      - $ref: "#/components/schemas/EieroverforingsforslagView"
       - type: object
         properties:
-          orgnr:
-            type: string
+          vaapendel:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
       required:
-      - orgnr
+      - id
+      - mottakersLoyve
+      - vaapendel
+      - vaapeneier
