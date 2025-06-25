@@ -179,6 +179,24 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
+  /virksomhet/eieroverforing/forslag/svar:
+    post:
+      tags:
+      - eieroverforings-controller
+      operationId: svarEieroverforing
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EieroverforingsforslagSvarRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/EieroverforingValidationResult"
   /virksomhet/whoami:
     get:
       tags:
@@ -1410,16 +1428,16 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         skytevaapentype:
           type: string
           enum:
@@ -1743,6 +1761,20 @@ components:
       - errors
       - status
       - warnings
+    EieroverforingsforslagSvarRequest:
+      type: object
+      properties:
+        eieroverforingId:
+          type: integer
+          format: int64
+        svar:
+          type: string
+          enum:
+          - AKSEPTER
+          - AVSLAA
+      required:
+      - eieroverforingId
+      - svar
     Innloggingsinfo:
       type: object
       properties:
