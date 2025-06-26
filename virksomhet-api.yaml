@@ -587,6 +587,8 @@ components:
           VIRKSOMHET: "#/components/schemas/EierVirksomhet"
           PERSON: "#/components/schemas/EierPerson"
       properties:
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -599,29 +601,31 @@ components:
       required:
       - eiertype
     EierPerson:
-      type: object
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: Fødselsnummer eller D-nummer
+            example: 12345678901
+          navn:
+            type: string
+            description: Navn på fysisk person - kun visning ved behov
+            example: Kari Ole Normann
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            example: PERSON
       description: Representerer en person
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unik identifikator for eieren
-          example: 5678
-        personidentifikator:
-          type: string
-          description: Fødselsnummer eller D-nummer
-          example: 12345678901
-        navn:
-          type: string
-          description: Navn på fysisk person - kun visning ved behov
-          example: Kari Ole Normann
-        eiertype:
-          type: string
-          description: Type eier
-          enum:
-          - PERSON
-          - VIRKSOMHET
-          example: PERSON
       required:
       - eiertype
       - personidentifikator
@@ -1058,12 +1062,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1817,8 +1821,8 @@ components:
           format: int64
         foresporrer:
           oneOf:
-          - $ref: "#/components/schemas/PersonInnehaver"
-          - $ref: "#/components/schemas/VirksomhetInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
         createdDate:
           type: string
           format: date
@@ -1861,12 +1865,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date

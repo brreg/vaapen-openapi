@@ -571,6 +571,8 @@ components:
           VIRKSOMHET: "#/components/schemas/EierVirksomhet"
           PERSON: "#/components/schemas/EierPerson"
       properties:
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -1671,26 +1673,17 @@ components:
         id:
           type: integer
           format: int64
-        foresporrerBeriket:
-          $ref: "#/components/schemas/ForesporrerBeriket"
-        opprettetDato:
+        foresporrer:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+        createdDate:
           type: string
           format: date
       required:
-      - foresporrerBeriket
-      - id
-    ForesporrerBeriket:
-      type: object
-      properties:
-        foresporrer:
-          oneOf:
-          - $ref: "#/components/schemas/PersonInnehaver"
-          - $ref: "#/components/schemas/VirksomhetInnehaver"
-        visningsnavn:
-          type: string
-      required:
+      - createdDate
       - foresporrer
-      - visningsnavn
+      - id
     EieroverforingsforslagView:
       type: object
       properties:
