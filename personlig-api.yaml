@@ -1412,6 +1412,12 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
+        modell:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1428,12 +1434,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        modell:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         id:
           type: integer
           format: int64
@@ -1494,11 +1494,18 @@ components:
       - reason
     KorreksjonResponseStatus:
       type: object
+      discriminator:
+        propertyName: status
       oneOf:
       - $ref: "#/components/schemas/Created"
       - $ref: "#/components/schemas/AlreadyExists"
       - $ref: "#/components/schemas/Denied"
       - $ref: "#/components/schemas/Failed"
+      properties:
+        status:
+          type: string
+      required:
+      - status
     EieroverforingsforslagRequest:
       type: object
     SkytevaapenEieroverforingsforslag:
