@@ -553,6 +553,8 @@ components:
           VIRKSOMHET: "#/components/schemas/EierVirksomhet"
           PERSON: "#/components/schemas/EierPerson"
       properties:
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -1283,6 +1285,14 @@ components:
             - DESTRUERT
             - DEAKTIVERT
             - UTFORT
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           innehavsloyve:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
@@ -1293,14 +1303,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -1510,6 +1512,8 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        messageToCaseworker:
+          type: string
       required:
       - previousData
       - proposalId
