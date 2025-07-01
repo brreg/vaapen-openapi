@@ -135,19 +135,19 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
         "409":
-          description: En korreksjon er allerede under behandling
+          description: Korreksjon for dette våpenet er allerede under behandling
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
         "500":
           description: Noe gikk galt
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
   /virksomhet/eieroverforing:
     post:
       tags:
@@ -425,11 +425,7 @@ paths:
           content:
             '*/*':
               schema:
-                oneOf:
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.Denied"
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
   /virksomhet/ikke-naering/vaapen:
     get:
       tags:
@@ -1622,7 +1618,16 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
       required:
       - vaapendel
-    KorreksjonResponseStatus.Created:
+    AlreadyExists:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
+      required:
+      - reason
+    Created:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
       - type: object
@@ -1632,8 +1637,7 @@ components:
             format: uuid
       required:
       - id
-      - status
-    KorreksjonResponseStatus.AlreadyExists:
+    Denied:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
       - type: object
@@ -1642,8 +1646,7 @@ components:
             type: string
       required:
       - reason
-      - status
-    KorreksjonResponseStatus.Failed:
+    Failed:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
       - type: object
@@ -1652,7 +1655,13 @@ components:
             type: string
       required:
       - reason
-      - status
+    KorreksjonResponseStatus:
+      type: object
+      oneOf:
+      - $ref: "#/components/schemas/Created"
+      - $ref: "#/components/schemas/AlreadyExists"
+      - $ref: "#/components/schemas/Denied"
+      - $ref: "#/components/schemas/Failed"
     EieroverforingsforslagRequest:
       type: object
     SkytevaapenEieroverforingsforslag:
@@ -1837,25 +1846,6 @@ components:
       - createdDate
       - foresporrer
       - id
-    KorreksjonResponseStatus:
-      type: object
-      discriminator:
-        propertyName: status
-      properties:
-        status:
-          type: string
-      required:
-      - status
-    KorreksjonResponseStatus.Denied:
-      allOf:
-      - $ref: "#/components/schemas/KorreksjonResponseStatus"
-      - type: object
-        properties:
-          reason:
-            type: string
-      required:
-      - reason
-      - status
     EieroverforingsforslagView:
       type: object
       properties:
