@@ -1455,6 +1455,14 @@ components:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        modell:
+          type: string
         skytevaapentype:
           type: string
           enum:
@@ -1490,14 +1498,6 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        serienummer:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
-        modell:
-          type: string
         id:
           type: integer
           format: int64
@@ -1627,6 +1627,7 @@ components:
             type: string
       required:
       - reason
+      - status
     Created:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
@@ -1637,6 +1638,7 @@ components:
             format: uuid
       required:
       - id
+      - status
     Denied:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
@@ -1646,6 +1648,7 @@ components:
             type: string
       required:
       - reason
+      - status
     Failed:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
@@ -1655,6 +1658,7 @@ components:
             type: string
       required:
       - reason
+      - status
     KorreksjonResponseStatus:
       type: object
       discriminator:
