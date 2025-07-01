@@ -113,6 +113,7 @@ paths:
     post:
       tags:
       - korreksjon-controller
+      summary: Opprett korreksjon
       operationId: lagKorreksjon
       parameters:
       - name: orgnr
@@ -129,8 +130,20 @@ paths:
               - $ref: "#/components/schemas/Vaapendelmelding"
         required: true
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Korreksjon mottatt
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
+        "409":
+          description: Korreksjon for dette våpenet er allerede under behandling
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
+        "500":
+          description: Noe gikk galt
           content:
             '*/*':
               schema:
@@ -1580,6 +1593,9 @@ components:
       - status
     Korreksjonsmelding:
       type: object
+      properties:
+        meldingTilSaksbehandler:
+          type: string
     Skytevaapenmelding:
       allOf:
       - $ref: "#/components/schemas/Korreksjonsmelding"
