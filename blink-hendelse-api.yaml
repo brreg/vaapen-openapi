@@ -1001,6 +1001,10 @@ components:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
           type: string
+        serienummer:
+          type: string
+        annetFabrikkmerke:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1023,10 +1027,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        serienummer:
-          type: string
-        annetFabrikkmerke:
-          type: string
         vaapendeltype:
           type: string
           enum:

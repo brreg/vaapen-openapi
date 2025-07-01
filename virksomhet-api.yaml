@@ -1657,11 +1657,18 @@ components:
       - reason
     KorreksjonResponseStatus:
       type: object
+      discriminator:
+        propertyName: status
       oneOf:
       - $ref: "#/components/schemas/Created"
       - $ref: "#/components/schemas/AlreadyExists"
       - $ref: "#/components/schemas/Denied"
       - $ref: "#/components/schemas/Failed"
+      properties:
+        status:
+          type: string
+      required:
+      - status
     EieroverforingsforslagRequest:
       type: object
     SkytevaapenEieroverforingsforslag:
