@@ -135,19 +135,19 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus"
+                $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
         "409":
-          description: Korreksjon for dette våpenet er allerede under behandling
+          description: En korreksjon er allerede under behandling
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus"
+                $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
         "500":
           description: Noe gikk galt
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus"
+                $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
   /virksomhet/eieroverforing:
     post:
       tags:
@@ -425,7 +425,11 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus"
+                oneOf:
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Denied"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
   /virksomhet/ikke-naering/vaapen:
     get:
       tags:
@@ -1455,14 +1459,6 @@ components:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
-        serienummer:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
-        modell:
-          type: string
         skytevaapentype:
           type: string
           enum:
@@ -1498,6 +1494,14 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        modell:
+          type: string
         id:
           type: integer
           format: int64
@@ -1618,17 +1622,7 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
       required:
       - vaapendel
-    AlreadyExists:
-      allOf:
-      - $ref: "#/components/schemas/KorreksjonResponseStatus"
-      - type: object
-        properties:
-          reason:
-            type: string
-      required:
-      - reason
-      - status
-    Created:
+    KorreksjonResponseStatus.Created:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
       - type: object
@@ -1639,7 +1633,7 @@ components:
       required:
       - id
       - status
-    Denied:
+    KorreksjonResponseStatus.AlreadyExists:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
       - type: object
@@ -1649,7 +1643,7 @@ components:
       required:
       - reason
       - status
-    Failed:
+    KorreksjonResponseStatus.Failed:
       allOf:
       - $ref: "#/components/schemas/KorreksjonResponseStatus"
       - type: object
@@ -1658,20 +1652,6 @@ components:
             type: string
       required:
       - reason
-      - status
-    KorreksjonResponseStatus:
-      type: object
-      discriminator:
-        propertyName: status
-      oneOf:
-      - $ref: "#/components/schemas/Created"
-      - $ref: "#/components/schemas/AlreadyExists"
-      - $ref: "#/components/schemas/Denied"
-      - $ref: "#/components/schemas/Failed"
-      properties:
-        status:
-          type: string
-      required:
       - status
     EieroverforingsforslagRequest:
       type: object
@@ -1857,6 +1837,25 @@ components:
       - createdDate
       - foresporrer
       - id
+    KorreksjonResponseStatus:
+      type: object
+      discriminator:
+        propertyName: status
+      properties:
+        status:
+          type: string
+      required:
+      - status
+    KorreksjonResponseStatus.Denied:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
+      required:
+      - reason
+      - status
     EieroverforingsforslagView:
       type: object
       properties:
