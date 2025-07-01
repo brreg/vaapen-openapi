@@ -134,19 +134,31 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
+                oneOf:
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Denied"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
         "409":
-          description: En korreksjon er allerede under behandling
+          description: Korreksjon for dette våpenet er allerede under behandling
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
+                oneOf:
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Denied"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
         "500":
           description: Noe gikk galt
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
+                oneOf:
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Denied"
+                - $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
   /person/eieroverforing:
     post:
       tags:
@@ -1002,12 +1014,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1455,34 +1467,53 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
       required:
       - vaapendel
-    KorreksjonResponseStatus.Created:
+    KorreksjonResponseStatus:
       type: object
+      discriminator:
+        propertyName: status
       properties:
-        id:
-          type: string
-          format: uuid
         status:
           type: string
       required:
-      - id
       - status
     KorreksjonResponseStatus.AlreadyExists:
-      type: object
-      properties:
-        reason:
-          type: string
-        status:
-          type: string
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
+      required:
+      - reason
+      - status
+    KorreksjonResponseStatus.Created:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          id:
+            type: string
+            format: uuid
+      required:
+      - id
+      - status
+    KorreksjonResponseStatus.Denied:
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
       required:
       - reason
       - status
     KorreksjonResponseStatus.Failed:
-      type: object
-      properties:
-        reason:
-          type: string
-        status:
-          type: string
+      allOf:
+      - $ref: "#/components/schemas/KorreksjonResponseStatus"
+      - type: object
+        properties:
+          reason:
+            type: string
       required:
       - reason
       - status
@@ -1704,12 +1735,12 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
