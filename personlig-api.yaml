@@ -118,6 +118,7 @@ paths:
     post:
       tags:
       - korreksjon-controller
+      summary: Opprett korreksjon
       operationId: lagKorreksjon
       requestBody:
         content:
@@ -128,8 +129,20 @@ paths:
               - $ref: "#/components/schemas/Vaapendelmelding"
         required: true
       responses:
-        "200":
-          description: OK
+        "201":
+          description: Korreksjon mottatt
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
+        "409":
+          description: Korreksjon for dette våpenet er allerede under behandling
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KorreksjonResponseStatus"
+        "500":
+          description: Noe gikk galt
           content:
             '*/*':
               schema:
@@ -380,24 +393,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Ervervsloyve"
-  /person/korrigeringer/{korreksjonsId}/status:
-    get:
-      tags:
-      - korreksjon-controller
-      operationId: hentKorreksjonsStatus
-      parameters:
-      - name: korreksjonsId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/KorreksjonResponseStatus"
   /person/eieroverforingsforslag:
     get:
       tags:
@@ -972,6 +967,9 @@ components:
       - navn
     Korreksjonsmelding:
       type: object
+      properties:
+        meldingTilSaksbehandler:
+          type: string
     Laaskasse:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -1383,36 +1381,14 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        vaapenstatus:
+        serienummer:
           type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        modell:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
-        serienummer:
-          type: string
         skytevaapentype:
           type: string
           enum:
@@ -1436,6 +1412,28 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+        modell:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
         id:
           type: integer
           format: int64
