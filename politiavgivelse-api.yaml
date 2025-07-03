@@ -553,14 +553,14 @@ components:
           VIRKSOMHET: "#/components/schemas/EierVirksomhet"
           PERSON: "#/components/schemas/EierPerson"
       properties:
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
           enum:
           - PERSON
           - VIRKSOMHET
+        navn:
+          type: string
         id:
           type: integer
           format: int64
