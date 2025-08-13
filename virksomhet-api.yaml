@@ -8,7 +8,7 @@ servers:
 - url: https://vaapen.ut1.brreg.no
   description: Utviklingsmiljø
 paths:
-  /virksomhet/naering/vaapen/lagerbeholdning:
+  /api/virksomhet/naering/vaapen/lagerbeholdning:
     post:
       tags:
       - naering
@@ -32,7 +32,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/UploadStatus"
-  /virksomhet/naering/vaapen/csv:
+  /api/virksomhet/naering/vaapen/csv:
     post:
       tags:
       - naering
@@ -56,60 +56,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Lagerbeholdning"
-  /virksomhet/loyveforesporsel:
-    get:
-      tags:
-      - loyve-controller
-      operationId: finnErvervsloyveForesporsel
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/ErvervsloyveForesporsel"
-    post:
-      tags:
-      - loyve-controller
-      operationId: opprettLoyvedelingsforesporsel
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: "#/components/schemas/PersonInnehaver"
-              - $ref: "#/components/schemas/VirksomhetInnehaver"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/JsonMessage"
-  /virksomhet/loyveforesporsel/svar:
-    post:
-      tags:
-      - loyve-controller
-      operationId: svarErvervsloyveForesporsel
-      requestBody:
-        content:
-          application/json:
-            schema:
-              oneOf:
-              - $ref: "#/components/schemas/AcceptLoyvedeling"
-              - $ref: "#/components/schemas/RejectLoyvedeling"
-        required: true
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/ErvervsloyvedelingValidationResult"
-  /virksomhet/korrigeringer:
+  /api/virksomhet/korrigeringer:
     post:
       tags:
       - korreksjon-controller
@@ -148,10 +95,78 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
-  /virksomhet/eieroverforing:
+  /api/virksomhet/ervervsloyvedelingsforesporsler:
+    get:
+      tags:
+      - ervervsloyvedelingsforesporsel-controller
+      operationId: finnErvervsloyveForesporsel
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ErvervsloyveForesporsel"
     post:
       tags:
-      - eieroverforings-controller
+      - ervervsloyvedelingsforesporsel-controller
+      operationId: opprettLoyvedelingsforesporsel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/PersonInnehaver"
+              - $ref: "#/components/schemas/VirksomhetInnehaver"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/JsonMessage"
+  /api/virksomhet/ervervsloyvedelingsforesporsler/svar:
+    post:
+      tags:
+      - ervervsloyvedelingsforesporsel-controller
+      operationId: svarErvervsloyveForesporsel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/AcceptLoyvedeling"
+              - $ref: "#/components/schemas/RejectLoyvedeling"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErvervsloyvedelingValidationResult"
+  /api/virksomhet/eieroverforingsforslag:
+    get:
+      tags:
+      - eieroverforing-controller
+      operationId: finnEieroverforingsforslag
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagView"
+                  - $ref: "#/components/schemas/VaapendelEieroverforingsforslagView"
+    post:
+      tags:
+      - eieroverforing-controller
       operationId: oppretteEieroverforingsforslag
       requestBody:
         content:
@@ -170,10 +185,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
-  /virksomhet/eieroverforing/validate:
+  /api/virksomhet/eieroverforingsforslag/validate:
     post:
       tags:
-      - eieroverforings-controller
+      - eieroverforing-controller
       operationId: validateForslag
       requestBody:
         content:
@@ -192,10 +207,10 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
-  /virksomhet/eieroverforing/forslag/svar:
+  /api/virksomhet/eieroverforingsforslag/svar:
     post:
       tags:
-      - eieroverforings-controller
+      - eieroverforing-controller
       operationId: svarEieroverforing
       requestBody:
         content:
@@ -210,7 +225,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
-  /virksomhet/whoami:
+  /api/virksomhet/whoami:
     get:
       tags:
       - login-controller
@@ -228,7 +243,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Innloggingsinfo"
-  /virksomhet/representere:
+  /api/virksomhet/representere:
     get:
       tags:
       - virksomhet-controller
@@ -242,11 +257,11 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Actor"
-  /virksomhet/naeringsloyve:
+  /api/virksomhet/naeringsloyver:
     get:
       tags:
       - naeringsloyve-controller
-      operationId: getMittNaeringsloyve
+      operationId: getMineNaeringsloyver
       parameters:
       - name: paVegneAv
         in: query
@@ -259,8 +274,10 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/Naeringsloyve"
-  /virksomhet/naeringsloyver/innsyn/{orgnummer}:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Naeringsloyve"
+  /api/virksomhet/naeringsloyver/innsyn/{orgnummer}:
     get:
       tags:
       - naeringsloyve-controller
@@ -271,6 +288,11 @@ paths:
         required: true
         schema:
           type: string
+      - name: forAuth
+        in: query
+        required: true
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -278,7 +300,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/NaeringsloyveInnsyn"
-  /virksomhet/naering/vaapen:
+  /api/virksomhet/naering/vaapen:
     get:
       tags:
       - naering
@@ -303,7 +325,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Skytevaapen"
-  /virksomhet/naering/vaapendeler:
+  /api/virksomhet/naering/vaapendeler:
     get:
       tags:
       - naering
@@ -332,7 +354,7 @@ paths:
                   - $ref: "#/components/schemas/Pipe"
                   - $ref: "#/components/schemas/Revolvertonne"
                   - $ref: "#/components/schemas/Sluttstykke"
-  /virksomhet/naering/vaapendeler/{id}:
+  /api/virksomhet/naering/vaapendeler/{id}:
     get:
       tags:
       - naering
@@ -359,7 +381,7 @@ paths:
                 - $ref: "#/components/schemas/Pipe"
                 - $ref: "#/components/schemas/Revolvertonne"
                 - $ref: "#/components/schemas/Sluttstykke"
-  /virksomhet/naering/vaapen/{id}:
+  /api/virksomhet/naering/vaapen/{id}:
     get:
       tags:
       - naering
@@ -382,73 +404,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Skytevaapen"
-  /virksomhet/loyvedeling:
-    get:
-      tags:
-      - loyve-controller
-      operationId: hentDelteLoyver
-      parameters:
-      - name: X-Loyveinnehaver
-        in: header
-        description: Custom header for sending Loyveinnehaver search parameter
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Ervervsloyve"
-  /virksomhet/loyvedeling/{loyveId}:
-    get:
-      tags:
-      - loyve-controller
-      operationId: getDeltErvervsloyveById
-      parameters:
-      - name: loyveId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: paVegneAv
-        in: query
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/Ervervsloyve"
-  /virksomhet/korrigeringer/{korreksjonsId}/status:
-    get:
-      tags:
-      - korreksjon-controller
-      operationId: hentKorreksjonsStatus
-      parameters:
-      - name: korreksjonsId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                oneOf:
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.AlreadyExists"
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.Created"
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.Denied"
-                - $ref: "#/components/schemas/KorreksjonResponseStatus.Failed"
-  /virksomhet/ikke-naering/vaapen:
+  /api/virksomhet/ikke-naering/vaapen:
     get:
       tags:
       - virksomhet
@@ -468,7 +424,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Skytevaapen"
-  /virksomhet/ikke-naering/vaapendeler:
+  /api/virksomhet/ikke-naering/vaapendeler:
     get:
       tags:
       - virksomhet
@@ -492,7 +448,7 @@ paths:
                   - $ref: "#/components/schemas/Pipe"
                   - $ref: "#/components/schemas/Revolvertonne"
                   - $ref: "#/components/schemas/Sluttstykke"
-  /virksomhet/ikke-naering/vaapendeler/{id}:
+  /api/virksomhet/ikke-naering/vaapendeler/{id}:
     get:
       tags:
       - virksomhet
@@ -519,7 +475,7 @@ paths:
                 - $ref: "#/components/schemas/Pipe"
                 - $ref: "#/components/schemas/Revolvertonne"
                 - $ref: "#/components/schemas/Sluttstykke"
-  /virksomhet/ikke-naering/vaapen/{id}:
+  /api/virksomhet/ikke-naering/vaapen/{id}:
     get:
       tags:
       - virksomhet
@@ -542,7 +498,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Skytevaapen"
-  /virksomhet/ervervsloyve:
+  /api/virksomhet/ervervsloyver:
     get:
       tags:
       - loyve-controller
@@ -565,11 +521,18 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Ervervsloyve"
-  /virksomhet/eieroverforing/forslag:
+  /api/virksomhet/delte-ervervsloyver:
     get:
       tags:
-      - eieroverforings-controller
-      operationId: finnEieroverforingsforslag
+      - loyve-controller
+      operationId: hentDelteLoyver
+      parameters:
+      - name: X-Loyveinnehaver
+        in: header
+        description: Custom header for sending Loyveinnehaver search parameter
+        required: true
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -578,9 +541,30 @@ paths:
               schema:
                 type: array
                 items:
-                  oneOf:
-                  - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagView"
-                  - $ref: "#/components/schemas/VaapendelEieroverforingsforslagView"
+                  $ref: "#/components/schemas/Ervervsloyve"
+  /api/virksomhet/delte-ervervsloyver/{loyveId}:
+    get:
+      tags:
+      - loyve-controller
+      operationId: getDeltErvervsloyveById
+      parameters:
+      - name: loyveId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: paVegneAv
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/Ervervsloyve"
 components:
   schemas:
     Aldersgrunnlag:
@@ -614,6 +598,20 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    DigitalEier:
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          navn:
+            type: string
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
+          PERSON: "#/components/schemas/EierPerson"
+      required:
+      - eiertype
     Eier:
       type: object
       discriminator:
@@ -621,15 +619,17 @@ components:
         mapping:
           VIRKSOMHET: "#/components/schemas/EierVirksomhet"
           PERSON: "#/components/schemas/EierPerson"
+          UKJENT_INNEHAVER: "#/components/schemas/UkjentInnehaver"
+          POLITI: "#/components/schemas/PolitiInnehaver"
       properties:
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
           enum:
           - PERSON
           - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
         id:
           type: integer
           format: int64
@@ -637,7 +637,7 @@ components:
       - eiertype
     EierPerson:
       allOf:
-      - $ref: "#/components/schemas/Eier"
+      - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
           id:
@@ -659,6 +659,8 @@ components:
             enum:
             - PERSON
             - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
             example: PERSON
       description: Representerer en person
       required:
@@ -666,7 +668,7 @@ components:
       - personidentifikator
     EierVirksomhet:
       allOf:
-      - $ref: "#/components/schemas/Eier"
+      - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
           id:
@@ -688,7 +690,10 @@ components:
             enum:
             - PERSON
             - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
             example: VIRKSOMHET
+      - $ref: "#/components/schemas/Eier"
       description: Representerer en virksomhet
       required:
       - eiertype
@@ -713,8 +718,16 @@ components:
           format: date
         innehaver:
           oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
         gyldigTil:
           type: string
           format: date
@@ -788,8 +801,16 @@ components:
           type: boolean
         oppbevaringsansvarlig:
           oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
         brukesAv:
           type: integer
           format: int64
@@ -979,14 +1000,30 @@ components:
             - $ref: "#/components/schemas/UkjentGrunnlag"
           paaVegneAv:
             oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
           fritakFraAlderskrav:
             type: boolean
           oppbevaringsansvarlig:
             oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
           ervervsloyve:
             $ref: "#/components/schemas/Ervervsloyve"
       description: Løyve for innehavelse av våpen eller våpendel
@@ -1107,8 +1144,16 @@ components:
           type: string
         innehaver:
           oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
         vedtaksdato:
           type: string
           format: date
@@ -1125,6 +1170,11 @@ components:
       - loyvetype
       - status
       - vedtaksdato
+    ManuellEier:
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      required:
+      - eiertype
     Minneverdegrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1202,6 +1252,39 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    PolitiInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/ManuellEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik intern identifikator for eieren
+            example: 5678
+          lokasjon:
+            type: string
+            description: Lokasjon i politiet
+            example: Beslagssenter Oslo - Grønland
+          importertKategori:
+            type: boolean
+            description: Importert fra NVR - Bør ryddes
+            example: TAPTE VÅPEN - OSLO
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en innehaver uten gyldig indentifikator (person eller
+        virksomhet)
+      required:
+      - eiertype
+      - importertKategori
     ReplikaLuftOgFjaergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1260,8 +1343,16 @@ components:
           format: uuid
         innehaver:
           oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
         navn:
           type: string
         beskrivelse:
@@ -1457,6 +1548,51 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    UkjentInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/ManuellEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik intern identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: "Identifikator for person, som regel fødselsdato"
+            example: 311280
+          navn:
+            type: string
+            description: Navn på utenlandsk person
+            example: Kari Ole Normann
+          adresse:
+            type: string
+            description: Adressen til utenlandsk person
+            example: Kari Ole Normann
+          stilling:
+            type: string
+            description: Stilling til utenlandsk person
+            example: Diplomat
+          telefon:
+            type: string
+            description: Telefon til utenlandsk person
+            example: +47 13131313
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en innehaver uten gyldig indentifikator (person eller
+        virksomhet)
+      required:
+      - eiertype
+      - personidentifikator
     UtenBehovsprovingGrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1499,13 +1635,6 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        vaapendeltype:
-          type: string
-          enum:
-          - PIPE
-          - LAASKASSE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
         vaapenstatus:
           type: string
           enum:
@@ -1518,6 +1647,13 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        vaapendeltype:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
         serienummer:
           type: string
         fabrikkmerke:
@@ -1540,6 +1676,64 @@ components:
         status:
           type: string
       required:
+      - status
+    Korreksjonsmelding:
+      type: object
+      properties:
+        meldingTilSaksbehandler:
+          type: string
+    Skytevaapenmelding:
+      allOf:
+      - $ref: "#/components/schemas/Korreksjonsmelding"
+      - type: object
+        properties:
+          skytevaapen:
+            $ref: "#/components/schemas/Skytevaapen"
+      required:
+      - skytevaapen
+    Vaapendelmelding:
+      allOf:
+      - $ref: "#/components/schemas/Korreksjonsmelding"
+      - type: object
+        properties:
+          vaapendel:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+      required:
+      - vaapendel
+    KorreksjonResponseStatus.Created:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+      required:
+      - id
+      - status
+    KorreksjonResponseStatus.AlreadyExists:
+      type: object
+      properties:
+        reason:
+          type: string
+        status:
+          type: string
+      required:
+      - reason
+      - status
+    KorreksjonResponseStatus.Failed:
+      type: object
+      properties:
+        reason:
+          type: string
+        status:
+          type: string
+      required:
+      - reason
       - status
     Innehaver:
       type: object
@@ -1618,64 +1812,6 @@ components:
           - OK
           - ERROR
       required:
-      - status
-    Korreksjonsmelding:
-      type: object
-      properties:
-        meldingTilSaksbehandler:
-          type: string
-    Skytevaapenmelding:
-      allOf:
-      - $ref: "#/components/schemas/Korreksjonsmelding"
-      - type: object
-        properties:
-          skytevaapen:
-            $ref: "#/components/schemas/Skytevaapen"
-      required:
-      - skytevaapen
-    Vaapendelmelding:
-      allOf:
-      - $ref: "#/components/schemas/Korreksjonsmelding"
-      - type: object
-        properties:
-          vaapendel:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
-      required:
-      - vaapendel
-    KorreksjonResponseStatus.Created:
-      allOf:
-      - $ref: "#/components/schemas/KorreksjonResponseStatus"
-      - type: object
-        properties:
-          id:
-            type: string
-            format: uuid
-      required:
-      - id
-      - status
-    KorreksjonResponseStatus.AlreadyExists:
-      allOf:
-      - $ref: "#/components/schemas/KorreksjonResponseStatus"
-      - type: object
-        properties:
-          reason:
-            type: string
-      required:
-      - reason
-      - status
-    KorreksjonResponseStatus.Failed:
-      allOf:
-      - $ref: "#/components/schemas/KorreksjonResponseStatus"
-      - type: object
-        properties:
-          reason:
-            type: string
-      required:
-      - reason
       - status
     EieroverforingsforslagRequest:
       type: object
@@ -1769,6 +1905,8 @@ components:
           - ERROR_UGYLDIG_VAAPEN
           - ERROR_NAERINGSLOYVE_FINNES_IKKE
           - ERROR_VAAPEN_UTEN_VAAPENDEL
+          - ERROR_IKKE_INNEHAVER
+          - ERROR_FORSLAG_IKKE_FUNNET
           - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
       required:
       - errorType
@@ -1881,36 +2019,17 @@ components:
       - createdDate
       - foresporrer
       - id
-    KorreksjonResponseStatus:
-      type: object
-      discriminator:
-        propertyName: status
-      properties:
-        status:
-          type: string
-      required:
-      - status
-    KorreksjonResponseStatus.Denied:
-      allOf:
-      - $ref: "#/components/schemas/KorreksjonResponseStatus"
-      - type: object
-        properties:
-          reason:
-            type: string
-      required:
-      - reason
-      - status
     EieroverforingsforslagView:
       type: object
       properties:
-        vaapeneier:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
         mottakersLoyve:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
         id:
           type: integer
           format: int64
@@ -1918,6 +2037,91 @@ components:
       - id
       - mottakersLoyve
       - vaapeneier
+    ExistingDigitalEier:
+      type: object
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/ExistingVirksomhet"
+          PERSON: "#/components/schemas/ExistingPerson"
+      properties:
+        eiertype:
+          type: string
+          description: Type eier
+          enum:
+          - PERSON
+          - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
+        id:
+          type: integer
+          format: int64
+      required:
+      - eiertype
+      - id
+    ExistingPerson:
+      allOf:
+      - $ref: "#/components/schemas/ExistingDigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: Fødselsnummer eller D-nummer
+            example: 12345678901
+          navn:
+            type: string
+            description: Navn på fysisk person - kun visning ved behov
+            example: Kari Ole Normann
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      description: Representerer en person
+      required:
+      - eiertype
+      - id
+      - personidentifikator
+    ExistingVirksomhet:
+      allOf:
+      - $ref: "#/components/schemas/ExistingDigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 1234
+          organisasjonsnummer:
+            type: string
+            description: Organisasjonsnummer
+            example: 123456789
+          navn:
+            type: string
+            description: Navn på virksomhet - kun visning ved behov
+            example: PANGPANG AS
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: VIRKSOMHET
+      required:
+      - eiertype
+      - id
+      - organisasjonsnummer
     LoyveForErverv:
       type: object
       discriminator:
@@ -1939,8 +2143,16 @@ components:
           type: string
         innehaver:
           oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
         vedtaksdato:
           type: string
           format: date
