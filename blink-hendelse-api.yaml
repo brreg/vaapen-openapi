@@ -6,7 +6,59 @@ servers:
 - url: https://vaapen.ppe.brreg.no
   description: Eksternt testmiljø (Pre Prod Ekstern)
 paths:
-  /samleromraade:
+  /blink-hendelse/vaapenrom:
+    put:
+      tags:
+      - vaapenromendring-controller
+      operationId: endreVaapenrom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Vaapenrom"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    post:
+      tags:
+      - vaapenromendring-controller
+      operationId: lagreNyttVaapenrom
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateVaapenromEvent"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+    delete:
+      tags:
+      - vaapenromendring-controller
+      operationId: sletteVaapenrom
+      parameters:
+      - name: id
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+  /blink-hendelse/samleromraade:
     post:
       tags:
       - samleromraade-controller
@@ -23,7 +75,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/SamleromraadeEvent"
+                type: string
   /blink-hendelse/loyve/endring:
     post:
       tags:
@@ -97,6 +149,43 @@ paths:
                 - $ref: "#/components/schemas/ChangeSuccess"
 components:
   schemas:
+    DigitalEier:
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          navn:
+            type: string
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
+          PERSON: "#/components/schemas/EierPerson"
+      required:
+      - eiertype
+    Eier:
+      type: object
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
+          PERSON: "#/components/schemas/EierPerson"
+          UKJENT_INNEHAVER: "#/components/schemas/UkjentInnehaver"
+          POLITI: "#/components/schemas/PolitiInnehaver"
+      properties:
+        eiertype:
+          type: string
+          description: Type eier
+          enum:
+          - PERSON
+          - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
+        id:
+          type: integer
+          format: int64
+      required:
+      - eiertype
     EierPerson:
       type: object
       description: Representerer en person
@@ -120,6 +209,8 @@ components:
           enum:
           - PERSON
           - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
           example: PERSON
       required:
       - eiertype
@@ -147,10 +238,148 @@ components:
           enum:
           - PERSON
           - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
           example: VIRKSOMHET
       required:
       - eiertype
       - organisasjonsnummer
+    ManuellEier:
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      required:
+      - eiertype
+    PolitiInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/ManuellEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik intern identifikator for eieren
+            example: 5678
+          lokasjon:
+            type: string
+            description: Lokasjon i politiet
+            example: Beslagssenter Oslo - Grønland
+          importertKategori:
+            type: boolean
+            description: Importert fra NVR - Bør ryddes
+            example: TAPTE VÅPEN - OSLO
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en innehaver uten gyldig indentifikator (person eller
+        virksomhet)
+      required:
+      - eiertype
+      - importertKategori
+    UkjentInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/ManuellEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik intern identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: "Identifikator for person, som regel fødselsdato"
+            example: 311280
+          navn:
+            type: string
+            description: Navn på utenlandsk person
+            example: Kari Ole Normann
+          adresse:
+            type: string
+            description: Adressen til utenlandsk person
+            example: Kari Ole Normann
+          stilling:
+            type: string
+            description: Stilling til utenlandsk person
+            example: Diplomat
+          telefon:
+            type: string
+            description: Telefon til utenlandsk person
+            example: +47 13131313
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en innehaver uten gyldig indentifikator (person eller
+        virksomhet)
+      required:
+      - eiertype
+      - personidentifikator
+    Vaapenrom:
+      type: object
+      properties:
+        id:
+          type: string
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        status:
+          type: string
+          enum:
+          - GODKJENT
+          - GODKJENNING_TILBAKETRUKKET
+          - SLETTET
+        saksreferanse:
+          type: string
+        matrikkelnummer:
+          type: string
+        createdDate:
+          type: string
+          format: date-time
+        deletedDate:
+          type: string
+          format: date-time
+      required:
+      - innehaver
+      - saksreferanse
+      - status
+    CreateVaapenromEvent:
+      type: object
+      properties:
+        vaapenrom:
+          $ref: "#/components/schemas/Vaapenrom"
+        eventtype:
+          type: string
+          enum:
+          - CREATE_VAAPENSKAP
+          - DELETE_VAAPENSKAP
+          - CREATE_VAAPENROM
+          - EDIT_VAAPENROM
+          - DELETE_VAAPENROM
+      required:
+      - eventtype
+      - vaapenrom
     Samleromraade:
       type: object
       properties:
@@ -159,8 +388,16 @@ components:
           format: uuid
         innehaver:
           oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
         navn:
           type: string
         beskrivelse:
@@ -326,8 +563,16 @@ components:
             type: boolean
           oppbevaringsansvarlig:
             oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
           brukesAv:
             type: integer
             format: int64
@@ -404,23 +649,29 @@ components:
         mapping:
           JAKT: "#/components/schemas/Jaktgrunnlag"
           SPORT: "#/components/schemas/Sportsgrunnlag"
-          SAMLER: "#/components/schemas/Samlergrunnlag"
-          HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsgrunnlag"
           MINNEVERDE: "#/components/schemas/Minneverdegrunnlag"
-          AMMUNISJONSSAMLING: "#/components/schemas/Ammunisjonssamlergrunnlag"
+          SAMLER: "#/components/schemas/Samlergrunnlag"
           REPLIKA_LUFT_FJAER: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
           ISBJORN: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
-          IKKE_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapengrunnlag"
           TJENESTEPERSON: "#/components/schemas/Tjenestepersonsgrunnlag"
+          UTEN_BEHOVSPROVING: "#/components/schemas/UtenBehovsprovingGrunnlag"
+          ALDER: "#/components/schemas/Aldersgrunnlag"
+          AMMUNISJONSSAMLING: "#/components/schemas/Ammunisjonssamlergrunnlag"
           SKYTTERFORENING: "#/components/schemas/Skytterforeningsgrunnlag"
+          NAERINGSVIRKSOMHET: "#/components/schemas/Naeringsvirksomhetgrunnlag"
           AVLIVING_AV_DYR: "#/components/schemas/Avlivingsgrunnlag"
           MUSEUM: "#/components/schemas/Museumsgrunnlag"
-          PIRAT: "#/components/schemas/Piratgrunnlag"
           TEST_UTVIKLING: "#/components/schemas/TestOgUtviklingsgrunnlag"
-          ALDER: "#/components/schemas/Aldersgrunnlag"
+          PIRAT: "#/components/schemas/Piratgrunnlag"
+          ETTERREGISTRERT: "#/components/schemas/Etterregistrertgrunnlag"
+          DEAKTIVERT: "#/components/schemas/Deaktivertgrunnlag"
+          AMNESTI: "#/components/schemas/Amnestigrunnlag"
           SAERSKILT_TILFELLE: "#/components/schemas/SaerskiltGrunnlag"
           ANDRE_BEHOV: "#/components/schemas/AndreBehovsgrunnlag"
-          NAERINGSVIRKSOMHET: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+          IKKE_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapengrunnlag"
+          HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsgrunnlag"
+          UTRYDDELSE_AV_SKADEDYR: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+          SLAKTING: "#/components/schemas/Slaktegrunnlag"
           UKJENT: "#/components/schemas/UkjentGrunnlag"
       properties:
         grunnlagsType:
@@ -719,14 +970,30 @@ components:
             - $ref: "#/components/schemas/UkjentGrunnlag"
           paaVegneAv:
             oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
           fritakFraAlderskrav:
             type: boolean
           oppbevaringsansvarlig:
             oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
           ervervsloyve:
             $ref: "#/components/schemas/Ervervsloyve"
       description: Løyve for innehavelse av våpen eller våpendel
@@ -772,10 +1039,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
         loyveId:
           type: string
         vedtaksdato:
@@ -797,6 +1060,18 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
       required:
       - innehaver
       - loyveId
@@ -1179,10 +1454,6 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
         loyveId:
           type: string
         vedtaksdato:
@@ -1204,6 +1475,18 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
       required:
       - innehaver
       - loyveId
