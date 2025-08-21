@@ -173,10 +173,10 @@ paths:
           application/json:
             schema:
               oneOf:
-              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslag"
-              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagNaering"
-              - $ref: "#/components/schemas/VaapendelEieroverforingsforslag"
-              - $ref: "#/components/schemas/VaapendelEieroverforingsforslagNaering"
+              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagNaeringRequest"
+              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagRequest"
+              - $ref: "#/components/schemas/VaapendelEieroverforingsforslagNaeringRequest"
+              - $ref: "#/components/schemas/VaapendelEieroverforingsforslagRequest"
         required: true
       responses:
         "200":
@@ -195,10 +195,10 @@ paths:
           application/json:
             schema:
               oneOf:
-              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslag"
-              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagNaering"
-              - $ref: "#/components/schemas/VaapendelEieroverforingsforslag"
-              - $ref: "#/components/schemas/VaapendelEieroverforingsforslagNaering"
+              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagNaeringRequest"
+              - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagRequest"
+              - $ref: "#/components/schemas/VaapendelEieroverforingsforslagNaeringRequest"
+              - $ref: "#/components/schemas/VaapendelEieroverforingsforslagRequest"
         required: true
       responses:
         "200":
@@ -1562,6 +1562,10 @@ components:
             type: string
             description: "Identifikator for person, som regel fødselsdato"
             example: 311280
+          vaapenkortSid:
+            type: string
+            description: Referanse til gammelt vaapenkort
+            example: 01-1111111111
           navn:
             type: string
             description: Navn på utenlandsk person
@@ -1619,6 +1623,14 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        modell:
+          type: string
         skytevaapentype:
           type: string
           enum:
@@ -1635,6 +1647,13 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        vaapendeltype:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
         vaapenstatus:
           type: string
           enum:
@@ -1647,21 +1666,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        vaapendeltype:
-          type: string
-          enum:
-          - PIPE
-          - LAASKASSE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-        serienummer:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
-        modell:
-          type: string
         id:
           type: integer
           format: int64
@@ -1815,26 +1819,7 @@ components:
       - status
     EieroverforingsforslagRequest:
       type: object
-    SkytevaapenEieroverforingsforslag:
-      allOf:
-      - $ref: "#/components/schemas/EieroverforingsforslagRequest"
-      - type: object
-        properties:
-          ervervsloyveId:
-            type: string
-          skytevaapenId:
-            type: integer
-            format: int64
-          vaapendeler:
-            type: array
-            items:
-              type: integer
-              format: int64
-      required:
-      - ervervsloyveId
-      - skytevaapenId
-      - vaapendeler
-    SkytevaapenEieroverforingsforslagNaering:
+    SkytevaapenEieroverforingsforslagNaeringRequest:
       allOf:
       - $ref: "#/components/schemas/EieroverforingsforslagRequest"
       - type: object
@@ -1853,32 +1838,51 @@ components:
       - naeringsloyveId
       - skytevaapenId
       - vaapendeler
-    VaapendelEieroverforingsforslag:
+    SkytevaapenEieroverforingsforslagRequest:
       allOf:
       - $ref: "#/components/schemas/EieroverforingsforslagRequest"
       - type: object
         properties:
           ervervsloyveId:
             type: string
-          vaapendelid:
+          skytevaapenId:
             type: integer
             format: int64
+          vaapendeler:
+            type: array
+            items:
+              type: integer
+              format: int64
       required:
       - ervervsloyveId
-      - vaapendelid
-    VaapendelEieroverforingsforslagNaering:
+      - skytevaapenId
+      - vaapendeler
+    VaapendelEieroverforingsforslagNaeringRequest:
       allOf:
       - $ref: "#/components/schemas/EieroverforingsforslagRequest"
       - type: object
         properties:
           naeringsloyveId:
             type: string
-          vaapendelid:
+          vaapendelId:
             type: integer
             format: int64
       required:
       - naeringsloyveId
-      - vaapendelid
+      - vaapendelId
+    VaapendelEieroverforingsforslagRequest:
+      allOf:
+      - $ref: "#/components/schemas/EieroverforingsforslagRequest"
+      - type: object
+        properties:
+          ervervsloyveId:
+            type: string
+          vaapendelId:
+            type: integer
+            format: int64
+      required:
+      - ervervsloyveId
+      - vaapendelId
     EieroverforingError:
       type: object
       properties:
@@ -2030,6 +2034,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
+        validation:
+          $ref: "#/components/schemas/EieroverforingValidationResult"
         id:
           type: integer
           format: int64
@@ -2037,6 +2043,7 @@ components:
       - id
       - mottakersLoyve
       - vaapeneier
+      - validation
     ExistingDigitalEier:
       type: object
       discriminator:
@@ -2181,6 +2188,7 @@ components:
       - mottakersLoyve
       - skytevaapen
       - vaapeneier
+      - validation
     VaapendelEieroverforingsforslagView:
       allOf:
       - $ref: "#/components/schemas/EieroverforingsforslagView"
@@ -2197,3 +2205,4 @@ components:
       - mottakersLoyve
       - vaapendel
       - vaapeneier
+      - validation
