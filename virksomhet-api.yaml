@@ -243,20 +243,6 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Innloggingsinfo"
-  /api/virksomhet/representere:
-    get:
-      tags:
-      - virksomhet-controller
-      operationId: representere
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Actor"
   /api/virksomhet/naeringsloyver:
     get:
       tags:
@@ -285,11 +271,6 @@ paths:
       parameters:
       - name: orgnummer
         in: path
-        required: true
-        schema:
-          type: string
-      - name: forAuth
-        in: query
         required: true
         schema:
           type: string
@@ -1613,24 +1594,16 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        serienummer:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
-        modell:
-          type: string
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         skytevaapentype:
           type: string
           enum:
@@ -1647,13 +1620,6 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        vaapendeltype:
-          type: string
-          enum:
-          - PIPE
-          - LAASKASSE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
         vaapenstatus:
           type: string
           enum:
@@ -1666,6 +1632,21 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        vaapendeltype:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        modell:
+          type: string
         id:
           type: integer
           format: int64
@@ -1968,24 +1949,6 @@ components:
       - naeringsvirksomhet
       - person
       - virksomhet
-    Actor:
-      type: object
-      properties:
-        Name:
-          type: string
-        Type:
-          type: string
-        OrganizationNumber:
-          type: string
-        OrganizationForm:
-          type: string
-        Status:
-          type: string
-      required:
-      - Name
-      - OrganizationForm
-      - Status
-      - Type
     NaeringsloyveInnsyn:
       type: object
       properties:
