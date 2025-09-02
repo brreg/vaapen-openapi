@@ -100,12 +100,41 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Ervervsloyve"
+  /avgivelse/vaapenskap/{personidentifikator}:
+    get:
+      tags:
+      - search
+      summary: Get all vaapenskap on user
+      operationId: findVaapenskapByPerson
+      parameters:
+      - name: personidentifikator
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Alle vaapenskap til person
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenskap"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenskap"
   /avgivelse/vaapenrom/{personidentifikator}:
     get:
       tags:
       - search
       summary: Get all vaapenrom on user
-      operationId: findVaapenBySearch_1
+      operationId: findVaapenromBySearch
       parameters:
       - name: personidentifikator
         in: path
@@ -1402,6 +1431,10 @@ components:
             type: string
             description: "Identifikator for person, som regel fødselsdato"
             example: 311280
+          vaapenkortSid:
+            type: string
+            description: Referanse til gammelt vaapenkort
+            example: 01-1111111111
           navn:
             type: string
             description: Navn på utenlandsk person
@@ -1667,12 +1700,50 @@ components:
       - limit
       - offset
       - sortDir
+    Vaapenskap:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unik intern identifikator for våpenskap.
+        innehaver:
+          description: Eier av våpenskap
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        serienummer:
+          type: string
+          description: Serienummer til våpenskapet
+        merke:
+          type: string
+          description: Merke på våpenskapet
+        createdDate:
+          type: string
+          format: date
+        lastUpdated:
+          type: string
+          format: date
+      required:
+      - id
+      - innehaver
+      - merke
+      - serienummer
     Vaapenrom:
       type: object
       properties:
         id:
           type: string
+          description: Unik intern identifikator for våpenrommet. I form av UUID.
         innehaver:
+          description: Eier av våpenrommet
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
@@ -1686,21 +1757,26 @@ components:
           - $ref: "#/components/schemas/UkjentInnehaver"
         status:
           type: string
+          description: Status på våpenrom
           enum:
           - GODKJENT
           - GODKJENNING_TILBAKETRUKKET
           - SLETTET
+          example: GODKJENT
         saksreferanse:
           type: string
+          description: Alle våpenrom som innvilges må ha en saksreferanse i websak
         matrikkelnummer:
           type: string
+          description: identifikator for fast eiendom i Norge hvor våpenrommet er
         createdDate:
           type: string
-          format: date-time
+          format: date
         deletedDate:
           type: string
-          format: date-time
+          format: date
       required:
+      - id
       - innehaver
       - saksreferanse
       - status

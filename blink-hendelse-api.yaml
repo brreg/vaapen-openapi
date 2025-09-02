@@ -296,6 +296,10 @@ components:
             type: string
             description: "Identifikator for person, som regel fødselsdato"
             example: 311280
+          vaapenkortSid:
+            type: string
+            description: Referanse til gammelt vaapenkort
+            example: 01-1111111111
           navn:
             type: string
             description: Navn på utenlandsk person
@@ -332,7 +336,9 @@ components:
       properties:
         id:
           type: string
+          description: Unik intern identifikator for våpenrommet. I form av UUID.
         innehaver:
+          description: Eier av våpenrommet
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
@@ -346,21 +352,26 @@ components:
           - $ref: "#/components/schemas/UkjentInnehaver"
         status:
           type: string
+          description: Status på våpenrom
           enum:
           - GODKJENT
           - GODKJENNING_TILBAKETRUKKET
           - SLETTET
+          example: GODKJENT
         saksreferanse:
           type: string
+          description: Alle våpenrom som innvilges må ha en saksreferanse i websak
         matrikkelnummer:
           type: string
+          description: identifikator for fast eiendom i Norge hvor våpenrommet er
         createdDate:
           type: string
-          format: date-time
+          format: date
         deletedDate:
           type: string
-          format: date-time
+          format: date
       required:
+      - id
       - innehaver
       - saksreferanse
       - status

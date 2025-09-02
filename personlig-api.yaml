@@ -287,7 +287,7 @@ paths:
                   - $ref: "#/components/schemas/Pipe"
                   - $ref: "#/components/schemas/Revolvertonne"
                   - $ref: "#/components/schemas/Sluttstykke"
-  /api/person/vaapendel/{id}:
+  /api/person/vaapendeler/{id}:
     get:
       tags:
       - vaapen-controller
@@ -1930,16 +1930,16 @@ components:
     EieroverforingsforslagView:
       type: object
       properties:
-        vaapeneier:
-          oneOf:
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
         mottakersLoyve:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
         validation:
           $ref: "#/components/schemas/EieroverforingValidationResult"
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
         id:
           type: integer
           format: int64
