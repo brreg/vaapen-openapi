@@ -553,11 +553,6 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    Ammunisjonssamlergrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
     Amnestigrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -745,21 +740,17 @@ components:
         grunnlag:
           oneOf:
           - $ref: "#/components/schemas/Aldersgrunnlag"
-          - $ref: "#/components/schemas/Ammunisjonssamlergrunnlag"
           - $ref: "#/components/schemas/Amnestigrunnlag"
           - $ref: "#/components/schemas/AndreBehovsgrunnlag"
           - $ref: "#/components/schemas/Avlivingsgrunnlag"
           - $ref: "#/components/schemas/Deaktivertgrunnlag"
           - $ref: "#/components/schemas/Etterregistrertgrunnlag"
           - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-          - $ref: "#/components/schemas/Hoykapasitetsgrunnlag"
-          - $ref: "#/components/schemas/IkkeSkytevaapengrunnlag"
           - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
           - $ref: "#/components/schemas/Jaktgrunnlag"
           - $ref: "#/components/schemas/Minneverdegrunnlag"
           - $ref: "#/components/schemas/Museumsgrunnlag"
           - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
-          - $ref: "#/components/schemas/Piratgrunnlag"
           - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
           - $ref: "#/components/schemas/SaerskiltGrunnlag"
           - $ref: "#/components/schemas/Samlergrunnlag"
@@ -804,6 +795,7 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
+          - ANNET_LOYVE
       required:
       - fritakFraAlderskrav
       - grunnlag
@@ -871,20 +863,16 @@ components:
           TJENESTEPERSON: "#/components/schemas/Tjenestepersonsgrunnlag"
           UTEN_BEHOVSPROVING: "#/components/schemas/UtenBehovsprovingGrunnlag"
           ALDER: "#/components/schemas/Aldersgrunnlag"
-          AMMUNISJONSSAMLING: "#/components/schemas/Ammunisjonssamlergrunnlag"
           SKYTTERFORENING: "#/components/schemas/Skytterforeningsgrunnlag"
           NAERINGSVIRKSOMHET: "#/components/schemas/Naeringsvirksomhetgrunnlag"
           AVLIVING_AV_DYR: "#/components/schemas/Avlivingsgrunnlag"
           MUSEUM: "#/components/schemas/Museumsgrunnlag"
           TEST_UTVIKLING: "#/components/schemas/TestOgUtviklingsgrunnlag"
-          PIRAT: "#/components/schemas/Piratgrunnlag"
           ETTERREGISTRERT: "#/components/schemas/Etterregistrertgrunnlag"
           DEAKTIVERT: "#/components/schemas/Deaktivertgrunnlag"
           AMNESTI: "#/components/schemas/Amnestigrunnlag"
           SAERSKILT_TILFELLE: "#/components/schemas/SaerskiltGrunnlag"
           ANDRE_BEHOV: "#/components/schemas/AndreBehovsgrunnlag"
-          IKKE_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapengrunnlag"
-          HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsgrunnlag"
           UTRYDDELSE_AV_SKADEDYR: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
           SLAKTING: "#/components/schemas/Slaktegrunnlag"
           UKJENT: "#/components/schemas/UkjentGrunnlag"
@@ -901,20 +889,16 @@ components:
           - TJENESTEPERSON
           - UTEN_BEHOVSPROVING
           - ALDER
-          - AMMUNISJONSSAMLING
           - SKYTTERFORENING
           - NAERINGSVIRKSOMHET
           - AVLIVING_AV_DYR
           - MUSEUM
           - TEST_UTVIKLING
-          - PIRAT
           - ETTERREGISTRERT
           - DEAKTIVERT
           - AMNESTI
           - SAERSKILT_TILFELLE
           - ANDRE_BEHOV
-          - IKKE_SKYTEVAAPEN
-          - HOYKAPASITETSMAGASIN
           - UTRYDDELSE_AV_SKADEDYR
           - SLAKTING
           - UKJENT
@@ -932,16 +916,6 @@ components:
             type: string
       required:
       - grunnlagsType
-    Hoykapasitetsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    IkkeSkytevaapengrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
     Innehavsloyve:
       allOf:
       - $ref: "#/components/schemas/LoyveForInnehav"
@@ -950,21 +924,17 @@ components:
           grunnlag:
             oneOf:
             - $ref: "#/components/schemas/Aldersgrunnlag"
-            - $ref: "#/components/schemas/Ammunisjonssamlergrunnlag"
             - $ref: "#/components/schemas/Amnestigrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/Avlivingsgrunnlag"
             - $ref: "#/components/schemas/Deaktivertgrunnlag"
             - $ref: "#/components/schemas/Etterregistrertgrunnlag"
             - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-            - $ref: "#/components/schemas/Hoykapasitetsgrunnlag"
-            - $ref: "#/components/schemas/IkkeSkytevaapengrunnlag"
             - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
             - $ref: "#/components/schemas/Jaktgrunnlag"
             - $ref: "#/components/schemas/Minneverdegrunnlag"
             - $ref: "#/components/schemas/Museumsgrunnlag"
             - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
-            - $ref: "#/components/schemas/Piratgrunnlag"
             - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/Samlergrunnlag"
@@ -1145,6 +1115,7 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
+          - ANNET_LOYVE
       required:
       - innehaver
       - loyveId
@@ -1228,11 +1199,6 @@ components:
       - kaliber
       - korrigeringsstatus
       - skytevaapentype
-    Piratgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
     PolitiInnehaver:
       allOf:
       - $ref: "#/components/schemas/ManuellEier"
@@ -1989,16 +1955,16 @@ components:
     EieroverforingsforslagView:
       type: object
       properties:
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
         validation:
           $ref: "#/components/schemas/EieroverforingValidationResult"
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -2133,6 +2099,7 @@ components:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
           - NAERINGSLOYVE
+          - ANNET_LOYVE
       required:
       - innehaver
       - loyveId

@@ -1815,10 +1815,10 @@ components:
           description: Merke på våpenskapet
         createdDate:
           type: string
-          format: date
+          format: date-time
         lastUpdated:
           type: string
-          format: date
+          format: date-time
       required:
       - id
       - innehaver
@@ -1859,10 +1859,10 @@ components:
           description: identifikator for fast eiendom i Norge hvor våpenrommet er
         createdDate:
           type: string
-          format: date
+          format: date-time
         deletedDate:
           type: string
-          format: date
+          format: date-time
       required:
       - id
       - innehaver
