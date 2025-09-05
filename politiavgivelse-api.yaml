@@ -254,6 +254,21 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/SkyteVaapenProposal"
+  /avgivelse/korreksjon/avbrutt/ids:
+    get:
+      tags:
+      - korreksjons-controller
+      operationId: getCancelledKorreksjonIds
+      responses:
+        "200":
+          description: List of cancelled korreksjon IDs
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  type: string
+                  format: uuid
   /avgivelse/hello/local:
     get:
       tags:
@@ -1472,24 +1487,24 @@ components:
             - DESTRUERT
             - DEAKTIVERT
             - UTFORT
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           innehavsloyve:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           korrigeringsstatus:
             type: string
             enum:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype

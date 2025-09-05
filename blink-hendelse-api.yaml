@@ -103,7 +103,7 @@ paths:
   /blink-hendelse/korrigeringer/mottatt:
     post:
       tags:
-      - korrigerings-event-controller
+      - korreksjon-event-controller
       summary: Lagre at en korreksjon har blitt plukket opp av Blink
       operationId: updatePickedUpByBlink
       requestBody:
@@ -122,9 +122,9 @@ paths:
   /blink-hendelse/korrigeringer/endring:
     post:
       tags:
-      - korrigerings-event-controller
-      summary: "Lagre endring eller korreksjon på våpen eller våpendel, eller eieroverfø\
-        ring på våpen eller våpendel"
+      - korreksjon-event-controller
+      summary: "Lagre endring eller korreksjon av våpen eller våpendel, eller eieroverfø\
+        ring av våpen eller våpendel"
       operationId: lagreEndring_1
       requestBody:
         content:
@@ -148,6 +148,25 @@ paths:
                 oneOf:
                 - $ref: "#/components/schemas/ChangeFailed"
                 - $ref: "#/components/schemas/ChangeSuccess"
+  /blink-hendelse/korrigeringer/avbrutt:
+    post:
+      tags:
+      - korreksjon-event-controller
+      summary: Lagre at en korreksjon har blitt bekreftet avbrutt av Blink
+      operationId: updateAcknowledgeCancelledByBlink
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KorreksjonsId"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
 components:
   schemas:
     DigitalEier:
