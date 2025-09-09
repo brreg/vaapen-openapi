@@ -10,6 +10,8 @@ paths:
     put:
       tags:
       - vaapenromendring-controller
+      summary: Trekk tilbake godkjenning av våpenrom. Status settes til GODKJENNING_TILBAKETRUKKET.
+        Saksreferanse og matrikkelnummer kan endres samtidig.
       operationId: endreVaapenrom
       requestBody:
         content:
@@ -27,6 +29,7 @@ paths:
     post:
       tags:
       - vaapenromendring-controller
+      summary: Opprett våpenrom.
       operationId: lagreNyttVaapenrom
       requestBody:
         content:
@@ -44,6 +47,7 @@ paths:
     delete:
       tags:
       - vaapenromendring-controller
+      summary: Slett våpenrom. Status settes til SLETTET.
       operationId: sletteVaapenrom
       parameters:
       - name: id
@@ -1656,6 +1660,10 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1678,10 +1686,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
         serienummer:
           type: string
         annetFabrikkmerke:
