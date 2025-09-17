@@ -227,6 +227,11 @@ components:
           type: string
           description: Navn på fysisk person - kun visning ved behov
           example: Kari Ole Normann
+        foedselsdato:
+          type: string
+          format: date
+          description: Fødselsdato - kun visning ved behov
+          example: 1991-01-01
         eiertype:
           type: string
           description: Type eier
@@ -817,7 +822,7 @@ components:
             $ref: "#/components/schemas/EierPerson"
           samlerorganisasjon:
             type: string
-      description: Løyve for godkjent samler
+      description: Løyve som godkjent samler
       required:
       - annetloyveLoyvetype
       - innehaver
@@ -940,10 +945,11 @@ components:
           godkjentForVaapen:
             type: integer
             format: int64
-      description: Løyve for høykapasitetsmagasin knyttet til våpen
+          godkjentForErvervsloyve:
+            type: string
+      description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
       required:
       - annetloyveLoyvetype
-      - godkjentForVaapen
       - innehaver
       - isActiveAndNotExpired
       - loyveId
@@ -1043,15 +1049,21 @@ components:
           laanenivaaSport:
             type: string
             enum:
-            - HALVAUTOMATISK_MED_HOT_PATRONKAPASITET
+            - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
             - PISTOL_REVOLVER
             - OVRIGE_RIFLER_HAGLER
+          gyldigTil:
+            type: string
+            format: date
+          isPermanent:
+            type: boolean
       description: Løyve for lån av våpen
       required:
       - annetloyveLoyvetype
       - grunnlag
       - innehaver
       - isActiveAndNotExpired
+      - isPermanent
       - loyveId
       - loyvetype
       - saksreferanse
@@ -1064,9 +1076,13 @@ components:
         properties:
           importBeskrivelse:
             type: string
-      description: Løyve for midlertidig innførser
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for midlertidig innførsel
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - importBeskrivelse
       - innehaver
       - isActiveAndNotExpired
@@ -1085,6 +1101,46 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    NaeringAmmunisjon:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringIkkeRegpliktigeVaapen:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringMekling:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringUtleie:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
     Naeringsimportloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -1117,15 +1173,22 @@ components:
             $ref: "#/components/schemas/EierVirksomhet"
           loyvehaver:
             $ref: "#/components/schemas/EierPerson"
+            description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
+          dagligAnsvarshavende:
+            $ref: "#/components/schemas/EierPerson"
+            description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           typeNaeringsvirksomhet:
             type: array
             items:
-              type: string
-              enum:
-              - HANDEL
-              - UTLEIE
-              - MEKLING
-              - TILVIRKNING
+              oneOf:
+              - $ref: "#/components/schemas/NaeringAmmunisjon"
+              - $ref: "#/components/schemas/NaeringBegrensetHandel"
+              - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
+              - $ref: "#/components/schemas/NaeringHandel"
+              - $ref: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+              - $ref: "#/components/schemas/NaeringMekling"
+              - $ref: "#/components/schemas/NaeringTilvirkning"
+              - $ref: "#/components/schemas/NaeringUtleie"
           avgrensninger:
             type: string
           dispensasjon:
@@ -1152,6 +1215,32 @@ components:
       required:
       - changeType
       - naeringsloyve
+    Naeringstype:
+      type: object
+      discriminator:
+        propertyName: annetloyveLoyvetype
+        mapping:
+          HANDEL: "#/components/schemas/NaeringHandel"
+          UTLEIE: "#/components/schemas/NaeringUtleie"
+          MEKLING: "#/components/schemas/NaeringMekling"
+          TILVIRKNING: "#/components/schemas/NaeringTilvirkning"
+          HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+          BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
+          BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
+      properties:
+        type:
+          type: string
+          enum:
+          - HANDEL
+          - BEGRENSETHANDEL
+          - UTLEIE
+          - MEKLING
+          - TILVIRKNING
+          - BEGRENSETTILVIRKNING
+          - HANDELIKKEREGPLIKTIGEVAAPEN
+          - AMMUNISJON
+      required:
+      - type
     Naeringsvirksomhetgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1660,17 +1749,6 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -1690,6 +1768,17 @@ components:
           type: string
         annetFabrikkmerke:
           type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
         vaapendeltype:
           type: string
           enum:

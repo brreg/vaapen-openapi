@@ -225,6 +225,38 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
+  /api/virksomhet/digitale-bevis:
+    get:
+      tags:
+      - digitalt-bevis-controller
+      operationId: getDigitaleBevis
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: "#/components/schemas/DigitaltBevisAnnetLoyve"
+                  - $ref: "#/components/schemas/DigitaltBevisSkytevaapen"
+                  - $ref: "#/components/schemas/DigitaltBevisVaapendel"
+    post:
+      tags:
+      - digitalt-bevis-controller
+      operationId: createDigitaltBevis
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/OpprettDigitaltBevisAnnetLoyveRequest"
+              - $ref: "#/components/schemas/OpprettDigitaltBevisInnehavsloyveRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
   /api/virksomhet/whoami:
     get:
       tags:
@@ -502,6 +534,67 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Ervervsloyve"
+  /api/virksomhet/digitale-bevis/{idDigitaltBevis}/kontroll:
+    get:
+      tags:
+      - digitalt-bevis-controller
+      operationId: getDigitaltBevisKontrollById
+      parameters:
+      - name: idDigitaltBevis
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/BeviskontrollAnnetLoyve"
+                - $ref: "#/components/schemas/BeviskontrollSkytevaapen"
+                - $ref: "#/components/schemas/BeviskontrollVaapendel"
+  /api/virksomhet/digitale-bevis/innehavsloyveId/{idInnehavsloyve}:
+    get:
+      tags:
+      - digitalt-bevis-controller
+      operationId: getDigitaltBevisByInnehavsloyveId
+      parameters:
+      - name: idInnehavsloyve
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/DigitaltBevisAnnetLoyve"
+                - $ref: "#/components/schemas/DigitaltBevisSkytevaapen"
+                - $ref: "#/components/schemas/DigitaltBevisVaapendel"
+  /api/virksomhet/digitale-bevis/annetLoyveId/{idAnnetLoyve}:
+    get:
+      tags:
+      - digitalt-bevis-controller
+      operationId: getDigitaltBevisByAnnetLoyveId
+      parameters:
+      - name: idAnnetLoyve
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DigitaltBevisAnnetLoyve"
   /api/virksomhet/delte-ervervsloyver:
     get:
       tags:
@@ -546,6 +639,21 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Ervervsloyve"
+  /api/virksomhet/digitale-bevis/{id}:
+    delete:
+      tags:
+      - digitalt-bevis-controller
+      operationId: deleteDigitaltBevis
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: OK
 components:
   schemas:
     Aldersgrunnlag:
@@ -629,6 +737,11 @@ components:
             type: string
             description: Navn på fysisk person - kun visning ved behov
             example: Kari Ole Normann
+          foedselsdato:
+            type: string
+            format: date
+            description: Fødselsdato - kun visning ved behov
+            example: 1991-01-01
           eiertype:
             type: string
             description: Type eier
@@ -638,6 +751,7 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
+      - $ref: "#/components/schemas/Eier"
       description: Representerer en person
       required:
       - eiertype
@@ -1137,6 +1251,46 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    NaeringAmmunisjon:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringIkkeRegpliktigeVaapen:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringMekling:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringUtleie:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
     Naeringsloyve:
       allOf:
       - $ref: "#/components/schemas/LoyveForInnehav"
@@ -1146,15 +1300,22 @@ components:
             $ref: "#/components/schemas/EierVirksomhet"
           loyvehaver:
             $ref: "#/components/schemas/EierPerson"
+            description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
+          dagligAnsvarshavende:
+            $ref: "#/components/schemas/EierPerson"
+            description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           typeNaeringsvirksomhet:
             type: array
             items:
-              type: string
-              enum:
-              - HANDEL
-              - UTLEIE
-              - MEKLING
-              - TILVIRKNING
+              oneOf:
+              - $ref: "#/components/schemas/NaeringAmmunisjon"
+              - $ref: "#/components/schemas/NaeringBegrensetHandel"
+              - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
+              - $ref: "#/components/schemas/NaeringHandel"
+              - $ref: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+              - $ref: "#/components/schemas/NaeringMekling"
+              - $ref: "#/components/schemas/NaeringTilvirkning"
+              - $ref: "#/components/schemas/NaeringUtleie"
           avgrensninger:
             type: string
           dispensasjon:
@@ -1171,6 +1332,32 @@ components:
       - status
       - typeNaeringsvirksomhet
       - vedtaksdato
+    Naeringstype:
+      type: object
+      discriminator:
+        propertyName: annetloyveLoyvetype
+        mapping:
+          HANDEL: "#/components/schemas/NaeringHandel"
+          UTLEIE: "#/components/schemas/NaeringUtleie"
+          MEKLING: "#/components/schemas/NaeringMekling"
+          TILVIRKNING: "#/components/schemas/NaeringTilvirkning"
+          HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+          BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
+          BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
+      properties:
+        type:
+          type: string
+          enum:
+          - HANDEL
+          - BEGRENSETHANDEL
+          - UTLEIE
+          - MEKLING
+          - TILVIRKNING
+          - BEGRENSETTILVIRKNING
+          - HANDELIKKEREGPLIKTIGEVAAPEN
+          - AMMUNISJON
+      required:
+      - type
     Naeringsvirksomhetgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1899,6 +2086,44 @@ components:
       required:
       - eieroverforingId
       - svar
+    OpprettDigitaltBevisAnnetLoyveRequest:
+      allOf:
+      - $ref: "#/components/schemas/OpprettDigitaltBevisRequest"
+      - type: object
+        properties:
+          annetLoyveId:
+            type: string
+      required:
+      - annetLoyveId
+      - gyldigTil
+      - type
+    OpprettDigitaltBevisInnehavsloyveRequest:
+      allOf:
+      - $ref: "#/components/schemas/OpprettDigitaltBevisRequest"
+      - type: object
+        properties:
+          innehavsloyveId:
+            type: string
+      required:
+      - gyldigTil
+      - innehavsloyveId
+      - type
+    OpprettDigitaltBevisRequest:
+      type: object
+      discriminator:
+        propertyName: type
+      properties:
+        gyldigTil:
+          type: string
+          format: date
+        type:
+          type: string
+          enum:
+          - OPPRETT_BEVIS_INNEHAVSLOYVE
+          - OPPRETT_BEVIS_ANNET_LOYVE
+      required:
+      - gyldigTil
+      - type
     Innloggingsinfo:
       type: object
       properties:
@@ -1928,9 +2153,13 @@ components:
             type: string
             enum:
             - HANDEL
+            - BEGRENSETHANDEL
             - UTLEIE
             - MEKLING
             - TILVIRKNING
+            - BEGRENSETTILVIRKNING
+            - HANDELIKKEREGPLIKTIGEVAAPEN
+            - AMMUNISJON
       required:
       - innehaver
       - loyveId
@@ -2136,3 +2365,636 @@ components:
       - vaapendel
       - vaapeneier
       - validation
+    DigitaltBevis:
+      type: object
+      discriminator:
+        propertyName: type
+      properties:
+        beviseierId:
+          type: integer
+          format: int64
+        gyldigTil:
+          type: string
+          format: date
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - BEVIS_SKYTEVAAPEN
+          - BEVIS_VAAPENDEL
+          - BEVIS_ANNET_LOYVE
+      required:
+      - beviseierId
+      - gyldigTil
+      - id
+      - type
+    DigitaltBevisAnnetLoyve:
+      allOf:
+      - $ref: "#/components/schemas/DigitaltBevis"
+      - type: object
+        properties:
+          annetLoyveId:
+            type: string
+      required:
+      - annetLoyveId
+      - beviseierId
+      - gyldigTil
+      - id
+      - type
+    DigitaltBevisSkytevaapen:
+      allOf:
+      - $ref: "#/components/schemas/DigitaltBevis"
+      - type: object
+        properties:
+          innehavsloyveId:
+            type: string
+          skytevaapenId:
+            type: integer
+            format: int64
+      required:
+      - beviseierId
+      - gyldigTil
+      - id
+      - innehavsloyveId
+      - skytevaapenId
+      - type
+    DigitaltBevisVaapendel:
+      allOf:
+      - $ref: "#/components/schemas/DigitaltBevis"
+      - type: object
+        properties:
+          innehavsloyveId:
+            type: string
+          vaapendelId:
+            type: integer
+            format: int64
+      required:
+      - beviseierId
+      - gyldigTil
+      - id
+      - innehavsloyveId
+      - type
+      - vaapendelId
+    AmmunisjonskjoployveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for tidsbegrenset engangskjøp av ammunisjon til våpen som
+        ikke er registreringspliktig
+      required:
+      - annetloyveLoyvetype
+      - gyldigTil
+      - kaliber
+    AmmunisjonssamlerloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
+      description: Løyve for ammunisjonssamlere
+      required:
+      - annetloyveLoyvetype
+      - beskrivelse
+    AnnetLoyveBeviskontrollView:
+      type: object
+      discriminator:
+        propertyName: annetloyveLoyvetype
+        mapping:
+          AMMUNISJONSKJOP_IKKEREGPLIKTIG: "#/components/schemas/AmmunisjonskjoployveBeviskontrollView"
+          AMMUNISJONSSAMLER: "#/components/schemas/AmmunisjonssamlerloyveBeviskontrollView"
+          GODKJENT_SAMLER: "#/components/schemas/GodkjentSamlerloyveBeviskontrollView"
+          PIRATBESKYTTELSE: "#/components/schemas/PiratbeskyttelsesloyveBeviskontrollView"
+          ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapenErvervsloyveBeviskontrollView"
+          LAANELOYVE: "#/components/schemas/LaaneloyveBeviskontrollView"
+          IKKE_ERVERVSMESSIG_INNFORSEL: "#/components/schemas/PrivatimportloyveBeviskontrollView"
+          ERVERVSMESSIG_INNFORSEL: "#/components/schemas/NaeringsimportloyveBeviskontrollView"
+          MIDLERTIDIG_INNFORSEL: "#/components/schemas/MidlertidigInnforselsloyveBeviskontrollView"
+          UTFORSEL: "#/components/schemas/UtforrselsloyveBeviskontrollView"
+          GODKJENT_SKYTEBANE: "#/components/schemas/GodkjentSkytebaneloyveBeviskontrollView"
+          GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyveBeviskontrollView"
+          HOYKAPASITETSMAGASIN: "#/components/schemas/HoykapasitetsmagasinloyveBeviskontrollView"
+      properties:
+        annetloyveLoyvetype:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - NYTT_SKYTEPROGRAM
+          - HOYKAPASITETSMAGASIN
+      required:
+      - annetloyveLoyvetype
+    Beviskontroll:
+      type: object
+      discriminator:
+        propertyName: type
+      properties:
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPersonBeviskontrollView"
+          - $ref: "#/components/schemas/EierVirksomhetBeviskontrollView"
+        gyldigTil:
+          type: string
+          format: date
+        id:
+          type: string
+          format: uuid
+        type:
+          type: string
+          enum:
+          - BEVIS_SKYTEVAAPEN
+          - BEVIS_VAAPENDEL
+          - BEVIS_ANNET_LOYVE
+      required:
+      - gyldigTil
+      - id
+      - innehaver
+      - type
+    BeviskontrollAnnetLoyve:
+      allOf:
+      - $ref: "#/components/schemas/Beviskontroll"
+      - type: object
+        properties:
+          annetLoyve:
+            oneOf:
+            - $ref: "#/components/schemas/AmmunisjonskjoployveBeviskontrollView"
+            - $ref: "#/components/schemas/AmmunisjonssamlerloyveBeviskontrollView"
+            - $ref: "#/components/schemas/GodkjentSamlerloyveBeviskontrollView"
+            - $ref: "#/components/schemas/GodkjentSkytebaneloyveBeviskontrollView"
+            - $ref: "#/components/schemas/GodkjentSkytterforeningsloyveBeviskontrollView"
+            - $ref: "#/components/schemas/HoykapasitetsmagasinloyveBeviskontrollView"
+            - $ref: "#/components/schemas/IkkeSkytevaapenErvervsloyveBeviskontrollView"
+            - $ref: "#/components/schemas/LaaneloyveBeviskontrollView"
+            - $ref: "#/components/schemas/MidlertidigInnforselsloyveBeviskontrollView"
+            - $ref: "#/components/schemas/NaeringsimportloyveBeviskontrollView"
+            - $ref: "#/components/schemas/PiratbeskyttelsesloyveBeviskontrollView"
+            - $ref: "#/components/schemas/PrivatimportloyveBeviskontrollView"
+            - $ref: "#/components/schemas/UtforrselsloyveBeviskontrollView"
+      required:
+      - annetLoyve
+      - gyldigTil
+      - id
+      - innehaver
+      - type
+    BeviskontrollSkytevaapen:
+      allOf:
+      - $ref: "#/components/schemas/Beviskontroll"
+      - type: object
+        properties:
+          skytevaapen:
+            $ref: "#/components/schemas/SkytevaapenBeviskontrollView"
+      required:
+      - gyldigTil
+      - id
+      - innehaver
+      - skytevaapen
+      - type
+    BeviskontrollVaapendel:
+      allOf:
+      - $ref: "#/components/schemas/Beviskontroll"
+      - type: object
+        properties:
+          vaapendel:
+            oneOf:
+            - $ref: "#/components/schemas/LaaskasseBeviskontrollView"
+            - $ref: "#/components/schemas/PipeBeviskontrollView"
+            - $ref: "#/components/schemas/RevolvertonneBeviskontrollView"
+            - $ref: "#/components/schemas/SluttstykkeBeviskontrollView"
+      required:
+      - gyldigTil
+      - id
+      - innehaver
+      - type
+      - vaapendel
+    EierBeviskontrollView:
+      type: object
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhetBeviskontrollView"
+          PERSON: "#/components/schemas/EierPersonBeviskontrollView"
+      properties:
+        navn:
+          type: string
+        eiertype:
+          type: string
+          description: Type eier
+          enum:
+          - PERSON
+          - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
+      required:
+      - eiertype
+    EierPersonBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/EierBeviskontrollView"
+      - type: object
+        properties:
+          foedselsdato:
+            type: string
+            format: date
+            description: Fødselsdato
+            example: 1991-01-01
+          navn:
+            type: string
+            description: Navn på fysisk person - kun visning ved behov
+            example: Kari Ole Normann
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      description: Representerer en person
+      required:
+      - eiertype
+    EierVirksomhetBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/EierBeviskontrollView"
+      - type: object
+        properties:
+          organisasjonsnummer:
+            type: string
+            description: Organisasjonsnummer
+            example: 123456789
+          navn:
+            type: string
+            description: Navn på virksomhet - kun visning ved behov
+            example: PANGPANG AS
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: VIRKSOMHET
+      description: Representerer en virksomhet
+      required:
+      - eiertype
+      - organisasjonsnummer
+    GodkjentSamlerloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          samlerorganisasjon:
+            type: string
+      description: Løyve som godkjent samler
+      required:
+      - annetloyveLoyvetype
+      - samlerorganisasjon
+    GodkjentSkytebaneloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
+      description: Løyve for godkjent skytebane
+      required:
+      - annetloyveLoyvetype
+      - beskrivelse
+    GodkjentSkytterforeningsloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      description: Løyve for godkjenning som skytterforening
+      required:
+      - annetloyveLoyvetype
+    HoykapasitetsmagasinloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          godkjentForVaapen:
+            type: integer
+            format: int64
+          godkjentForErvervsloyve:
+            type: string
+      description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
+      required:
+      - annetloyveLoyvetype
+    IkkeSkytevaapenErvervsloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
+          grunnlagsbeskrivelse:
+            type: string
+      description: Løyve for erverv av våpen som ikke regnes som skytevåpen
+      required:
+      - annetloyveLoyvetype
+      - beskrivelse
+      - grunnlagsbeskrivelse
+    LaaneloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          grunnlag:
+            oneOf:
+            - $ref: "#/components/schemas/Aldersgrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
+            - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
+            - $ref: "#/components/schemas/Museumsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
+            - $ref: "#/components/schemas/Sportsgrunnlag"
+            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
+            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+          laanenivaaSport:
+            type: string
+            enum:
+            - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
+            - PISTOL_REVOLVER
+            - OVRIGE_RIFLER_HAGLER
+      description: Løyve for lån av våpen
+      required:
+      - annetloyveLoyvetype
+      - grunnlag
+    LaaskasseBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelBeviskontrollView"
+      - type: object
+        properties:
+          laaskassetype:
+            type: string
+            enum:
+            - LAASKASSE
+            - OVERDEL
+            - UNDERDEL
+      required:
+      - skytevaapentype
+    MidlertidigInnforselsloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          importBeskrivelse:
+            type: string
+      description: Løyve for midlertidig innførsel
+      required:
+      - annetloyveLoyvetype
+      - importBeskrivelse
+    NaeringsimportloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          importBeskrivelse:
+            type: string
+      description: Løyve for innførsel av våpen for næringsdrivende virksomhet
+      required:
+      - annetloyveLoyvetype
+      - importBeskrivelse
+    PipeBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelBeviskontrollView"
+      - type: object
+        properties:
+          pipelengde:
+            type: integer
+            format: int32
+          antallLop:
+            type: integer
+            format: int32
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+      required:
+      - antallLop
+      - kaliber
+      - skytevaapentype
+    PiratbeskyttelsesloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      description: Løyve for godkjenning av beskyttelse av skip mot piratvirksomhet
+      required:
+      - annetloyveLoyvetype
+    PrivatimportloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      description: Løyve for innførsel av våpen som ikke er ervervsmessig
+      required:
+      - annetloyveLoyvetype
+    RevolvertonneBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelBeviskontrollView"
+      - type: object
+        properties:
+          lademekanisme:
+            type: string
+            enum:
+            - MUNNLADER
+            - BAKLADER
+          avfyringsmekanisme:
+            type: string
+            enum:
+            - PATRON
+            - PERKUSJON
+            - FLINT
+            - LUNTE
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+      required:
+      - avfyringsmekanisme
+      - kaliber
+      - lademekanisme
+      - skytevaapentype
+    SkytevaapenBeviskontrollView:
+      type: object
+      description: Skytevåpen-modellen
+      properties:
+        funksjonsmaate:
+          type: string
+          description: Funksjonsmåte for skytevåpenet
+          enum:
+          - ENKELTSKUDD
+          - HALVAUTOMATISK
+          - HELAUTOMATISK
+          - MANUELL_OMLADING
+          - UKJENT
+        skytevaapentype:
+          type: string
+          enum:
+          - RIFLE
+          - HAGLE
+          - KOMBINASJONSVAAPEN
+          - PISTOL
+          - REVOLVER
+          - MASKINGEVAER
+          - MASKINPISTOL
+          - SALUTT
+          - KNALL
+          - LUFTFJAER
+          - MUSKETT
+          - ARMBROST
+          - UKJENT
+        avfyringsmekanisme:
+          type: string
+          enum:
+          - PATRON
+          - PERKUSJON
+          - FLINT
+          - LUNTE
+        lademekanisme:
+          type: string
+          enum:
+          - MUNNLADER
+          - BAKLADER
+        vaapendeler:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/LaaskasseBeviskontrollView"
+            - $ref: "#/components/schemas/PipeBeviskontrollView"
+            - $ref: "#/components/schemas/RevolvertonneBeviskontrollView"
+            - $ref: "#/components/schemas/SluttstykkeBeviskontrollView"
+        definerendeType:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+        registreringsobjektType:
+          type: string
+          description: Type registreringsobjekt
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          example: SkyteVaapen
+      required:
+      - definerendeType
+      - funksjonsmaate
+      - registreringsobjektType
+      - skytevaapentype
+      - vaapendeler
+    SluttstykkeBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelBeviskontrollView"
+      - type: object
+        properties:
+          sluttstykketype:
+            type: string
+            enum:
+            - SLUTTSTYKKE
+            - GLIDESTYKKE
+            - LAASEBLOKK
+      required:
+      - skytevaapentype
+    UtforrselsloyveBeviskontrollView:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
+      - type: object
+        properties:
+          utforselBeskrivelse:
+            type: string
+      description: Løyve for utførsel av våpen
+      required:
+      - annetloyveLoyvetype
+      - utforselBeskrivelse
+    VaapendelBeviskontrollView:
+      type: object
+      description: Våpendel-modellene
+      discriminator:
+        propertyName: vaapendeltype
+        mapping:
+          LAASKASSE: "#/components/schemas/LaaskasseBeviskontrollView"
+          PIPE: "#/components/schemas/PipeBeviskontrollView"
+          REVOLVERTONNE: "#/components/schemas/RevolvertonneBeviskontrollView"
+          SLUTTSTYKKE: "#/components/schemas/SluttstykkeBeviskontrollView"
+      properties:
+        skytevaapentype:
+          type: string
+          enum:
+          - RIFLE
+          - HAGLE
+          - KOMBINASJONSVAAPEN
+          - PISTOL
+          - REVOLVER
+          - MASKINGEVAER
+          - MASKINPISTOL
+          - SALUTT
+          - KNALL
+          - LUFTFJAER
+          - MUSKETT
+          - ARMBROST
+          - UKJENT
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+        vaapendeltype:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        modell:
+          type: string
+      required:
+      - registreringsobjektType
+      - skytevaapentype
