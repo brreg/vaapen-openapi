@@ -9,6 +9,64 @@ servers:
 - url: https://vaapen.ut1.brreg.no
   description: Utviklingsmiljø
 paths:
+  /avgivelse/vaapenskap/person:
+    post:
+      tags:
+      - vaapenoppbevaring-controller
+      summary: Search for vaapenskap using personidentifikator
+      operationId: findVaapenskapByPerson
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPerson"
+        required: true
+      responses:
+        "200":
+          description: Alle vaapenskap til person
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenskap"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenskap"
+  /avgivelse/vaapenrom/person:
+    post:
+      tags:
+      - vaapenoppbevaring-controller
+      summary: Search for vaapenrom using personidentifikator
+      operationId: findVaapenromBySearch
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPerson"
+        required: true
+      responses:
+        "200":
+          description: "Alle vaapenrom til person, både godkjente og ikke"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenrom"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Vaapenrom"
   /avgivelse/vaapendel/search:
     post:
       tags:
@@ -184,64 +242,6 @@ paths:
                   - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
                   - $ref: "#/components/schemas/Privatimportloyve"
                   - $ref: "#/components/schemas/Utforrselsloyve"
-  /avgivelse/vaapenskap/{personidentifikator}:
-    get:
-      tags:
-      - search
-      summary: Get all vaapenskap on user
-      operationId: findVaapenskapByPerson
-      parameters:
-      - name: personidentifikator
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: Alle vaapenskap til person
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapenskap"
-        "400":
-          description: Bad request
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapenskap"
-  /avgivelse/vaapenrom/{personidentifikator}:
-    get:
-      tags:
-      - search
-      summary: Get all vaapenrom on user
-      operationId: findVaapenromBySearch
-      parameters:
-      - name: personidentifikator
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: "Alle vaapenrom til person, både godkjente og ikke"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapenrom"
-        "400":
-          description: Bad request
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapenrom"
   /avgivelse/samleromraade:
     get:
       tags:
@@ -430,6 +430,286 @@ paths:
                 - $ref: "#/components/schemas/Utforrselsloyve"
 components:
   schemas:
+    RequestPerson:
+      type: object
+      properties:
+        personidentifikator:
+          type: string
+      required:
+      - personidentifikator
+    DigitalEier:
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          navn:
+            type: string
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
+          PERSON: "#/components/schemas/EierPerson"
+      required:
+      - eiertype
+    Eier:
+      type: object
+      discriminator:
+        propertyName: eiertype
+        mapping:
+          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
+          PERSON: "#/components/schemas/EierPerson"
+          UKJENT_INNEHAVER: "#/components/schemas/UkjentInnehaver"
+          POLITI: "#/components/schemas/PolitiInnehaver"
+      properties:
+        eiertype:
+          type: string
+          description: Type eier
+          enum:
+          - PERSON
+          - VIRKSOMHET
+          - UKJENT_INNEHAVER
+          - POLITI
+        id:
+          type: integer
+          format: int64
+      required:
+      - eiertype
+    EierPerson:
+      allOf:
+      - $ref: "#/components/schemas/DigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: Fødselsnummer eller D-nummer
+            example: 12345678901
+          navn:
+            type: string
+            description: Navn på fysisk person - kun visning ved behov
+            example: Kari Ole Normann
+          foedselsdato:
+            type: string
+            format: date
+            description: Fødselsdato - kun visning ved behov
+            example: 1991-01-01
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en person
+      required:
+      - eiertype
+      - personidentifikator
+    EierVirksomhet:
+      allOf:
+      - $ref: "#/components/schemas/DigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 1234
+          organisasjonsnummer:
+            type: string
+            description: Organisasjonsnummer
+            example: 123456789
+          navn:
+            type: string
+            description: Navn på virksomhet - kun visning ved behov
+            example: PANGPANG AS
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: VIRKSOMHET
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en virksomhet
+      required:
+      - eiertype
+      - organisasjonsnummer
+    ManuellEier:
+      allOf:
+      - $ref: "#/components/schemas/Eier"
+      required:
+      - eiertype
+    PolitiInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/ManuellEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik intern identifikator for eieren
+            example: 5678
+          lokasjon:
+            type: string
+            description: Lokasjon i politiet
+            example: Beslagssenter Oslo - Grønland
+          importertKategori:
+            type: boolean
+            description: Importert fra NVR - Bør ryddes
+            example: TAPTE VÅPEN - OSLO
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en innehaver uten gyldig indentifikator (person eller
+        virksomhet)
+      required:
+      - eiertype
+      - importertKategori
+    UkjentInnehaver:
+      allOf:
+      - $ref: "#/components/schemas/ManuellEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik intern identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: "Identifikator for person, som regel fødselsdato"
+            example: 311280
+          vaapenkortSid:
+            type: string
+            description: Referanse til gammelt vaapenkort
+            example: 01-1111111111
+          navn:
+            type: string
+            description: Navn på utenlandsk person
+            example: Kari Ole Normann
+          adresse:
+            type: string
+            description: Adressen til utenlandsk person
+            example: Kari Ole Normann
+          stilling:
+            type: string
+            description: Stilling til utenlandsk person
+            example: Diplomat
+          telefon:
+            type: string
+            description: Telefon til utenlandsk person
+            example: +47 13131313
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
+      description: Representerer en innehaver uten gyldig indentifikator (person eller
+        virksomhet)
+      required:
+      - eiertype
+      - personidentifikator
+    Vaapenskap:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unik intern identifikator for våpenskap.
+        innehaver:
+          description: Eier av våpenskap
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        serienummer:
+          type: string
+          description: Serienummer til våpenskapet
+        merke:
+          type: string
+          description: Merke på våpenskapet
+        createdDate:
+          type: string
+          format: date-time
+        lastUpdated:
+          type: string
+          format: date-time
+      required:
+      - id
+      - innehaver
+      - merke
+      - serienummer
+    Vaapenrom:
+      type: object
+      properties:
+        id:
+          type: string
+          description: Unik intern identifikator for våpenrommet. I form av UUID.
+        innehaver:
+          description: Eier av våpenrommet
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        status:
+          type: string
+          description: Status på våpenrom
+          enum:
+          - GODKJENT
+          - GODKJENNING_TILBAKETRUKKET
+          - SLETTET
+          example: GODKJENT
+        saksreferanse:
+          type: string
+          description: Alle våpenrom som innvilges må ha en saksreferanse i websak
+        matrikkelnummer:
+          type: string
+          description: identifikator for fast eiendom i Norge hvor våpenrommet er
+        createdDate:
+          type: string
+          format: date-time
+        deletedDate:
+          type: string
+          format: date-time
+      required:
+      - id
+      - innehaver
+      - saksreferanse
+      - status
     BooleanFilter:
       allOf:
       - $ref: "#/components/schemas/SkytevaapenSearchFilter"
@@ -748,107 +1028,6 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    DigitalEier:
-      allOf:
-      - $ref: "#/components/schemas/Eier"
-      - type: object
-        properties:
-          navn:
-            type: string
-      discriminator:
-        propertyName: eiertype
-        mapping:
-          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
-          PERSON: "#/components/schemas/EierPerson"
-      required:
-      - eiertype
-    Eier:
-      type: object
-      discriminator:
-        propertyName: eiertype
-        mapping:
-          VIRKSOMHET: "#/components/schemas/EierVirksomhet"
-          PERSON: "#/components/schemas/EierPerson"
-          UKJENT_INNEHAVER: "#/components/schemas/UkjentInnehaver"
-          POLITI: "#/components/schemas/PolitiInnehaver"
-      properties:
-        eiertype:
-          type: string
-          description: Type eier
-          enum:
-          - PERSON
-          - VIRKSOMHET
-          - UKJENT_INNEHAVER
-          - POLITI
-        id:
-          type: integer
-          format: int64
-      required:
-      - eiertype
-    EierPerson:
-      allOf:
-      - $ref: "#/components/schemas/DigitalEier"
-      - type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-            description: Unik identifikator for eieren
-            example: 5678
-          personidentifikator:
-            type: string
-            description: Fødselsnummer eller D-nummer
-            example: 12345678901
-          navn:
-            type: string
-            description: Navn på fysisk person - kun visning ved behov
-            example: Kari Ole Normann
-          eiertype:
-            type: string
-            description: Type eier
-            enum:
-            - PERSON
-            - VIRKSOMHET
-            - UKJENT_INNEHAVER
-            - POLITI
-            example: PERSON
-      - $ref: "#/components/schemas/Eier"
-      description: Representerer en person
-      required:
-      - eiertype
-      - personidentifikator
-    EierVirksomhet:
-      allOf:
-      - $ref: "#/components/schemas/DigitalEier"
-      - type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-            description: Unik identifikator for eieren
-            example: 1234
-          organisasjonsnummer:
-            type: string
-            description: Organisasjonsnummer
-            example: 123456789
-          navn:
-            type: string
-            description: Navn på virksomhet - kun visning ved behov
-            example: PANGPANG AS
-          eiertype:
-            type: string
-            description: Type eier
-            enum:
-            - PERSON
-            - VIRKSOMHET
-            - UKJENT_INNEHAVER
-            - POLITI
-            example: VIRKSOMHET
-      - $ref: "#/components/schemas/Eier"
-      description: Representerer en virksomhet
-      required:
-      - eiertype
-      - organisasjonsnummer
     Ervervsloyve:
       type: object
       description: Løyve for erverv av våpen eller våpendel
@@ -1253,11 +1432,6 @@ components:
       - loyvetype
       - status
       - vedtaksdato
-    ManuellEier:
-      allOf:
-      - $ref: "#/components/schemas/Eier"
-      required:
-      - eiertype
     Minneverdegrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1268,6 +1442,46 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    NaeringAmmunisjon:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringIkkeRegpliktigeVaapen:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringMekling:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringUtleie:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
     Naeringsloyve:
       allOf:
       - $ref: "#/components/schemas/LoyveForInnehav"
@@ -1277,15 +1491,22 @@ components:
             $ref: "#/components/schemas/EierVirksomhet"
           loyvehaver:
             $ref: "#/components/schemas/EierPerson"
+            description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
+          dagligAnsvarshavende:
+            $ref: "#/components/schemas/EierPerson"
+            description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           typeNaeringsvirksomhet:
             type: array
             items:
-              type: string
-              enum:
-              - HANDEL
-              - UTLEIE
-              - MEKLING
-              - TILVIRKNING
+              oneOf:
+              - $ref: "#/components/schemas/NaeringAmmunisjon"
+              - $ref: "#/components/schemas/NaeringBegrensetHandel"
+              - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
+              - $ref: "#/components/schemas/NaeringHandel"
+              - $ref: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+              - $ref: "#/components/schemas/NaeringMekling"
+              - $ref: "#/components/schemas/NaeringTilvirkning"
+              - $ref: "#/components/schemas/NaeringUtleie"
           avgrensninger:
             type: string
           dispensasjon:
@@ -1301,6 +1522,32 @@ components:
       - status
       - typeNaeringsvirksomhet
       - vedtaksdato
+    Naeringstype:
+      type: object
+      discriminator:
+        propertyName: annetloyveLoyvetype
+        mapping:
+          HANDEL: "#/components/schemas/NaeringHandel"
+          UTLEIE: "#/components/schemas/NaeringUtleie"
+          MEKLING: "#/components/schemas/NaeringMekling"
+          TILVIRKNING: "#/components/schemas/NaeringTilvirkning"
+          HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+          BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
+          BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
+      properties:
+        type:
+          type: string
+          enum:
+          - HANDEL
+          - BEGRENSETHANDEL
+          - UTLEIE
+          - MEKLING
+          - TILVIRKNING
+          - BEGRENSETTILVIRKNING
+          - HANDELIKKEREGPLIKTIGEVAAPEN
+          - AMMUNISJON
+      required:
+      - type
     Naeringsvirksomhetgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1329,39 +1576,6 @@ components:
       - kaliber
       - korrigeringsstatus
       - skytevaapentype
-    PolitiInnehaver:
-      allOf:
-      - $ref: "#/components/schemas/ManuellEier"
-      - type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-            description: Unik intern identifikator for eieren
-            example: 5678
-          lokasjon:
-            type: string
-            description: Lokasjon i politiet
-            example: Beslagssenter Oslo - Grønland
-          importertKategori:
-            type: boolean
-            description: Importert fra NVR - Bør ryddes
-            example: TAPTE VÅPEN - OSLO
-          eiertype:
-            type: string
-            description: Type eier
-            enum:
-            - PERSON
-            - VIRKSOMHET
-            - UKJENT_INNEHAVER
-            - POLITI
-            example: PERSON
-      - $ref: "#/components/schemas/Eier"
-      description: Representerer en innehaver uten gyldig indentifikator (person eller
-        virksomhet)
-      required:
-      - eiertype
-      - importertKategori
     ReplikaLuftOgFjaergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1533,55 +1747,6 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    UkjentInnehaver:
-      allOf:
-      - $ref: "#/components/schemas/ManuellEier"
-      - type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-            description: Unik intern identifikator for eieren
-            example: 5678
-          personidentifikator:
-            type: string
-            description: "Identifikator for person, som regel fødselsdato"
-            example: 311280
-          vaapenkortSid:
-            type: string
-            description: Referanse til gammelt vaapenkort
-            example: 01-1111111111
-          navn:
-            type: string
-            description: Navn på utenlandsk person
-            example: Kari Ole Normann
-          adresse:
-            type: string
-            description: Adressen til utenlandsk person
-            example: Kari Ole Normann
-          stilling:
-            type: string
-            description: Stilling til utenlandsk person
-            example: Diplomat
-          telefon:
-            type: string
-            description: Telefon til utenlandsk person
-            example: +47 13131313
-          eiertype:
-            type: string
-            description: Type eier
-            enum:
-            - PERSON
-            - VIRKSOMHET
-            - UKJENT_INNEHAVER
-            - POLITI
-            example: PERSON
-      - $ref: "#/components/schemas/Eier"
-      description: Representerer en innehaver uten gyldig indentifikator (person eller
-        virksomhet)
-      required:
-      - eiertype
-      - personidentifikator
     UtenBehovsprovingGrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1615,8 +1780,6 @@ components:
             - LAASKASSE
             - REVOLVERTONNE
             - SLUTTSTYKKE
-          modell:
-            type: string
           vaapenstatus:
             type: string
             enum:
@@ -1639,6 +1802,8 @@ components:
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
+            type: string
+          modell:
             type: string
       description: Våpendel-modellene
       discriminator:
@@ -1965,7 +2130,7 @@ components:
             $ref: "#/components/schemas/EierPerson"
           samlerorganisasjon:
             type: string
-      description: Løyve for godkjent samler
+      description: Løyve som godkjent samler
       required:
       - annetloyveLoyvetype
       - innehaver
@@ -2021,10 +2186,11 @@ components:
           godkjentForVaapen:
             type: integer
             format: int64
-      description: Løyve for høykapasitetsmagasin knyttet til våpen
+          godkjentForErvervsloyve:
+            type: string
+      description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
       required:
       - annetloyveLoyvetype
-      - godkjentForVaapen
       - innehaver
       - isActiveAndNotExpired
       - loyveId
@@ -2095,15 +2261,21 @@ components:
           laanenivaaSport:
             type: string
             enum:
-            - HALVAUTOMATISK_MED_HOT_PATRONKAPASITET
+            - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
             - PISTOL_REVOLVER
             - OVRIGE_RIFLER_HAGLER
+          gyldigTil:
+            type: string
+            format: date
+          isPermanent:
+            type: boolean
       description: Løyve for lån av våpen
       required:
       - annetloyveLoyvetype
       - grunnlag
       - innehaver
       - isActiveAndNotExpired
+      - isPermanent
       - loyveId
       - loyvetype
       - saksreferanse
@@ -2116,9 +2288,13 @@ components:
         properties:
           importBeskrivelse:
             type: string
-      description: Løyve for midlertidig innførser
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for midlertidig innførsel
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - importBeskrivelse
       - innehaver
       - isActiveAndNotExpired
@@ -2203,93 +2379,6 @@ components:
       - status
       - utforselBeskrivelse
       - vedtaksdato
-    RequestPerson:
-      type: object
-      properties:
-        personidentifikator:
-          type: string
-      required:
-      - personidentifikator
-    Vaapenskap:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unik intern identifikator for våpenskap.
-        innehaver:
-          description: Eier av våpenskap
-          oneOf:
-          - $ref: "#/components/schemas/DigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ManuellEier"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        serienummer:
-          type: string
-          description: Serienummer til våpenskapet
-        merke:
-          type: string
-          description: Merke på våpenskapet
-        createdDate:
-          type: string
-          format: date-time
-        lastUpdated:
-          type: string
-          format: date-time
-      required:
-      - id
-      - innehaver
-      - merke
-      - serienummer
-    Vaapenrom:
-      type: object
-      properties:
-        id:
-          type: string
-          description: Unik intern identifikator for våpenrommet. I form av UUID.
-        innehaver:
-          description: Eier av våpenrommet
-          oneOf:
-          - $ref: "#/components/schemas/DigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ManuellEier"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        status:
-          type: string
-          description: Status på våpenrom
-          enum:
-          - GODKJENT
-          - GODKJENNING_TILBAKETRUKKET
-          - SLETTET
-          example: GODKJENT
-        saksreferanse:
-          type: string
-          description: Alle våpenrom som innvilges må ha en saksreferanse i websak
-        matrikkelnummer:
-          type: string
-          description: identifikator for fast eiendom i Norge hvor våpenrommet er
-        createdDate:
-          type: string
-          format: date-time
-        deletedDate:
-          type: string
-          format: date-time
-      required:
-      - id
-      - innehaver
-      - saksreferanse
-      - status
     Proposal:
       type: object
       discriminator:
@@ -2300,6 +2389,8 @@ components:
       properties:
         proposalId:
           type: string
+        submittedBy:
+          $ref: "#/components/schemas/Submitter"
         previousData:
           oneOf:
           - $ref: "#/components/schemas/Skytevaapen"
@@ -2323,8 +2414,6 @@ components:
           - VAAPENDEL
         messageToCaseworker:
           type: string
-        submittedBy:
-          $ref: "#/components/schemas/Submitter"
       required:
       - previousData
       - proposalId
