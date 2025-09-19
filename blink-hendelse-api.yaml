@@ -396,9 +396,13 @@ components:
         createdDate:
           type: string
           format: date-time
+          description: "Tidspunktet når våpenrommet ble opprettet i databasen, blir\
+            \ satt på lagringstidspunktet, skal være tom ved innsending"
         deletedDate:
           type: string
           format: date-time
+          description: "Tidspunktet når våpenrommet ble soft-slettet i databasen,\
+            \ skal være tom ved innsending"
       required:
       - id
       - innehaver
@@ -1749,6 +1753,21 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
+        serienummer:
+          type: string
+        annetFabrikkmerke:
+          type: string
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -1764,21 +1783,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        serienummer:
-          type: string
-        annetFabrikkmerke:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
         vaapendeltype:
           type: string
           enum:
