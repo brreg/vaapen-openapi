@@ -230,6 +230,12 @@ paths:
       tags:
       - digitalt-bevis-controller
       operationId: getDigitaleBevis
+      parameters:
+      - name: inkluderQrKode
+        in: query
+        required: false
+        schema:
+          type: boolean
       responses:
         "200":
           description: OK
@@ -239,9 +245,9 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: "#/components/schemas/DigitaltBevisAnnetLoyve"
-                  - $ref: "#/components/schemas/DigitaltBevisSkytevaapen"
-                  - $ref: "#/components/schemas/DigitaltBevisVaapendel"
+                  - $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
+                  - $ref: "#/components/schemas/DigitaltBevisSkytevaapenResponse"
+                  - $ref: "#/components/schemas/DigitaltBevisVaapendelResponse"
     post:
       tags:
       - digitalt-bevis-controller
@@ -567,6 +573,11 @@ paths:
         required: true
         schema:
           type: string
+      - name: inkluderQrKode
+        in: query
+        required: false
+        schema:
+          type: boolean
       responses:
         "200":
           description: OK
@@ -574,9 +585,9 @@ paths:
             '*/*':
               schema:
                 oneOf:
-                - $ref: "#/components/schemas/DigitaltBevisAnnetLoyve"
-                - $ref: "#/components/schemas/DigitaltBevisSkytevaapen"
-                - $ref: "#/components/schemas/DigitaltBevisVaapendel"
+                - $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
+                - $ref: "#/components/schemas/DigitaltBevisSkytevaapenResponse"
+                - $ref: "#/components/schemas/DigitaltBevisVaapendelResponse"
   /api/virksomhet/digitale-bevis/annetLoyveId/{idAnnetLoyve}:
     get:
       tags:
@@ -588,13 +599,18 @@ paths:
         required: true
         schema:
           type: string
+      - name: inkluderQrKode
+        in: query
+        required: false
+        schema:
+          type: boolean
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/DigitaltBevisAnnetLoyve"
+                $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
   /api/virksomhet/delte-ervervsloyver:
     get:
       tags:
@@ -2365,20 +2381,31 @@ components:
       - vaapendel
       - vaapeneier
       - validation
-    DigitaltBevis:
+    DigitaltBevisAnnetLoyveResponse:
+      allOf:
+      - $ref: "#/components/schemas/DigitaltBevisResponse"
+      - type: object
+        properties:
+          annetLoyveId:
+            type: string
+      required:
+      - annetLoyveId
+      - beviseierId
+      - gyldigTil
+      - type
+    DigitaltBevisResponse:
       type: object
       discriminator:
         propertyName: type
       properties:
+        qrKode:
+          type: string
         beviseierId:
           type: integer
           format: int64
         gyldigTil:
           type: string
           format: date
-        id:
-          type: string
-          format: uuid
         type:
           type: string
           enum:
@@ -2388,24 +2415,10 @@ components:
       required:
       - beviseierId
       - gyldigTil
-      - id
       - type
-    DigitaltBevisAnnetLoyve:
+    DigitaltBevisSkytevaapenResponse:
       allOf:
-      - $ref: "#/components/schemas/DigitaltBevis"
-      - type: object
-        properties:
-          annetLoyveId:
-            type: string
-      required:
-      - annetLoyveId
-      - beviseierId
-      - gyldigTil
-      - id
-      - type
-    DigitaltBevisSkytevaapen:
-      allOf:
-      - $ref: "#/components/schemas/DigitaltBevis"
+      - $ref: "#/components/schemas/DigitaltBevisResponse"
       - type: object
         properties:
           innehavsloyveId:
@@ -2416,13 +2429,12 @@ components:
       required:
       - beviseierId
       - gyldigTil
-      - id
       - innehavsloyveId
       - skytevaapenId
       - type
-    DigitaltBevisVaapendel:
+    DigitaltBevisVaapendelResponse:
       allOf:
-      - $ref: "#/components/schemas/DigitaltBevis"
+      - $ref: "#/components/schemas/DigitaltBevisResponse"
       - type: object
         properties:
           innehavsloyveId:
@@ -2433,7 +2445,6 @@ components:
       required:
       - beviseierId
       - gyldigTil
-      - id
       - innehavsloyveId
       - type
       - vaapendelId
@@ -2519,9 +2530,6 @@ components:
         gyldigTil:
           type: string
           format: date
-        id:
-          type: string
-          format: uuid
         type:
           type: string
           enum:
@@ -2530,7 +2538,6 @@ components:
           - BEVIS_ANNET_LOYVE
       required:
       - gyldigTil
-      - id
       - innehaver
       - type
     BeviskontrollAnnetLoyve:
@@ -2556,7 +2563,6 @@ components:
       required:
       - annetLoyve
       - gyldigTil
-      - id
       - innehaver
       - type
     BeviskontrollSkytevaapen:
@@ -2568,7 +2574,6 @@ components:
             $ref: "#/components/schemas/SkytevaapenBeviskontrollView"
       required:
       - gyldigTil
-      - id
       - innehaver
       - skytevaapen
       - type
@@ -2585,7 +2590,6 @@ components:
             - $ref: "#/components/schemas/SluttstykkeBeviskontrollView"
       required:
       - gyldigTil
-      - id
       - innehaver
       - type
       - vaapendel
