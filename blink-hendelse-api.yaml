@@ -171,6 +171,40 @@ paths:
             '*/*':
               schema:
                 type: string
+  /blink-hendelse/besittelse/politi/endring:
+    post:
+      tags:
+      - kripos-event-controller
+      summary: Kripos hendelser
+      operationId: lagreEndring_2
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/AapnePall"
+              - $ref: "#/components/schemas/EndeligDestruksjon"
+              - $ref: "#/components/schemas/EndrePakkeDistrikt"
+              - $ref: "#/components/schemas/EndrePakkeKripos"
+              - $ref: "#/components/schemas/ForseglePall"
+              - $ref: "#/components/schemas/MottaPall"
+              - $ref: "#/components/schemas/PakkeEndringReferansesamling"
+              - $ref: "#/components/schemas/PakkeEndringUtlaan"
+              - $ref: "#/components/schemas/PakkeFraPall"
+              - $ref: "#/components/schemas/PakkerTilPall"
+              - $ref: "#/components/schemas/PallUnderKonstruksjon"
+              - $ref: "#/components/schemas/RegistrerPakke"
+              - $ref: "#/components/schemas/SendForsvaret"
+              - $ref: "#/components/schemas/SendPall"
+              - $ref: "#/components/schemas/TilbakeleverPakke"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KriposValidationResult"
 components:
   schemas:
     DigitalEier:
@@ -295,7 +329,7 @@ components:
           importertKategori:
             type: boolean
             description: Importert fra NVR - Bør ryddes
-            example: TAPTE VÅPEN - OSLO
+            example: false
           eiertype:
             type: string
             description: Type eier
@@ -457,6 +491,11 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    Ammunisjonsalg:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
     Ammunisjonskjoployve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -580,6 +619,7 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1185,6 +1225,7 @@ components:
             type: array
             items:
               oneOf:
+              - $ref: "#/components/schemas/Ammunisjonsalg"
               - $ref: "#/components/schemas/NaeringAmmunisjon"
               - $ref: "#/components/schemas/NaeringBegrensetHandel"
               - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
@@ -1231,6 +1272,7 @@ components:
           HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
           BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
           BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
+          AMMUNISJON: "#/components/schemas/Ammunisjonsalg"
       properties:
         type:
           type: string
@@ -1510,6 +1552,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - registreringsobjektType
       - skytevaapentype
     LoyveForInnehav:
       type: object
@@ -1541,6 +1584,7 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1581,6 +1625,7 @@ components:
       - innehavsloyve
       - kaliber
       - korrigeringsstatus
+      - registreringsobjektType
       - skytevaapentype
     Revolvertonne:
       allOf:
@@ -1611,6 +1656,7 @@ components:
       - kaliber
       - korrigeringsstatus
       - lademekanisme
+      - registreringsobjektType
       - skytevaapentype
     Skytevaapen:
       type: object
@@ -1652,6 +1698,9 @@ components:
           - DESTRUERT
           - DEAKTIVERT
           - UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
         avfyringsmekanisme:
           type: string
           enum:
@@ -1718,6 +1767,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - registreringsobjektType
       - skytevaapentype
     VAAPEN:
       type: object
@@ -1768,6 +1818,9 @@ components:
           - DESTRUERT
           - DEAKTIVERT
           - UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -1957,6 +2010,7 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2016,8 +2070,7 @@ components:
             type: string
       required:
       - reason
-    ChangeResponse:
-      type: object
+    ChangeResponse: {}
     ChangeSuccess:
       allOf:
       - $ref: "#/components/schemas/ChangeResponse"
@@ -2034,3 +2087,436 @@ components:
             - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
       required:
       - changeType
+    AapnePall:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+      required:
+      - pallId
+      - type
+    AnnetVaapen:
+      type: object
+      properties:
+        id:
+          type: string
+        beskrivelse:
+          type: string
+        type:
+          type: string
+      required:
+      - id
+    EndeligDestruksjon:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+      description: Endelig destruksjon fra Kripos
+      required:
+      - pallId
+      - type
+    EndrePakkeDistrikt:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakke:
+            $ref: "#/components/schemas/Pakke"
+      description: Endring på pakke fra et politikontor
+      required:
+      - pakke
+      - type
+    EndrePakkeKripos:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakke:
+            $ref: "#/components/schemas/Pakke"
+      description: Endring på pakke fra et kripos
+      required:
+      - pakke
+      - type
+    ForseglePall:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+      required:
+      - pallId
+      - type
+    HendelsePoltietsBesittelse:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          PAKKE_OPPRETTET: "#/components/schemas/RegistrerPakke"
+          PAKKE_ENDRING_DISTRIKT: "#/components/schemas/EndrePakkeDistrikt"
+          PAKKE_TILBAKELEVERT: "#/components/schemas/TilbakeleverPakke"
+          PAKKE_ENDRING_KRIPOS: "#/components/schemas/EndrePakkeKripos"
+          PAKKE_UTLAANSENDRING: "#/components/schemas/PakkeEndringUtlaan"
+          PAKKE_ENDRING_REFERANSESAMLING: "#/components/schemas/PakkeEndringReferansesamling"
+          PALL_OPPRETTET: "#/components/schemas/PallUnderKonstruksjon"
+          PAKKE_TIL_PALL: "#/components/schemas/PakkerTilPall"
+          PAKKE_FRA_PALL: "#/components/schemas/PakkeFraPall"
+          PALL_FORSEGLET: "#/components/schemas/ForseglePall"
+          PALL_SENDT: "#/components/schemas/SendPall"
+          PALL_MOTTATT_KRIPOS: "#/components/schemas/MottaPall"
+          PALL_AAPNET: "#/components/schemas/AapnePall"
+          PALL_SENDT_FORSVARET: "#/components/schemas/SendForsvaret"
+          PALL_ENDELIG_DESTRUERT: "#/components/schemas/EndeligDestruksjon"
+      properties:
+        type:
+          type: string
+          enum:
+          - PAKKE_OPPRETTET
+          - PAKKE_ENDRING_DISTRIKT
+          - PAKKE_TILBAKELEVERT
+          - PAKKE_ENDRING_KRIPOS
+          - PAKKE_TIL_PALL
+          - PAKKE_FRA_PALL
+          - PAKKE_UTLAANSENDRING
+          - PAKKE_ENDRING_REFERANSESAMLING
+          - PAKKE_SENDT
+          - PAKKE_MOTTATT
+          - PAKKE_KONTROLLERT_KRIPOS
+          - PAKKE_MELLOMLAGRET
+          - PAKKE_SENDT_FORSVARET
+          - PAKKE_ENDELIG_DESTRUERT
+          - PAKKE_BESLUTTET_HAANDTERING
+          - PALL_OPPRETTET
+          - PALL_ENDRING_DISTRIKT
+          - PALL_FORSEGLET
+          - PALL_SENDT
+          - PALL_MELLOMLAGRET
+          - PALL_ENDRING_KRIPOS
+          - PALL_MOTTATT_KRIPOS
+          - PALL_SENDT_FORSVARET
+          - PALL_AAPNET
+          - PALL_ENDELIG_DESTRUERT
+      required:
+      - type
+    MottaPall:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+          mottaker:
+            type: string
+          status:
+            type: string
+            enum:
+            - UNDER_KONSTRUKSJON
+            - MELLOMLAGRET
+            - MOTTATT_KRIPOS
+            - SENDT_FORSVARET
+            - ENDELIG_DESTRUERT
+            - SENDT_FRA_POLITI
+      required:
+      - mottaker
+      - pallId
+      - status
+      - type
+    Pakke:
+      type: object
+      properties:
+        id:
+          type: string
+        sikkerhetskontrollert:
+          type: boolean
+        kontrollertAv:
+          type: string
+        lokasjon:
+          type: string
+        pakkestatus:
+          type: string
+          enum:
+          - REGISTRERT
+          - SENDT_FRA_POLITIDISTRIKT
+          - MOTTATT_KRIPOS
+          - REFERANSESAMLING
+          - KONTROLLERT_KRIPOS
+          - MELLOMLAGRET
+          - SENDT_FORSVARET
+          - ENDELIG_DESTRUERT
+        lagerplassering:
+          type: string
+        iReferansesamling:
+          type: boolean
+          writeOnly: true
+        tilUtlaan:
+          type: boolean
+        merknad:
+          type: string
+        straffesaksnummer:
+          type: string
+        innkomstmaate:
+          type: string
+          enum:
+          - INNLEVERT
+          - TILBAKEKALT
+          - BESLAGLAGT
+        besluttetHandtering:
+          type: string
+          enum:
+          - IKKE_BESLUTTET
+          - DESTRUKSJON
+          - TILBAKELEVERING
+        besluttetAv:
+          type: string
+        annetVaapen:
+          $ref: "#/components/schemas/AnnetVaapen"
+        skyteVaapen:
+          type: integer
+          format: int64
+        vaapendel:
+          type: integer
+          format: int64
+        ireferansesamling:
+          type: boolean
+      required:
+      - besluttetHandtering
+      - id
+      - innkomstmaate
+      - ireferansesamling
+      - lokasjon
+      - pakkestatus
+      - tilUtlaan
+    PakkeEndringReferansesamling:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakkeId:
+            type: string
+          referansesamlingEntry:
+            $ref: "#/components/schemas/ReferansesamlingEntry"
+      required:
+      - pakkeId
+      - referansesamlingEntry
+      - type
+    PakkeEndringUtlaan:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakkeId:
+            type: string
+          utlaan:
+            $ref: "#/components/schemas/Utlaan"
+      required:
+      - pakkeId
+      - type
+      - utlaan
+    PakkeFraPall:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakkeId:
+            type: string
+      required:
+      - pakkeId
+      - type
+    PakkerTilPall:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+          pakkeIdEr:
+            type: array
+            items:
+              type: string
+      required:
+      - pakkeIdEr
+      - pallId
+      - type
+    Pall:
+      type: object
+      properties:
+        id:
+          type: string
+        lokasjon:
+          type: string
+        avsender:
+          type: string
+        mottaker:
+          type: string
+        forseglet:
+          type: boolean
+        status:
+          type: string
+          enum:
+          - UNDER_KONSTRUKSJON
+          - MELLOMLAGRET
+          - MOTTATT_KRIPOS
+          - SENDT_FORSVARET
+          - ENDELIG_DESTRUERT
+          - SENDT_FRA_POLITI
+        pakker:
+          type: array
+          items:
+            $ref: "#/components/schemas/Pakke"
+      required:
+      - avsender
+      - forseglet
+      - id
+      - lokasjon
+      - mottaker
+      - pakker
+      - status
+    PallUnderKonstruksjon:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pall:
+            $ref: "#/components/schemas/Pall"
+      required:
+      - pall
+      - type
+    ReferansesamlingEntry:
+      type: object
+      properties:
+        id:
+          type: string
+        hyllebeskrivelse:
+          type: string
+        samlingskode:
+          type: string
+        tilleggsinformasjon:
+          type: array
+          items:
+            type: string
+            enum:
+            - IKKE_PROVESKYT
+            - DEAKTIVERT
+        pakke:
+          $ref: "#/components/schemas/Pakke"
+      required:
+      - id
+      - pakke
+      - tilleggsinformasjon
+    RegistrerPakke:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakke:
+            $ref: "#/components/schemas/Pakke"
+      description: Registrering av ny pakke fra politikontor
+      required:
+      - pakke
+      - type
+    SendForsvaret:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+      required:
+      - pallId
+      - type
+    SendPall:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pallId:
+            type: string
+          avsender:
+            type: string
+          mottaker:
+            type: string
+      required:
+      - avsender
+      - mottaker
+      - pallId
+      - type
+    TilbakeleverPakke:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakkeId:
+            type: string
+          besluttetAv:
+            type: string
+      description: Lever tilbake pakke til registrert eier
+      required:
+      - besluttetAv
+      - pakkeId
+      - type
+    Utlaan:
+      type: object
+      properties:
+        id:
+          type: string
+        tilHvem:
+          type: string
+        kvittertInnAv:
+          type: string
+        kvittertUtAv:
+          type: string
+        datoUtlaant:
+          type: string
+          format: date
+        datoTil:
+          type: string
+          format: date
+        pakke:
+          $ref: "#/components/schemas/Pakke"
+      required:
+      - id
+      - pakke
+      - tilHvem
+    KriposError:
+      type: object
+      properties:
+        field:
+          type: string
+        errorType:
+          type: string
+          enum:
+          - ERROR_INVALID_ID
+          - ERROR_ALREADY_EXISTS
+          - PAKKE_NOT_FOUND
+          - PAKKE_CHANGE_NOT_ALLOWED
+          - PALL_NOT_FOUND
+          - PAKKE_KAN_IKKE_FJERNES_FRA_FORSEGLET_PALL
+      required:
+      - errorType
+      - field
+    KriposValidationResult:
+      type: object
+      properties:
+        status:
+          type: string
+          enum:
+          - SUCCESS
+          - WARNING
+          - ERROR
+          - CRITICAL
+        warnings:
+          type: array
+          items:
+            $ref: "#/components/schemas/KriposError"
+        errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/KriposError"
+      required:
+      - errors
+      - status
+      - warnings

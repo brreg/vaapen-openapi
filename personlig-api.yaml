@@ -415,6 +415,7 @@ paths:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+          - AVSLUTTET
       responses:
         "200":
           description: OK
@@ -598,6 +599,11 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    Ammunisjonsalg:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
     Amnestigrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -740,6 +746,7 @@ components:
           - FRYST
           - DELVIS_BENYTTET
           - AVSLAATT
+          - AVSLUTTET
         vedtaksdato:
           type: string
           format: date
@@ -1085,6 +1092,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - registreringsobjektType
       - skytevaapentype
     LoyveForInnehav:
       type: object
@@ -1094,15 +1102,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
         loyveId:
           type: string
         innehaver:
@@ -1128,6 +1127,16 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
       required:
       - innehaver
       - loyveId
@@ -1206,6 +1215,7 @@ components:
             type: array
             items:
               oneOf:
+              - $ref: "#/components/schemas/Ammunisjonsalg"
               - $ref: "#/components/schemas/NaeringAmmunisjon"
               - $ref: "#/components/schemas/NaeringBegrensetHandel"
               - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
@@ -1242,6 +1252,7 @@ components:
           HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
           BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
           BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
+          AMMUNISJON: "#/components/schemas/Ammunisjonsalg"
       properties:
         type:
           type: string
@@ -1283,6 +1294,7 @@ components:
       - innehavsloyve
       - kaliber
       - korrigeringsstatus
+      - registreringsobjektType
       - skytevaapentype
     PolitiInnehaver:
       allOf:
@@ -1351,6 +1363,7 @@ components:
       - kaliber
       - korrigeringsstatus
       - lademekanisme
+      - registreringsobjektType
       - skytevaapentype
     SaerskiltGrunnlag:
       allOf:
@@ -1473,6 +1486,9 @@ components:
           - DESTRUERT
           - DEAKTIVERT
           - UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
         avfyringsmekanisme:
           type: string
           enum:
@@ -1558,6 +1574,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - registreringsobjektType
       - skytevaapentype
     Sportsgrunnlag:
       allOf:
@@ -1685,12 +1702,6 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-        annetFabrikkmerke:
-          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1698,6 +1709,9 @@ components:
           - DESTRUERT
           - DEAKTIVERT
           - UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -1707,6 +1721,12 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        modell:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
         id:
           type: integer
           format: int64
@@ -2267,15 +2287,6 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
         loyveId:
           type: string
         innehaver:
@@ -2301,6 +2312,16 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
       required:
       - innehaver
       - loyveId
@@ -2731,6 +2752,7 @@ components:
             - OVERDEL
             - UNDERDEL
       required:
+      - registreringsobjektType
       - skytevaapentype
     MidlertidigInnforselsloyveBeviskontrollView:
       allOf:
@@ -2774,6 +2796,7 @@ components:
       required:
       - antallLop
       - kaliber
+      - registreringsobjektType
       - skytevaapentype
     PiratbeskyttelsesloyveBeviskontrollView:
       allOf:
@@ -2814,6 +2837,7 @@ components:
       - avfyringsmekanisme
       - kaliber
       - lademekanisme
+      - registreringsobjektType
       - skytevaapentype
     SkytevaapenBeviskontrollView:
       type: object
@@ -2896,6 +2920,7 @@ components:
             - GLIDESTYKKE
             - LAASEBLOKK
       required:
+      - registreringsobjektType
       - skytevaapentype
     UtforrselsloyveBeviskontrollView:
       allOf:
@@ -2944,17 +2969,17 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-        annetFabrikkmerke:
-          type: string
         registreringsobjektType:
           type: string
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        modell:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
       required:
       - registreringsobjektType
       - skytevaapentype
