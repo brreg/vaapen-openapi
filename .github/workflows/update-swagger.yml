@@ -15,12 +15,13 @@ jobs:
           release_tag=$(curl -sL https://api.github.com/repos/swagger-api/swagger-ui/releases/latest | jq -r ".tag_name")
           echo "release_tag=$release_tag" >> $GITHUB_OUTPUT
           current_tag=$(<swagger-ui.version)
+          swagger_url=$(<swagger-ui.url)
           echo "current_tag=$current_tag" >> $GITHUB_OUTPUT
       - name: Update Swagger UI
         if: steps.swagger-ui.outputs.current_tag != steps.swagger-ui.outputs.release_tag
         env:
           RELEASE_TAG: ${{ steps.swagger-ui.outputs.release_tag }}
-          SWAGGER_YAML: new URLSearchParams(window.location.search).get('url') || "blink-hendelse-api.yaml"
+          SWAGGER_YAML: ${{ steps.swagger-ui.outputs.swagger_url }}
         run: |
           # Delete the dist directory and index.html
           rm -fr dist index.html

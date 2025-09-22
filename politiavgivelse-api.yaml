@@ -167,7 +167,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+              oneOf:
+              - $ref: "#/components/schemas/AapnePall"
+              - $ref: "#/components/schemas/EndeligDestruksjon"
+              - $ref: "#/components/schemas/EndrePakkeDistrikt"
+              - $ref: "#/components/schemas/EndrePakkeKripos"
+              - $ref: "#/components/schemas/ForseglePall"
+              - $ref: "#/components/schemas/MottaPall"
+              - $ref: "#/components/schemas/PakkeEndringReferansesamling"
+              - $ref: "#/components/schemas/PakkeEndringUtlaan"
+              - $ref: "#/components/schemas/PakkeFraPall"
+              - $ref: "#/components/schemas/PakkerTilPall"
+              - $ref: "#/components/schemas/PallUnderKonstruksjon"
+              - $ref: "#/components/schemas/RegistrerPakke"
+              - $ref: "#/components/schemas/SendForsvaret"
+              - $ref: "#/components/schemas/SendPall"
+              - $ref: "#/components/schemas/TilbakeleverPakke"
         required: true
       responses:
         "200":
@@ -1908,16 +1923,16 @@ components:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           korrigeringsstatus:
             type: string
             enum:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           serienummer:
             type: string
           fabrikkmerke:
@@ -2187,22 +2202,6 @@ components:
           PALL_AAPNET: "#/components/schemas/AapnePall"
           PALL_SENDT_FORSVARET: "#/components/schemas/SendForsvaret"
           PALL_ENDELIG_DESTRUERT: "#/components/schemas/EndeligDestruksjon"
-      oneOf:
-      - $ref: "#/components/schemas/RegistrerPakke"
-      - $ref: "#/components/schemas/EndrePakkeDistrikt"
-      - $ref: "#/components/schemas/TilbakeleverPakke"
-      - $ref: "#/components/schemas/EndrePakkeKripos"
-      - $ref: "#/components/schemas/PakkeEndringUtlaan"
-      - $ref: "#/components/schemas/PakkeEndringReferansesamling"
-      - $ref: "#/components/schemas/PallUnderKonstruksjon"
-      - $ref: "#/components/schemas/PakkerTilPall"
-      - $ref: "#/components/schemas/PakkeFraPall"
-      - $ref: "#/components/schemas/ForseglePall"
-      - $ref: "#/components/schemas/SendPall"
-      - $ref: "#/components/schemas/MottaPall"
-      - $ref: "#/components/schemas/AapnePall"
-      - $ref: "#/components/schemas/SendForsvaret"
-      - $ref: "#/components/schemas/EndeligDestruksjon"
       properties:
         type:
           type: string

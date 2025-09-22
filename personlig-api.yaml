@@ -1112,6 +1112,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1124,8 +1126,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1679,6 +1679,8 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        modell:
+          type: string
         skytevaapentype:
           type: string
           enum:
@@ -1721,8 +1723,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        modell:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
@@ -2176,16 +2176,16 @@ components:
     EieroverforingsforslagView:
       type: object
       properties:
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         validation:
           $ref: "#/components/schemas/EieroverforingValidationResult"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -2297,6 +2297,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2309,8 +2311,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -2946,6 +2946,8 @@ components:
       properties:
         serienummer:
           type: string
+        modell:
+          type: string
         skytevaapentype:
           type: string
           enum:
@@ -2974,8 +2976,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        modell:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
