@@ -167,22 +167,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-              - $ref: "#/components/schemas/AapnePall"
-              - $ref: "#/components/schemas/EndeligDestruksjon"
-              - $ref: "#/components/schemas/EndrePakkeDistrikt"
-              - $ref: "#/components/schemas/EndrePakkeKripos"
-              - $ref: "#/components/schemas/ForseglePall"
-              - $ref: "#/components/schemas/MottaPall"
-              - $ref: "#/components/schemas/PakkeEndringReferansesamling"
-              - $ref: "#/components/schemas/PakkeEndringUtlaan"
-              - $ref: "#/components/schemas/PakkeFraPall"
-              - $ref: "#/components/schemas/PakkerTilPall"
-              - $ref: "#/components/schemas/PallUnderKonstruksjon"
-              - $ref: "#/components/schemas/RegistrerPakke"
-              - $ref: "#/components/schemas/SendForsvaret"
-              - $ref: "#/components/schemas/SendPall"
-              - $ref: "#/components/schemas/TilbakeleverPakke"
+              $ref: "#/components/schemas/HendelsePoltietsBesittelse"
         required: true
       responses:
         "200":
@@ -1923,16 +1908,16 @@ components:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           korrigeringsstatus:
             type: string
             enum:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           serienummer:
             type: string
           fabrikkmerke:
@@ -2123,6 +2108,7 @@ components:
         properties:
           pallId:
             type: string
+      description: Åpne pall
       required:
       - pallId
       - type
@@ -2177,6 +2163,7 @@ components:
         properties:
           pallId:
             type: string
+      description: Forsegle pall
       required:
       - pallId
       - type
@@ -2200,6 +2187,22 @@ components:
           PALL_AAPNET: "#/components/schemas/AapnePall"
           PALL_SENDT_FORSVARET: "#/components/schemas/SendForsvaret"
           PALL_ENDELIG_DESTRUERT: "#/components/schemas/EndeligDestruksjon"
+      oneOf:
+      - $ref: "#/components/schemas/RegistrerPakke"
+      - $ref: "#/components/schemas/EndrePakkeDistrikt"
+      - $ref: "#/components/schemas/TilbakeleverPakke"
+      - $ref: "#/components/schemas/EndrePakkeKripos"
+      - $ref: "#/components/schemas/PakkeEndringUtlaan"
+      - $ref: "#/components/schemas/PakkeEndringReferansesamling"
+      - $ref: "#/components/schemas/PallUnderKonstruksjon"
+      - $ref: "#/components/schemas/PakkerTilPall"
+      - $ref: "#/components/schemas/PakkeFraPall"
+      - $ref: "#/components/schemas/ForseglePall"
+      - $ref: "#/components/schemas/SendPall"
+      - $ref: "#/components/schemas/MottaPall"
+      - $ref: "#/components/schemas/AapnePall"
+      - $ref: "#/components/schemas/SendForsvaret"
+      - $ref: "#/components/schemas/EndeligDestruksjon"
       properties:
         type:
           type: string
@@ -2249,6 +2252,7 @@ components:
             - SENDT_FORSVARET
             - ENDELIG_DESTRUERT
             - SENDT_FRA_POLITI
+      description: Motta pall
       required:
       - mottaker
       - pallId
@@ -2328,6 +2332,7 @@ components:
             type: string
           referansesamlingEntry:
             $ref: "#/components/schemas/ReferansesamlingEntry"
+      description: Pakke endring til referansesamling - ikke ferdig
       required:
       - pakkeId
       - referansesamlingEntry
@@ -2341,6 +2346,7 @@ components:
             type: string
           utlaan:
             $ref: "#/components/schemas/Utlaan"
+      description: Pakke endring til utlån - ikke ferdig
       required:
       - pakkeId
       - type
@@ -2352,6 +2358,7 @@ components:
         properties:
           pakkeId:
             type: string
+      description: Pakke fra pall
       required:
       - pakkeId
       - type
@@ -2366,6 +2373,7 @@ components:
             type: array
             items:
               type: string
+      description: Pakker til pall
       required:
       - pakkeIdEr
       - pallId
@@ -2411,6 +2419,7 @@ components:
         properties:
           pall:
             $ref: "#/components/schemas/Pall"
+      description: Konstruer pall
       required:
       - pall
       - type
@@ -2454,6 +2463,7 @@ components:
         properties:
           pallId:
             type: string
+      description: Send forsvaret (krever ikke mottak)
       required:
       - pallId
       - type
@@ -2468,6 +2478,7 @@ components:
             type: string
           mottaker:
             type: string
+      description: Send pall
       required:
       - avsender
       - mottaker

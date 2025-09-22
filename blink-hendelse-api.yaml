@@ -181,22 +181,7 @@ paths:
         content:
           application/json:
             schema:
-              oneOf:
-              - $ref: "#/components/schemas/AapnePall"
-              - $ref: "#/components/schemas/EndeligDestruksjon"
-              - $ref: "#/components/schemas/EndrePakkeDistrikt"
-              - $ref: "#/components/schemas/EndrePakkeKripos"
-              - $ref: "#/components/schemas/ForseglePall"
-              - $ref: "#/components/schemas/MottaPall"
-              - $ref: "#/components/schemas/PakkeEndringReferansesamling"
-              - $ref: "#/components/schemas/PakkeEndringUtlaan"
-              - $ref: "#/components/schemas/PakkeFraPall"
-              - $ref: "#/components/schemas/PakkerTilPall"
-              - $ref: "#/components/schemas/PallUnderKonstruksjon"
-              - $ref: "#/components/schemas/RegistrerPakke"
-              - $ref: "#/components/schemas/SendForsvaret"
-              - $ref: "#/components/schemas/SendPall"
-              - $ref: "#/components/schemas/TilbakeleverPakke"
+              $ref: "#/components/schemas/HendelsePoltietsBesittelse"
         required: true
       responses:
         "200":
@@ -575,6 +560,8 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
+        saksreferanse:
+          type: string
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -595,21 +582,6 @@ components:
           - HOYKAPASITETSMAGASIN
         isActiveAndNotExpired:
           type: boolean
-        saksreferanse:
-          type: string
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - NAERINGSLOYVE
-          - ANNET_LOYVE
         status:
           type: string
           enum:
@@ -632,6 +604,19 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - NAERINGSLOYVE
+          - ANNET_LOYVE
       required:
       - annetloyveLoyvetype
       - innehaver
@@ -1562,19 +1547,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - NAERINGSLOYVE
-          - ANNET_LOYVE
         status:
           type: string
           enum:
@@ -1597,6 +1569,19 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - NAERINGSLOYVE
+          - ANNET_LOYVE
       required:
       - innehaver
       - loyveId
@@ -1803,13 +1788,32 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
+        vaapendeltype:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+        skytevaapentype:
+          type: string
+          enum:
+          - RIFLE
+          - HAGLE
+          - KOMBINASJONSVAAPEN
+          - PISTOL
+          - REVOLVER
+          - MASKINGEVAER
+          - MASKINPISTOL
+          - SALUTT
+          - KNALL
+          - LUFTFJAER
+          - MUSKETT
+          - ARMBROST
+          - UKJENT
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
-          type: string
-        serienummer:
-          type: string
-        annetFabrikkmerke:
           type: string
         vaapenstatus:
           type: string
@@ -1836,29 +1840,10 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        vaapendeltype:
+        serienummer:
           type: string
-          enum:
-          - PIPE
-          - LAASKASSE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-        skytevaapentype:
+        annetFabrikkmerke:
           type: string
-          enum:
-          - RIFLE
-          - HAGLE
-          - KOMBINASJONSVAAPEN
-          - PISTOL
-          - REVOLVER
-          - MASKINGEVAER
-          - MASKINPISTOL
-          - SALUTT
-          - KNALL
-          - LUFTFJAER
-          - MUSKETT
-          - ARMBROST
-          - UKJENT
         id:
           type: integer
           format: int64
@@ -1988,19 +1973,6 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - NAERINGSLOYVE
-          - ANNET_LOYVE
         status:
           type: string
           enum:
@@ -2023,6 +1995,19 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - NAERINGSLOYVE
+          - ANNET_LOYVE
       required:
       - innehaver
       - loyveId
@@ -2094,6 +2079,7 @@ components:
         properties:
           pallId:
             type: string
+      description: Åpne pall
       required:
       - pallId
       - type
@@ -2148,6 +2134,7 @@ components:
         properties:
           pallId:
             type: string
+      description: Forsegle pall
       required:
       - pallId
       - type
@@ -2171,6 +2158,22 @@ components:
           PALL_AAPNET: "#/components/schemas/AapnePall"
           PALL_SENDT_FORSVARET: "#/components/schemas/SendForsvaret"
           PALL_ENDELIG_DESTRUERT: "#/components/schemas/EndeligDestruksjon"
+      oneOf:
+      - $ref: "#/components/schemas/RegistrerPakke"
+      - $ref: "#/components/schemas/EndrePakkeDistrikt"
+      - $ref: "#/components/schemas/TilbakeleverPakke"
+      - $ref: "#/components/schemas/EndrePakkeKripos"
+      - $ref: "#/components/schemas/PakkeEndringUtlaan"
+      - $ref: "#/components/schemas/PakkeEndringReferansesamling"
+      - $ref: "#/components/schemas/PallUnderKonstruksjon"
+      - $ref: "#/components/schemas/PakkerTilPall"
+      - $ref: "#/components/schemas/PakkeFraPall"
+      - $ref: "#/components/schemas/ForseglePall"
+      - $ref: "#/components/schemas/SendPall"
+      - $ref: "#/components/schemas/MottaPall"
+      - $ref: "#/components/schemas/AapnePall"
+      - $ref: "#/components/schemas/SendForsvaret"
+      - $ref: "#/components/schemas/EndeligDestruksjon"
       properties:
         type:
           type: string
@@ -2220,6 +2223,7 @@ components:
             - SENDT_FORSVARET
             - ENDELIG_DESTRUERT
             - SENDT_FRA_POLITI
+      description: Motta pall
       required:
       - mottaker
       - pallId
@@ -2299,6 +2303,7 @@ components:
             type: string
           referansesamlingEntry:
             $ref: "#/components/schemas/ReferansesamlingEntry"
+      description: Pakke endring til referansesamling - ikke ferdig
       required:
       - pakkeId
       - referansesamlingEntry
@@ -2312,6 +2317,7 @@ components:
             type: string
           utlaan:
             $ref: "#/components/schemas/Utlaan"
+      description: Pakke endring til utlån - ikke ferdig
       required:
       - pakkeId
       - type
@@ -2323,6 +2329,7 @@ components:
         properties:
           pakkeId:
             type: string
+      description: Pakke fra pall
       required:
       - pakkeId
       - type
@@ -2337,6 +2344,7 @@ components:
             type: array
             items:
               type: string
+      description: Pakker til pall
       required:
       - pakkeIdEr
       - pallId
@@ -2382,6 +2390,7 @@ components:
         properties:
           pall:
             $ref: "#/components/schemas/Pall"
+      description: Konstruer pall
       required:
       - pall
       - type
@@ -2425,6 +2434,7 @@ components:
         properties:
           pallId:
             type: string
+      description: Send forsvaret (krever ikke mottak)
       required:
       - pallId
       - type
@@ -2439,6 +2449,7 @@ components:
             type: string
           mottaker:
             type: string
+      description: Send pall
       required:
       - avsender
       - mottaker
