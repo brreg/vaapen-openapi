@@ -364,20 +364,18 @@ paths:
         required: true
         schema:
           type: string
-      - name: serienummer
+      - name: pageRequest
         in: query
-        required: false
+        required: true
         schema:
-          type: string
+          $ref: "#/components/schemas/PageRequest"
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Skytevaapen"
+                $ref: "#/components/schemas/PageSkytevaapen"
   /api/virksomhet/naering/vaapendeler:
     get:
       tags:
@@ -389,24 +387,18 @@ paths:
         required: true
         schema:
           type: string
-      - name: serienummer
+      - name: pageRequest
         in: query
-        required: false
+        required: true
         schema:
-          type: string
+          $ref: "#/components/schemas/PageRequest"
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  oneOf:
-                  - $ref: "#/components/schemas/Laaskasse"
-                  - $ref: "#/components/schemas/Pipe"
-                  - $ref: "#/components/schemas/Revolvertonne"
-                  - $ref: "#/components/schemas/Sluttstykke"
+                $ref: "#/components/schemas/PageVaapendel"
   /api/virksomhet/naering/vaapendeler/{id}:
     get:
       tags:
@@ -2219,6 +2211,93 @@ components:
       - innehaver
       - loyveId
       - typeNaeringsvirksomhet
+    PageRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        filters:
+          type: object
+          additionalProperties:
+            type: string
+        offset:
+          type: integer
+          format: int32
+      required:
+      - filters
+      - offset
+      - page
+      - size
+    PageSkytevaapen:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: "#/components/schemas/Skytevaapen"
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        isFirst:
+          type: boolean
+        isLast:
+          type: boolean
+      required:
+      - content
+      - isFirst
+      - isLast
+      - pageNumber
+      - pageSize
+      - totalElements
+      - totalPages
+    PageVaapendel:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+        pageNumber:
+          type: integer
+          format: int32
+        pageSize:
+          type: integer
+          format: int32
+        totalElements:
+          type: integer
+          format: int64
+        totalPages:
+          type: integer
+          format: int64
+        isFirst:
+          type: boolean
+        isLast:
+          type: boolean
+      required:
+      - content
+      - isFirst
+      - isLast
+      - pageNumber
+      - pageSize
+      - totalElements
+      - totalPages
     ExistingDigitalEier:
       type: object
       discriminator:
@@ -2464,11 +2543,11 @@ components:
       discriminator:
         propertyName: type
       properties:
-        qrKode:
-          type: string
         beviseierId:
           type: integer
           format: int64
+        qrKode:
+          type: string
         gyldigTil:
           type: string
           format: date
