@@ -1923,16 +1923,16 @@ components:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           korrigeringsstatus:
             type: string
             enum:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           serienummer:
             type: string
           fabrikkmerke:

@@ -1816,13 +1816,13 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
         serienummer:
           type: string
         annetFabrikkmerke:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
           type: string
         vaapendeltype:
           type: string
