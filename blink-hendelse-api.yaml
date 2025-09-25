@@ -490,6 +490,25 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    AmmunisjonsLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          modell:
+            type: string
+          kaliber:
+            $ref: "#/components/schemas/Kaliber"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for ammunisjon i import
+      required:
+      - antall
+      - kaliber
+      - type
     Ammunisjonsalg:
       allOf:
       - $ref: "#/components/schemas/Naeringstype"
@@ -574,6 +593,8 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
+        isActiveAndNotExpired:
+          type: boolean
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -592,8 +613,6 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
-        isActiveAndNotExpired:
-          type: boolean
         saksreferanse:
           type: string
         loyveId:
@@ -1027,6 +1046,23 @@ components:
       - saksreferanse
       - status
       - vedtaksdato
+    ImportLinje:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          SKYTEVAAPEN: "#/components/schemas/VaapenLinje"
+          VAAPENDEL: "#/components/schemas/VaapendelLinje"
+          AMMUNISJON: "#/components/schemas/AmmunisjonsLinje"
+      properties:
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          - AMMUNISJON
+      required:
+      - type
     Isbjornbeskyttelsesgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1112,6 +1148,21 @@ components:
       - saksreferanse
       - status
       - vedtaksdato
+    Leverandor:
+      type: object
+      properties:
+        firmanavn:
+          type: string
+        adresse:
+          type: string
+        postnummer:
+          type: string
+        sted:
+          type: string
+        land:
+          type: string
+        telefon:
+          type: string
     MidlertidigInnforselsloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -1193,19 +1244,30 @@ components:
             $ref: "#/components/schemas/EierVirksomhet"
           naeringsloyveid:
             type: string
-          importBeskrivelse:
-            type: string
+          leverandor:
+            $ref: "#/components/schemas/Leverandor"
+          importlinjer:
+            type: array
+            items:
+              oneOf:
+              - $ref: "#/components/schemas/AmmunisjonsLinje"
+              - $ref: "#/components/schemas/VaapenLinje"
+              - $ref: "#/components/schemas/VaapendelLinje"
+          totalVerdi:
+            $ref: "#/components/schemas/Verdi"
       description: Løyve for innførsel av våpen for næringsdrivende virksomhet
       required:
       - annetloyveLoyvetype
-      - importBeskrivelse
+      - importlinjer
       - innehaver
       - isActiveAndNotExpired
+      - leverandor
       - loyveId
       - loyvetype
       - naeringsloyveid
       - saksreferanse
       - status
+      - totalVerdi
       - vedtaksdato
     Naeringsloyve:
       allOf:
@@ -1459,6 +1521,124 @@ components:
       - status
       - utforselBeskrivelse
       - vedtaksdato
+    VaapenLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          vaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          modell:
+            type: string
+          funksjonsmaate:
+            type: string
+            enum:
+            - ENKELTSKUDD
+            - HALVAUTOMATISK
+            - HELAUTOMATISK
+            - MANUELL_OMLADING
+            - UKJENT
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for skytevåpen i import
+      required:
+      - antall
+      - fabrikkmerke
+      - funksjonsmaate
+      - kaliber
+      - modell
+      - type
+      - vaapentype
+    VaapendelLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          vaapendeltype:
+            type: string
+            enum:
+            - PIPE
+            - LAASKASSE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          modell:
+            type: string
+          funksjonsmaate:
+            type: string
+            enum:
+            - ENKELTSKUDD
+            - HALVAUTOMATISK
+            - HELAUTOMATISK
+            - MANUELL_OMLADING
+            - UKJENT
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for våpendeler i import
+      required:
+      - antall
+      - fabrikkmerke
+      - kaliber
+      - modell
+      - type
+      - vaapendeltype
+    Verdi:
+      type: object
+      description: Verdi i Valuta
+      properties:
+        sum:
+          type: number
+          description: Beløp i gitt valuta
+          example: 199.99
+        valuta:
+          type: object
+          default: NOK
+          description: Valutakode i ISO 4217 format
+          example: NOK
+          properties:
+            currencyCode:
+              type: string
+            displayName:
+              type: string
+            symbol:
+              type: string
+            defaultFractionDigits:
+              type: integer
+              format: int32
+            numericCode:
+              type: integer
+              format: int32
+            numericCodeAsString:
+              type: string
+      required:
+      - sum
     KorreksjonsId:
       type: object
       properties:
@@ -1816,13 +1996,13 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        serienummer:
-          type: string
-        annetFabrikkmerke:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
+          type: string
+        serienummer:
+          type: string
+        annetFabrikkmerke:
           type: string
         vaapendeltype:
           type: string
