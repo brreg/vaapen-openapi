@@ -368,7 +368,7 @@ paths:
         in: query
         required: true
         schema:
-          $ref: "#/components/schemas/PageRequest"
+          $ref: "#/components/schemas/PageRequestVaapen"
       responses:
         "200":
           description: OK
@@ -391,7 +391,7 @@ paths:
         in: query
         required: true
         schema:
-          $ref: "#/components/schemas/PageRequest"
+          $ref: "#/components/schemas/PageRequestVaapendel"
       responses:
         "200":
           description: OK
@@ -1222,6 +1222,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1234,8 +1236,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -2211,7 +2211,7 @@ components:
       - innehaver
       - loyveId
       - typeNaeringsvirksomhet
-    PageRequest:
+    PageRequestVaapen:
       type: object
       properties:
         page:
@@ -2220,16 +2220,30 @@ components:
         size:
           type: integer
           format: int32
-        filters:
-          type: object
-          additionalProperties:
-            type: string
-        offset:
+        serienummer:
+          type: string
+        skytevaapentype:
+          type: string
+          enum:
+          - RIFLE
+          - HAGLE
+          - KOMBINASJONSVAAPEN
+          - PISTOL
+          - REVOLVER
+          - MASKINGEVAER
+          - MASKINPISTOL
+          - SALUTT
+          - KNALL
+          - LUFTFJAER
+          - MUSKETT
+          - ARMBROST
+          - UKJENT
+        merke:
           type: integer
           format: int32
+        modell:
+          type: string
       required:
-      - filters
-      - offset
       - page
       - size
     PageSkytevaapen:
@@ -2263,6 +2277,38 @@ components:
       - pageSize
       - totalElements
       - totalPages
+    PageRequestVaapendel:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+        vaapenkobling:
+          type: string
+          enum:
+          - ALLE
+          - LOSE
+        serienummer:
+          type: string
+        vaapendeltype:
+          type: string
+          enum:
+          - PIPE
+          - LAASKASSE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+        merke:
+          type: integer
+          format: int32
+        modell:
+          type: string
+      required:
+      - page
+      - size
+      - vaapenkobling
     PageVaapendel:
       type: object
       properties:
@@ -2465,6 +2511,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2477,8 +2525,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
