@@ -593,8 +593,6 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
-        isActiveAndNotExpired:
-          type: boolean
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -613,6 +611,8 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
+        isActiveAndNotExpired:
+          type: boolean
         saksreferanse:
           type: string
         loyveId:
@@ -1971,6 +1971,10 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1996,10 +2000,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
         serienummer:
           type: string
         annetFabrikkmerke:

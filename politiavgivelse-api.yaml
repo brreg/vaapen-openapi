@@ -1915,6 +1915,10 @@ components:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
             type: string
           modell:
@@ -1925,10 +1929,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
