@@ -881,6 +881,7 @@ components:
           - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
           - $ref: "#/components/schemas/UkjentGrunnlag"
           - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+          - $ref: "#/components/schemas/Vaapendelgrunnlag"
           - $ref: "#/components/schemas/AndreBehovsgrunnlag"
           - $ref: "#/components/schemas/SaerskiltGrunnlag"
           - $ref: "#/components/schemas/UkjentGrunnlag"
@@ -992,6 +993,7 @@ components:
           AMNESTI: "#/components/schemas/Amnestigrunnlag"
           SAERSKILT_TILFELLE: "#/components/schemas/SaerskiltGrunnlag"
           ANDRE_BEHOV: "#/components/schemas/AndreBehovsgrunnlag"
+          VAAPENDEL: "#/components/schemas/Vaapendelgrunnlag"
           UTRYDDELSE_AV_SKADEDYR: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
           SLAKTING: "#/components/schemas/Slaktegrunnlag"
           UKJENT: "#/components/schemas/UkjentGrunnlag"
@@ -1018,6 +1020,7 @@ components:
           - AMNESTI
           - SAERSKILT_TILFELLE
           - ANDRE_BEHOV
+          - VAAPENDEL
           - UTRYDDELSE_AV_SKADEDYR
           - SLAKTING
           - UKJENT
@@ -1065,6 +1068,7 @@ components:
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
@@ -1173,8 +1177,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1187,6 +1189,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1796,6 +1800,11 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    Vaapendelgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Vaapendelmelding:
       allOf:
       - $ref: "#/components/schemas/Korreksjonsmelding"
@@ -2375,8 +2384,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2389,6 +2396,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -2867,6 +2876,7 @@ components:
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
@@ -3367,8 +3377,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -3381,6 +3389,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -3535,6 +3545,7 @@ components:
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"

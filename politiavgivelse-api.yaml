@@ -1230,6 +1230,7 @@ components:
           - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
           - $ref: "#/components/schemas/UkjentGrunnlag"
           - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+          - $ref: "#/components/schemas/Vaapendelgrunnlag"
           - $ref: "#/components/schemas/AndreBehovsgrunnlag"
           - $ref: "#/components/schemas/SaerskiltGrunnlag"
           - $ref: "#/components/schemas/UkjentGrunnlag"
@@ -1341,6 +1342,7 @@ components:
           AMNESTI: "#/components/schemas/Amnestigrunnlag"
           SAERSKILT_TILFELLE: "#/components/schemas/SaerskiltGrunnlag"
           ANDRE_BEHOV: "#/components/schemas/AndreBehovsgrunnlag"
+          VAAPENDEL: "#/components/schemas/Vaapendelgrunnlag"
           UTRYDDELSE_AV_SKADEDYR: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
           SLAKTING: "#/components/schemas/Slaktegrunnlag"
           UKJENT: "#/components/schemas/UkjentGrunnlag"
@@ -1367,6 +1369,7 @@ components:
           - AMNESTI
           - SAERSKILT_TILFELLE
           - ANDRE_BEHOV
+          - VAAPENDEL
           - UTRYDDELSE_AV_SKADEDYR
           - SLAKTING
           - UKJENT
@@ -1414,6 +1417,7 @@ components:
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
@@ -1915,20 +1919,20 @@ components:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           korrigeringsstatus:
             type: string
             enum:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -1942,6 +1946,11 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    Vaapendelgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     SearchResponseVaapendel:
       type: object
       properties:
@@ -2904,6 +2913,7 @@ components:
             - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
