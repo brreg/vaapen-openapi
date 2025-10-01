@@ -33,11 +33,9 @@ paths:
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapenskap"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/vaapenrom/person:
     post:
       tags:
@@ -62,11 +60,9 @@ paths:
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapenrom"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/vaapendel/search:
     post:
       tags:
@@ -85,15 +81,13 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Vaapendel"
+                $ref: "#/components/schemas/SearchResponseVaapendel"
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: "#/components/schemas/SearchResponseVaapendel"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/vaapen/search:
     post:
       tags:
@@ -112,15 +106,13 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Skytevaapen"
+                $ref: "#/components/schemas/SearchResponseSkytevaapen"
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: "#/components/schemas/SearchResponseSkytevaapen"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/ervervsloyve/search:
     post:
       tags:
@@ -139,15 +131,13 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Ervervsloyve"
+                $ref: "#/components/schemas/SearchResponseErvervsloyve"
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                $ref: "#/components/schemas/SearchResponseErvervsloyve"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/besittelse/valider/:
     post:
       tags:
@@ -178,7 +168,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/KriposValidationResult"
   /andreloyver/virksomhet/:
@@ -201,14 +191,6 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AnnetLoyve"
-        "400":
-          description: Bad request
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
                   oneOf:
                   - $ref: "#/components/schemas/Ammunisjonskjoployve"
                   - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
@@ -223,6 +205,12 @@ paths:
                   - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
                   - $ref: "#/components/schemas/Privatimportloyve"
                   - $ref: "#/components/schemas/Utforrselsloyve"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /andreloyver/person/:
     post:
       tags:
@@ -243,14 +231,6 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/AnnetLoyve"
-        "400":
-          description: Bad request
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
                   oneOf:
                   - $ref: "#/components/schemas/Ammunisjonskjoployve"
                   - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
@@ -265,6 +245,12 @@ paths:
                   - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
                   - $ref: "#/components/schemas/Privatimportloyve"
                   - $ref: "#/components/schemas/Utforrselsloyve"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/samleromraade:
     get:
       tags:
@@ -280,7 +266,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -300,29 +286,11 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Naeringsloyve"
-  /avgivelse/korreksjon:
-    get:
-      tags:
-      - korreksjons-controller
-      operationId: getNextKorreksjonsForslag
-      responses:
-        "200":
-          description: Get next available proposal. See Schemas for details on proposalId.
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/Proposal"
-        "404":
-          description: No available proposal at this time.
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/Proposal"
   /avgivelse/korreksjon/vaapendel:
     get:
       tags:
@@ -333,13 +301,13 @@ paths:
           description: Get next available Vaapendel proposal. See Schemas for details
             on proposalId.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/VaapendelProposal"
         "404":
           description: No available proposal at this time.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/VaapendelProposal"
   /avgivelse/korreksjon/skytevaapen:
@@ -352,13 +320,13 @@ paths:
           description: Get next available Skytevaapen proposal. See Schemas for details
             on proposalId.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/SkyteVaapenProposal"
         "404":
           description: No available proposal at this time.
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/SkyteVaapenProposal"
   /avgivelse/korreksjon/avbrutt/ids:
@@ -370,12 +338,30 @@ paths:
         "200":
           description: List of cancelled korreksjon IDs
           content:
-            '*/*':
+            text/plain:
               schema:
                 type: array
                 items:
                   type: string
                   format: uuid
+  /avgivelse/korreksjon:
+    get:
+      tags:
+      - korreksjons-controller
+      operationId: getNextKorreksjonsForslag
+      responses:
+        "200":
+          description: Get next available proposal. See Schemas for details on proposalId.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proposal"
+        "404":
+          description: No available proposal at this time.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Proposal"
   /avgivelse/history/vaapenanddel:
     get:
       tags:
@@ -429,15 +415,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
+                  $ref: "#/components/schemas/HistoryRowRegistreringsobjektObject"
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/HistoryRowRegistreringsobjektObject"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/history/loyve:
     get:
       tags:
@@ -491,15 +475,13 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/HistoryRowLoyve"
+                  $ref: "#/components/schemas/HistoryRowLoyveObject"
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/HistoryRowLoyveObject"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/history/endringslogg/vaapendel:
     get:
       tags:
@@ -543,11 +525,9 @@ paths:
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/EieroverforingsloggVaapendel"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/history/endringslogg/skytevaapen:
     get:
       tags:
@@ -591,11 +571,9 @@ paths:
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/EieroverforingsloggVaapen"
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/history/all:
     get:
       tags:
@@ -649,17 +627,15 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/HistoryRow"
-        "400":
-          description: Bad request
-          content:
-            '*/*':
-              schema:
-                type: array
-                items:
                   oneOf:
                   - $ref: "#/components/schemas/HistoryRowLoyve"
                   - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/besittelse/paller/{pallId}:
     get:
       tags:
@@ -675,7 +651,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/Pall"
   /avgivelse/besittelse/paller/pakke/{pakkeId}:
@@ -693,7 +669,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/Pall"
   /avgivelse/besittelse/pakker/{pakkeId}:
@@ -711,7 +687,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 $ref: "#/components/schemas/Pakke"
   /avgivelse/besittelse/besittelse/paller:
@@ -734,7 +710,7 @@ paths:
         "200":
           description: OK
           content:
-            '*/*':
+            application/json:
               schema:
                 type: array
                 items:
@@ -755,7 +731,7 @@ paths:
         "200":
           description: AnnetLoyve
           content:
-            '*/*':
+            application/json:
               schema:
                 oneOf:
                 - $ref: "#/components/schemas/Ammunisjonskjoployve"
@@ -774,22 +750,9 @@ paths:
         "400":
           description: Bad request
           content:
-            '*/*':
+            application/json:
               schema:
-                oneOf:
-                - $ref: "#/components/schemas/Ammunisjonskjoployve"
-                - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
-                - $ref: "#/components/schemas/GodkjentSamlerloyve"
-                - $ref: "#/components/schemas/GodkjentSkytebaneloyve"
-                - $ref: "#/components/schemas/GodkjentSkytterforeningsloyve"
-                - $ref: "#/components/schemas/Hoykapasitetsmagasinloyve"
-                - $ref: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
-                - $ref: "#/components/schemas/Laaneloyve"
-                - $ref: "#/components/schemas/MidlertidigInnforselsloyve"
-                - $ref: "#/components/schemas/Naeringsimportloyve"
-                - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
-                - $ref: "#/components/schemas/Privatimportloyve"
-                - $ref: "#/components/schemas/Utforrselsloyve"
+                $ref: "#/components/schemas/ErrorResponse"
 components:
   schemas:
     RequestPerson:
@@ -799,6 +762,26 @@ components:
           type: string
       required:
       - personidentifikator
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
+        timestamp:
+          type: string
+          format: date-time
+      required:
+      - code
+      - details
+      - message
+      - timestamp
     DigitalEier:
       allOf:
       - $ref: "#/components/schemas/Eier"
@@ -837,65 +820,71 @@ components:
       required:
       - eiertype
     EierPerson:
-      type: object
+      allOf:
+      - $ref: "#/components/schemas/DigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 5678
+          personidentifikator:
+            type: string
+            description: Fødselsnummer eller D-nummer
+            example: 12345678901
+          navn:
+            type: string
+            description: Navn på fysisk person - kun visning ved behov
+            example: Kari Ole Normann
+          foedselsdato:
+            type: string
+            format: date
+            description: Fødselsdato - kun visning ved behov
+            example: 1991-01-01
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: PERSON
+      - $ref: "#/components/schemas/Eier"
       description: Representerer en person
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unik identifikator for eieren
-          example: 5678
-        personidentifikator:
-          type: string
-          description: Fødselsnummer eller D-nummer
-          example: 12345678901
-        navn:
-          type: string
-          description: Navn på fysisk person - kun visning ved behov
-          example: Kari Ole Normann
-        foedselsdato:
-          type: string
-          format: date
-          description: Fødselsdato - kun visning ved behov
-          example: 1991-01-01
-        eiertype:
-          type: string
-          description: Type eier
-          enum:
-          - PERSON
-          - VIRKSOMHET
-          - UKJENT_INNEHAVER
-          - POLITI
-          example: PERSON
       required:
       - eiertype
       - personidentifikator
     EierVirksomhet:
-      type: object
+      allOf:
+      - $ref: "#/components/schemas/DigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 1234
+          organisasjonsnummer:
+            type: string
+            description: Organisasjonsnummer
+            example: 123456789
+          navn:
+            type: string
+            description: Navn på virksomhet - kun visning ved behov
+            example: PANGPANG AS
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: VIRKSOMHET
+      - $ref: "#/components/schemas/Eier"
       description: Representerer en virksomhet
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unik identifikator for eieren
-          example: 1234
-        organisasjonsnummer:
-          type: string
-          description: Organisasjonsnummer
-          example: 123456789
-        navn:
-          type: string
-          description: Navn på virksomhet - kun visning ved behov
-          example: PANGPANG AS
-        eiertype:
-          type: string
-          description: Type eier
-          enum:
-          - PERSON
-          - VIRKSOMHET
-          - UKJENT_INNEHAVER
-          - POLITI
-          example: VIRKSOMHET
       required:
       - eiertype
       - organisasjonsnummer
@@ -1825,7 +1814,7 @@ components:
       - type
     Naeringsloyve:
       allOf:
-      - $ref: "#/components/schemas/LoyveForErverv"
+      - $ref: "#/components/schemas/LoyveForInnehav"
       - type: object
         properties:
           innehaver:
@@ -1855,7 +1844,7 @@ components:
             type: string
           saksreferanse:
             type: string
-      - $ref: "#/components/schemas/LoyveForInnehav"
+      - $ref: "#/components/schemas/LoyveForErverv"
       - $ref: "#/components/schemas/Loyve"
       description: Løyve for næringsdrivende virksomhet
       required:
@@ -2003,6 +1992,29 @@ components:
       - id
       - innehaver
       - navn
+    SearchResponseVaapendel:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+        totalResults:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+      required:
+      - result
+      - totalResults
     Skadedyrsutryddelsesgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2121,13 +2133,6 @@ components:
             - MUSKETT
             - ARMBROST
             - UKJENT
-          vaapendeltype:
-            type: string
-            enum:
-            - PIPE
-            - LAASKASSE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
           vaapenstatus:
             type: string
             enum:
@@ -2156,6 +2161,13 @@ components:
             type: string
           modell:
             type: string
+          vaapendeltype:
+            type: string
+            enum:
+            - PIPE
+            - LAASKASSE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -2174,17 +2186,13 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    SearchResponseVaapendel:
+    SearchResponseSkytevaapen:
       type: object
       properties:
         result:
           type: array
           items:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
+            $ref: "#/components/schemas/Skytevaapen"
         totalResults:
           type: integer
           format: int32
@@ -2294,25 +2302,6 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
-    SearchResponseSkytevaapen:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: "#/components/schemas/Skytevaapen"
-        totalResults:
-          type: integer
-          format: int32
-        limit:
-          type: integer
-          format: int32
-        offset:
-          type: integer
-          format: int32
-      required:
-      - result
-      - totalResults
     LoyveSearchFilter:
       type: object
       discriminator:
@@ -3393,6 +3382,59 @@ components:
               type: string
       required:
       - sum
+    Submitter:
+      type: object
+      properties:
+        personalId:
+          type: string
+      required:
+      - personalId
+    VaapendelProposal:
+      allOf:
+      - $ref: "#/components/schemas/Proposal"
+      - type: object
+        properties:
+          proposalId:
+            type: string
+            example: UUID
+          previousData:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+          proposedData:
+            oneOf:
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+      description: Våpendel-forslag
+      required:
+      - previousData
+      - proposalId
+      - proposalType
+      - proposedData
+      - submittedBy
+    SkyteVaapenProposal:
+      allOf:
+      - $ref: "#/components/schemas/Proposal"
+      - type: object
+        properties:
+          proposalId:
+            type: string
+            example: UUID
+          previousData:
+            $ref: "#/components/schemas/Skytevaapen"
+          proposedData:
+            $ref: "#/components/schemas/Skytevaapen"
+      description: Skytevåpen-forslag
+      required:
+      - previousData
+      - proposalId
+      - proposalType
+      - proposedData
+      - submittedBy
     Proposal:
       type: object
       discriminator:
@@ -3453,82 +3495,6 @@ components:
           format: int64
       required:
       - registreringsobjektType
-    SkyteVaapenProposal:
-      allOf:
-      - $ref: "#/components/schemas/Proposal"
-      - type: object
-        properties:
-          proposalId:
-            type: string
-            example: UUID
-          previousData:
-            $ref: "#/components/schemas/Skytevaapen"
-          proposedData:
-            $ref: "#/components/schemas/Skytevaapen"
-      description: Skytevåpen-forslag
-      required:
-      - previousData
-      - proposalId
-      - proposalType
-      - proposedData
-      - submittedBy
-    Submitter:
-      type: object
-      properties:
-        personalId:
-          type: string
-      required:
-      - personalId
-    VaapendelProposal:
-      allOf:
-      - $ref: "#/components/schemas/Proposal"
-      - type: object
-        properties:
-          proposalId:
-            type: string
-            example: UUID
-          previousData:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
-          proposedData:
-            oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
-      description: Våpendel-forslag
-      required:
-      - previousData
-      - proposalId
-      - proposalType
-      - proposedData
-      - submittedBy
-    HistoryRowRegistreringsobjekt:
-      allOf:
-      - $ref: "#/components/schemas/HistoryRow"
-      - type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-          objekt:
-            oneOf:
-            - $ref: "#/components/schemas/Skytevaapen"
-            - $ref: "#/components/schemas/Vaapendel"
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
-      required:
-      - changeType
-      - endringsaarsak
-      - historyId
-      - id
-      - objekt
-      - saksreferanse
     HistoryRowRegistreringsobjektObject:
       type: object
       properties:
@@ -3564,110 +3530,6 @@ components:
       - id
       - objekt
       - saksreferanse
-    HistoryRowLoyve:
-      allOf:
-      - $ref: "#/components/schemas/HistoryRow"
-      - type: object
-        properties:
-          id:
-            type: string
-          objekt:
-            oneOf:
-            - $ref: "#/components/schemas/AnnetLoyve"
-            - $ref: "#/components/schemas/Ervervsloyve"
-            - $ref: "#/components/schemas/Innehavsloyve"
-            - $ref: "#/components/schemas/LoyveForErverv"
-            - $ref: "#/components/schemas/LoyveForInnehav"
-            - $ref: "#/components/schemas/Naeringsloyve"
-            - $ref: "#/components/schemas/Ammunisjonskjoployve"
-            - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
-            - $ref: "#/components/schemas/GodkjentSamlerloyve"
-            - $ref: "#/components/schemas/GodkjentSkytebaneloyve"
-            - $ref: "#/components/schemas/GodkjentSkytterforeningsloyve"
-            - $ref: "#/components/schemas/Hoykapasitetsmagasinloyve"
-            - $ref: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
-            - $ref: "#/components/schemas/Laaneloyve"
-            - $ref: "#/components/schemas/MidlertidigInnforselsloyve"
-            - $ref: "#/components/schemas/Naeringsimportloyve"
-            - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
-            - $ref: "#/components/schemas/Privatimportloyve"
-            - $ref: "#/components/schemas/Utforrselsloyve"
-            - $ref: "#/components/schemas/Ervervsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-            - $ref: "#/components/schemas/Innehavsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-      required:
-      - changeType
-      - endringsaarsak
-      - historyId
-      - id
-      - objekt
-      - saksreferanse
-    Loyve:
-      type: object
-      discriminator:
-        propertyName: loyvetype
-        mapping:
-          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
-          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
-          INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
-          ANNET_LOYVE: "#/components/schemas/AnnetLoyve"
-      properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/DigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ManuellEier"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - NAERINGSLOYVE
-          - ANNET_LOYVE
-      required:
-      - innehaver
-      - loyveId
-      - loyvetype
-      - status
-      - vedtaksdato
-    LoyveForErverv:
-      allOf:
-      - $ref: "#/components/schemas/Loyve"
-      discriminator:
-        propertyName: loyvetype
-        mapping:
-          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
-          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
-      required:
-      - innehaver
-      - loyveId
-      - loyvetype
-      - status
-      - vedtaksdato
     HistoryRowLoyveObject:
       type: object
       properties:
@@ -3791,6 +3653,11 @@ components:
     HistoryRow:
       type: object
       properties:
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         saksreferanse:
           type: string
         historyId:
@@ -3806,13 +3673,135 @@ components:
           - EIEROVERFORING
           - INNFORING
           - LAGERBEHOLDNING
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
       required:
       - changeType
       - endringsaarsak
       - historyId
       - saksreferanse
+    HistoryRowLoyve:
+      allOf:
+      - $ref: "#/components/schemas/HistoryRow"
+      - type: object
+        properties:
+          id:
+            type: string
+          objekt:
+            oneOf:
+            - $ref: "#/components/schemas/AnnetLoyve"
+            - $ref: "#/components/schemas/Ervervsloyve"
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/LoyveForErverv"
+            - $ref: "#/components/schemas/LoyveForInnehav"
+            - $ref: "#/components/schemas/Naeringsloyve"
+            - $ref: "#/components/schemas/Ammunisjonskjoployve"
+            - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
+            - $ref: "#/components/schemas/GodkjentSamlerloyve"
+            - $ref: "#/components/schemas/GodkjentSkytebaneloyve"
+            - $ref: "#/components/schemas/GodkjentSkytterforeningsloyve"
+            - $ref: "#/components/schemas/Hoykapasitetsmagasinloyve"
+            - $ref: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
+            - $ref: "#/components/schemas/Laaneloyve"
+            - $ref: "#/components/schemas/MidlertidigInnforselsloyve"
+            - $ref: "#/components/schemas/Naeringsimportloyve"
+            - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
+            - $ref: "#/components/schemas/Privatimportloyve"
+            - $ref: "#/components/schemas/Utforrselsloyve"
+            - $ref: "#/components/schemas/Ervervsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
+      required:
+      - changeType
+      - endringsaarsak
+      - historyId
+      - id
+      - objekt
+      - saksreferanse
+    HistoryRowRegistreringsobjekt:
+      allOf:
+      - $ref: "#/components/schemas/HistoryRow"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+          objekt:
+            oneOf:
+            - $ref: "#/components/schemas/Skytevaapen"
+            - $ref: "#/components/schemas/Vaapendel"
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+      required:
+      - changeType
+      - endringsaarsak
+      - historyId
+      - id
+      - objekt
+      - saksreferanse
+    Loyve:
+      type: object
+      discriminator:
+        propertyName: loyvetype
+        mapping:
+          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
+          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
+          INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
+          ANNET_LOYVE: "#/components/schemas/AnnetLoyve"
+      properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - NAERINGSLOYVE
+          - ANNET_LOYVE
+      required:
+      - innehaver
+      - loyveId
+      - loyvetype
+      - status
+      - vedtaksdato
+    LoyveForErverv:
+      allOf:
+      - $ref: "#/components/schemas/Loyve"
+      discriminator:
+        propertyName: loyvetype
+        mapping:
+          ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
+          NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
+      required:
+      - innehaver
+      - loyveId
+      - loyvetype
+      - status
+      - vedtaksdato
