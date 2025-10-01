@@ -147,9 +147,7 @@ paths:
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Ervervsloyve"
+                $ref: "#/components/schemas/SearchResponseErvervsloyve"
   /avgivelse/besittelse/valider/:
     post:
       tags:
@@ -2150,14 +2148,14 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           serienummer:
             type: string
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -2386,6 +2384,25 @@ components:
       - limit
       - offset
       - sortDir
+    SearchResponseErvervsloyve:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/Ervervsloyve"
+        totalResults:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+      required:
+      - result
+      - totalResults
     AapnePall:
       allOf:
       - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
