@@ -2153,6 +2153,10 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           vaapendeltype:
             type: string
             enum:
@@ -2160,10 +2164,6 @@ components:
             - LAASKASSE
             - REVOLVERTONNE
             - SLUTTSTYKKE
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           serienummer:
             type: string
           fabrikkmerke:
@@ -3445,6 +3445,8 @@ components:
       properties:
         proposalId:
           type: string
+        submittedBy:
+          $ref: "#/components/schemas/Submitter"
         previousData:
           oneOf:
           - $ref: "#/components/schemas/Skytevaapen"
@@ -3468,8 +3470,6 @@ components:
           - VAAPENDEL
         messageToCaseworker:
           type: string
-        submittedBy:
-          $ref: "#/components/schemas/Submitter"
       required:
       - previousData
       - proposalId
@@ -3660,6 +3660,9 @@ components:
           format: date-time
         saksreferanse:
           type: string
+        historyId:
+          type: integer
+          format: int64
         endringsaarsak:
           type: string
           enum:
@@ -3670,9 +3673,6 @@ components:
           - EIEROVERFORING
           - INNFORING
           - LAGERBEHOLDNING
-        historyId:
-          type: integer
-          format: int64
       required:
       - changeType
       - endringsaarsak

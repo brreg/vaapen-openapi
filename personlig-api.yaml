@@ -1765,6 +1765,14 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
+        serienummer:
+          type: string
+        modell:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1784,14 +1792,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        modell:
-          type: string
-        serienummer:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         id:
           type: integer
           format: int64
@@ -3192,19 +3192,19 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        modell:
-          type: string
         serienummer:
+          type: string
+        modell:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
           type: string
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
       required:
       - registreringsobjektType
       - skytevaapentype
