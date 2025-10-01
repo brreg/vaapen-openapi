@@ -615,6 +615,16 @@ components:
           type: boolean
         saksreferanse:
           type: string
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         loyveId:
           type: string
         vedtaksdato:
@@ -628,16 +638,6 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1751,6 +1751,16 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         loyveId:
           type: string
         vedtaksdato:
@@ -1764,16 +1774,6 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1981,10 +1981,10 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        modell:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
         vaapenstatus:
           type: string
           enum:
@@ -2122,6 +2122,16 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         loyveId:
           type: string
         vedtaksdato:
@@ -2135,16 +2145,6 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
