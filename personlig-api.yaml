@@ -1177,8 +1177,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1191,6 +1189,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1765,14 +1765,6 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        serienummer:
-          type: string
-        modell:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         vaapenstatus:
           type: string
           enum:
@@ -1792,6 +1784,14 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        modell:
+          type: string
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
         id:
           type: integer
           format: int64
@@ -2384,8 +2384,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2398,6 +2396,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -3192,19 +3192,19 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        serienummer:
-          type: string
-        modell:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         registreringsobjektType:
           type: string
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        modell:
+          type: string
+        serienummer:
+          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
       required:
       - registreringsobjektType
       - skytevaapentype
@@ -3377,8 +3377,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -3391,6 +3389,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date

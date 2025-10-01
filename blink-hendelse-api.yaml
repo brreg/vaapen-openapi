@@ -1981,6 +1981,11 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
@@ -2005,11 +2010,6 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         serienummer:
           type: string
         annetFabrikkmerke:
