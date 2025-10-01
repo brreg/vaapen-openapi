@@ -1167,16 +1167,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1202,6 +1192,16 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
       required:
       - innehaver
       - loyveId
@@ -2374,16 +2374,6 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2409,6 +2399,16 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
       required:
       - innehaver
       - loyveId
@@ -3367,16 +3367,6 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -3402,6 +3392,16 @@ components:
           - ERVERVSLOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
       required:
       - annetloyveLoyvetype
       - innehaver
