@@ -362,6 +362,34 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Proposal"
+  /avgivelse/history/vaapendel:
+    get:
+      tags:
+      - history-controller
+      summary: Get history for våpendel by id.
+      operationId: findEndringsloggVaapendel
+      parameters:
+      - name: vaapendelId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: VaapendelHistory
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoryRowRegistreringsobjektVaapendel"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/history/vaapenanddel:
     get:
       tags:
@@ -397,13 +425,13 @@ paths:
           format: date-time
       - name: offset
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int64
       - name: limit
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int32
@@ -416,6 +444,34 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/HistoryRowRegistreringsobjektObject"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /avgivelse/history/skytevaapen:
+    get:
+      tags:
+      - history-controller
+      summary: Get history for skytevåpen by id.
+      operationId: findEndringsloggSkytevaapen
+      parameters:
+      - name: vaapenId
+        in: query
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: SkytevaapenHistory
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/HistoryRowRegistreringsobjektSkytevaapen"
         "400":
           description: Bad request
           content:
@@ -457,13 +513,13 @@ paths:
           format: date-time
       - name: offset
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int64
       - name: limit
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int32
@@ -482,12 +538,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /avgivelse/history/endringslogg/vaapendel:
+  /avgivelse/history/eieroverforingslogg/vaapendel:
     get:
       tags:
       - history-controller
       summary: "Get eieroverforingslogg for vaapendel. Filter by involvert eier, vaapendelId,\
-        \ and page by offset and limit"
+        \ and paginate by offset and limit"
       operationId: findEieroverforingsloggVaapendel
       parameters:
       - name: involvertEier
@@ -528,12 +584,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /avgivelse/history/endringslogg/skytevaapen:
+  /avgivelse/history/eieroverforingslogg/skytevaapen:
     get:
       tags:
       - history-controller
-      summary: "Get eieroverforingslogg for vaapen. Filter by involvert eier, vaapenId,\
-        \ and page by offset and limit"
+      summary: "Get eieroverforingslogg for skytevåpen. Filter by involvert eier,\
+        \ vaapenId, and paginate by offset and limit"
       operationId: findEieroverforingsloggSkytevaapen
       parameters:
       - name: involvertEier
@@ -609,13 +665,13 @@ paths:
           format: date-time
       - name: offset
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int64
       - name: limit
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int32
@@ -2153,10 +2209,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           vaapendeltype:
             type: string
             enum:
@@ -2168,6 +2220,10 @@ components:
             type: string
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3495,6 +3551,45 @@ components:
           format: int64
       required:
       - registreringsobjektType
+    HistoryRowRegistreringsobjektVaapendel:
+      type: object
+      properties:
+        historyId:
+          type: integer
+          format: int64
+        id:
+          type: integer
+          format: int64
+        objekt:
+          oneOf:
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        changeType:
+          type: string
+        endringsaarsak:
+          type: string
+          enum:
+          - MIGRERING
+          - SAKSBEHANDLERENDRING
+          - KORRIGERING
+          - SLETTING
+          - EIEROVERFORING
+          - INNFORING
+          - LAGERBEHOLDNING
+        saksreferanse:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
+      required:
+      - changeType
+      - endringsaarsak
+      - historyId
+      - id
+      - objekt
+      - saksreferanse
     HistoryRowRegistreringsobjektObject:
       type: object
       properties:
@@ -3506,6 +3601,41 @@ components:
           format: int64
         objekt:
           type: object
+        changeType:
+          type: string
+        endringsaarsak:
+          type: string
+          enum:
+          - MIGRERING
+          - SAKSBEHANDLERENDRING
+          - KORRIGERING
+          - SLETTING
+          - EIEROVERFORING
+          - INNFORING
+          - LAGERBEHOLDNING
+        saksreferanse:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
+      required:
+      - changeType
+      - endringsaarsak
+      - historyId
+      - id
+      - objekt
+      - saksreferanse
+    HistoryRowRegistreringsobjektSkytevaapen:
+      type: object
+      properties:
+        historyId:
+          type: integer
+          format: int64
+        id:
+          type: integer
+          format: int64
+        objekt:
+          $ref: "#/components/schemas/Skytevaapen"
         changeType:
           type: string
         endringsaarsak:
@@ -3653,13 +3783,13 @@ components:
     HistoryRow:
       type: object
       properties:
+        saksreferanse:
+          type: string
         changeType:
           type: string
         endringstidspunkt:
           type: string
           format: date-time
-        saksreferanse:
-          type: string
         historyId:
           type: integer
           format: int64
