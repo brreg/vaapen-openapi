@@ -203,6 +203,92 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErvervsloyvedelingValidationResult"
+  /api/virksomhet/endring/vaapendel:
+    post:
+      tags:
+      - naering-vaapen-endring-controller
+      operationId: updateVaapendel
+      parameters:
+      - name: innloggetVirksomhet
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/EndreAntallLop"
+              - $ref: "#/components/schemas/EndreAvfyringsmekanismeTonne"
+              - $ref: "#/components/schemas/EndreFabrikkmerke"
+              - $ref: "#/components/schemas/EndreKaliber"
+              - $ref: "#/components/schemas/EndreLademekanismeTonne"
+              - $ref: "#/components/schemas/EndreModell"
+              - $ref: "#/components/schemas/EndrePipelengde"
+              - $ref: "#/components/schemas/EndreSluttstykketype"
+              - $ref: "#/components/schemas/NyttSerienummer"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/virksomhet/endring/skytevaapen:
+    post:
+      tags:
+      - naering-vaapen-endring-controller
+      operationId: updateSkytevaapen
+      parameters:
+      - name: innloggetVirksomhet
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/EndreAvfyringsmekanismeVaapen"
+              - $ref: "#/components/schemas/EndreFunksjonsmaate"
+              - $ref: "#/components/schemas/EndreLademekanismeVaapen"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
+  /api/virksomhet/endring/skytevaapen/deler:
+    post:
+      tags:
+      - naering-vaapen-endring-controller
+      operationId: updateDelerSkytevaapen
+      parameters:
+      - name: innloggetVirksomhet
+        in: query
+        required: true
+        schema:
+          type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/KobleVaapendelFraVaapen"
+              - $ref: "#/components/schemas/KobleVaapendelTilVaapen"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
   /api/virksomhet/eieroverforingsforslag:
     get:
       tags:
@@ -1298,8 +1384,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
         status:
           type: string
           enum:
@@ -1310,6 +1394,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1937,7 +2023,7 @@ components:
     Forhandlerimport:
       type: object
       properties:
-        naeringsloyveid:
+        importloyveid:
           type: string
         lagerbeholdning:
           $ref: "#/components/schemas/Lagerbeholdning"
@@ -1947,8 +2033,8 @@ components:
           - DELVIS_BENYTTET
           - BENYTTET
       required:
+      - importloyveid
       - lagerbeholdning
-      - naeringsloyveid
       - status
     MasseoverforingsForslagRequest:
       allOf:
@@ -2157,6 +2243,283 @@ components:
           - ERROR
       required:
       - status
+    EndreAntallLop:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          antallLop:
+            type: integer
+            format: int32
+      required:
+      - antallLop
+      - endringstype
+      - vaapendelid
+    EndreAvfyringsmekanismeTonne:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          avfyringsmekanisme:
+            type: string
+            enum:
+            - PATRON
+            - PERKUSJON
+            - FLINT
+            - LUNTE
+      required:
+      - avfyringsmekanisme
+      - endringstype
+      - vaapendelid
+    EndreFabrikkmerke:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
+      required:
+      - endringstype
+      - vaapendelid
+    EndreKaliber:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+      required:
+      - endringstype
+      - kaliber
+      - vaapendelid
+    EndreLademekanismeTonne:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          lademekanisme:
+            type: string
+            enum:
+            - MUNNLADER
+            - BAKLADER
+      required:
+      - endringstype
+      - lademekanisme
+      - vaapendelid
+    EndreModell:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          modell:
+            type: string
+      required:
+      - endringstype
+      - modell
+      - vaapendelid
+    EndrePipelengde:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          pipelengde:
+            type: integer
+            format: int32
+      required:
+      - endringstype
+      - pipelengde
+      - vaapendelid
+    EndreSluttstykketype:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          sluttstykketype:
+            type: string
+            enum:
+            - SLUTTSTYKKE
+            - GLIDESTYKKE
+            - LAASEBLOKK
+      required:
+      - endringstype
+      - sluttstykketype
+      - vaapendelid
+    NyttSerienummer:
+      allOf:
+      - $ref: "#/components/schemas/VaapendelEndring"
+      - type: object
+        properties:
+          serienummer:
+            type: string
+      required:
+      - endringstype
+      - serienummer
+      - vaapendelid
+    VaapendelEndring:
+      type: object
+      description: Våpendelendring for næringsdrivende
+      discriminator:
+        propertyName: endringstype
+        mapping:
+          SERIENUMMER: "#/components/schemas/NyttSerienummer"
+          FABRIKKMERKE: "#/components/schemas/EndreFabrikkmerke"
+          KALIBER: "#/components/schemas/EndreKaliber"
+          MODELL: "#/components/schemas/EndreModell"
+          PIPELENGDE: "#/components/schemas/EndrePipelengde"
+          ANTALL_LOP: "#/components/schemas/EndreAntallLop"
+          SLUTTSTYKKETYPE: "#/components/schemas/EndreSluttstykketype"
+          AVFYRINGSMEKANISME: "#/components/schemas/EndreAvfyringsmekanismeTonne"
+          LADEMEKANISME: "#/components/schemas/EndreLademekanismeTonne"
+      properties:
+        vaapendelid:
+          type: integer
+          format: int64
+        endringstype:
+          type: string
+          enum:
+          - SERIENUMMER
+          - DELETE_VAAPENDEL
+          - CREATE_VAAPENDEL
+          - FABRIKKMERKE
+          - KALIBER
+          - MODELL
+          - PIPELENGDE
+          - ANTALL_LOP
+          - SLUTTSTYKKETYPE
+          - AVFYRINGSMEKANISME
+          - LADEMEKANISME
+      required:
+      - endringstype
+      - vaapendelid
+    EndreAvfyringsmekanismeVaapen:
+      allOf:
+      - $ref: "#/components/schemas/VaapenEndring"
+      - type: object
+        properties:
+          avfyringsmekanisme:
+            type: string
+            enum:
+            - PATRON
+            - PERKUSJON
+            - FLINT
+            - LUNTE
+      required:
+      - avfyringsmekanisme
+      - endringstype
+      - vaapenid
+    EndreFunksjonsmaate:
+      allOf:
+      - $ref: "#/components/schemas/VaapenEndring"
+      - type: object
+        properties:
+          funksjonsmaate:
+            type: string
+            enum:
+            - ENKELTSKUDD
+            - HALVAUTOMATISK
+            - HELAUTOMATISK
+            - MANUELL_OMLADING
+            - UKJENT
+          manuelleFunksjonsmaater:
+            type: array
+            items:
+              type: string
+              enum:
+              - ENKELTSKUDD
+              - HALVAUTOMATISK
+              - HELAUTOMATISK
+              - MANUELL_OMLADING
+              - UKJENT
+      required:
+      - endringstype
+      - funksjonsmaate
+      - manuelleFunksjonsmaater
+      - vaapenid
+    EndreLademekanismeVaapen:
+      allOf:
+      - $ref: "#/components/schemas/VaapenEndring"
+      - type: object
+        properties:
+          lademekanisme:
+            type: string
+            enum:
+            - MUNNLADER
+            - BAKLADER
+      required:
+      - endringstype
+      - lademekanisme
+      - vaapenid
+    VaapenEndring:
+      type: object
+      description: Våpenendring for næringsdrivende
+      discriminator:
+        propertyName: endringstype
+        mapping:
+          FUNKSJONSMAATE: "#/components/schemas/EndreFunksjonsmaate"
+          AVFYRINGSMEKANISME: "#/components/schemas/EndreAvfyringsmekanismeVaapen"
+          LADEMEKANISME: "#/components/schemas/EndreLademekanismeVaapen"
+      properties:
+        vaapenid:
+          type: integer
+          format: int64
+        endringstype:
+          type: string
+          enum:
+          - FUNKSJONSMAATE
+          - ATTACH_VAAPENDEL
+          - DETATCH_VAAPENDEL
+          - AVFYRINGSMEKANISME
+          - LADEMEKANISME
+      required:
+      - endringstype
+      - vaapenid
+    KobleVaapendelFraVaapen:
+      allOf:
+      - $ref: "#/components/schemas/KoblingsEndring"
+      required:
+      - endringstype
+      - vaapendelid
+      - vaapenid
+    KobleVaapendelTilVaapen:
+      allOf:
+      - $ref: "#/components/schemas/KoblingsEndring"
+      required:
+      - endringstype
+      - vaapendelid
+      - vaapenid
+    KoblingsEndring:
+      type: object
+      description: Våpenkoblingsendring for næringsdrivende
+      discriminator:
+        propertyName: endringstype
+        mapping:
+          ATTACH_VAAPENDEL: "#/components/schemas/KobleVaapendelTilVaapen"
+          DETATCH_VAAPENDEL: "#/components/schemas/KobleVaapendelFraVaapen"
+      properties:
+        vaapendelid:
+          type: integer
+          format: int64
+        vaapenid:
+          type: integer
+          format: int64
+        endringstype:
+          type: string
+          enum:
+          - FUNKSJONSMAATE
+          - ATTACH_VAAPENDEL
+          - DETATCH_VAAPENDEL
+          - AVFYRINGSMEKANISME
+          - LADEMEKANISME
+      required:
+      - endringstype
+      - vaapendelid
+      - vaapenid
     EieroverforingsforslagRequest: {}
     SkytevaapenEieroverforingsforslagNaeringRequest:
       allOf:
@@ -2604,8 +2967,6 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
         status:
           type: string
           enum:
@@ -2616,6 +2977,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2692,11 +3055,11 @@ components:
       discriminator:
         propertyName: type
       properties:
-        qrKode:
-          type: string
         beviseierId:
           type: integer
           format: int64
+        qrKode:
+          type: string
         gyldigTil:
           type: string
           format: date
@@ -2747,9 +3110,7 @@ components:
       - $ref: "#/components/schemas/ImportLinje"
       - type: object
         properties:
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
+          merke:
             type: string
           kaliber:
             $ref: "#/components/schemas/Kaliber"
@@ -2759,7 +3120,7 @@ components:
       description: Linje for ammunisjon i import
       required:
       - antall
-      - kaliber
+      - merke
       - type
     AmmunisjonskjoployveBeviskontrollView:
       allOf:
@@ -3556,8 +3917,6 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
-        loyveId:
-          type: string
         status:
           type: string
           enum:
@@ -3568,6 +3927,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"

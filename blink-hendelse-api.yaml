@@ -495,9 +495,7 @@ components:
       - $ref: "#/components/schemas/ImportLinje"
       - type: object
         properties:
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
+          merke:
             type: string
           kaliber:
             $ref: "#/components/schemas/Kaliber"
@@ -507,7 +505,7 @@ components:
       description: Linje for ammunisjon i import
       required:
       - antall
-      - kaliber
+      - merke
       - type
     Ammunisjonsalg:
       allOf:
@@ -1627,25 +1625,10 @@ components:
           description: Beløp i gitt valuta
           example: 199.99
         valuta:
-          type: object
+          type: string
           default: NOK
           description: Valutakode i ISO 4217 format
           example: NOK
-          properties:
-            currencyCode:
-              type: string
-            displayName:
-              type: string
-            symbol:
-              type: string
-            defaultFractionDigits:
-              type: integer
-              format: int32
-            numericCode:
-              type: integer
-              format: int32
-            numericCodeAsString:
-              type: string
       required:
       - sum
     KorreksjonsId:
@@ -1981,11 +1964,6 @@ components:
           REVOLVERTONNE: "#/components/schemas/Revolvertonne"
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
       properties:
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
@@ -2010,6 +1988,11 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         serienummer:
           type: string
         annetFabrikkmerke:

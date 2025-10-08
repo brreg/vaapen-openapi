@@ -559,13 +559,13 @@ paths:
           format: int64
       - name: offset
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int64
       - name: limit
         in: query
-        required: true
+        required: false
         schema:
           type: integer
           format: int32
@@ -2903,9 +2903,7 @@ components:
       - $ref: "#/components/schemas/ImportLinje"
       - type: object
         properties:
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
+          merke:
             type: string
           kaliber:
             $ref: "#/components/schemas/Kaliber"
@@ -2915,7 +2913,7 @@ components:
       description: Linje for ammunisjon i import
       required:
       - antall
-      - kaliber
+      - merke
       - type
     Ammunisjonskjoployve:
       allOf:
@@ -3417,25 +3415,10 @@ components:
           description: Beløp i gitt valuta
           example: 199.99
         valuta:
-          type: object
+          type: string
           default: NOK
           description: Valutakode i ISO 4217 format
           example: NOK
-          properties:
-            currencyCode:
-              type: string
-            displayName:
-              type: string
-            symbol:
-              type: string
-            defaultFractionDigits:
-              type: integer
-              format: int32
-            numericCode:
-              type: integer
-              format: int32
-            numericCodeAsString:
-              type: string
       required:
       - sum
     Submitter:
@@ -3720,6 +3703,9 @@ components:
           type: string
         fraInnehaver:
           type: string
+        tidspunkt:
+          type: string
+          format: date-time
         nyttObjekt:
           oneOf:
           - $ref: "#/components/schemas/Laaskasse"
@@ -3740,6 +3726,7 @@ components:
       - objektId
       - tidligereHistorikkId
       - tidligereObjekt
+      - tidspunkt
       - tilInnehaver
     EieroverforingsloggVaapen:
       type: object
@@ -3767,6 +3754,9 @@ components:
           type: string
         fraInnehaver:
           type: string
+        tidspunkt:
+          type: string
+          format: date-time
         nyttObjekt:
           $ref: "#/components/schemas/Skytevaapen"
         tidligereObjekt:
@@ -3779,17 +3769,13 @@ components:
       - objektId
       - tidligereHistorikkId
       - tidligereObjekt
+      - tidspunkt
       - tilInnehaver
     HistoryRow:
       type: object
       properties:
         saksreferanse:
           type: string
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -3803,6 +3789,11 @@ components:
           - EIEROVERFORING
           - INNFORING
           - LAGERBEHOLDNING
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
       required:
       - changeType
       - endringsaarsak

@@ -1177,6 +1177,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1189,8 +1191,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1742,6 +1742,25 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         skytevaapentype:
           type: string
           enum:
@@ -1765,25 +1784,6 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
-          - INNLEVERT_POLITI
-          - TILBAKEKALT
-          - BESLAGLAGT
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         modell:
           type: string
         serienummer:
@@ -2384,6 +2384,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2396,8 +2398,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -2488,11 +2488,11 @@ components:
       discriminator:
         propertyName: type
       properties:
-        qrKode:
-          type: string
         beviseierId:
           type: integer
           format: int64
+        qrKode:
+          type: string
         gyldigTil:
           type: string
           format: date
@@ -2543,9 +2543,7 @@ components:
       - $ref: "#/components/schemas/ImportLinje"
       - type: object
         properties:
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
+          merke:
             type: string
           kaliber:
             $ref: "#/components/schemas/Kaliber"
@@ -2555,7 +2553,7 @@ components:
       description: Linje for ammunisjon i import
       required:
       - antall
-      - kaliber
+      - merke
       - type
     AmmunisjonskjoployveBeviskontrollView:
       allOf:
@@ -3169,6 +3167,11 @@ components:
           REVOLVERTONNE: "#/components/schemas/RevolvertonneBeviskontrollView"
           SLUTTSTYKKE: "#/components/schemas/SluttstykkeBeviskontrollView"
       properties:
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         skytevaapentype:
           type: string
           enum:
@@ -3192,11 +3195,6 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         modell:
           type: string
         serienummer:
@@ -3256,25 +3254,10 @@ components:
           description: Beløp i gitt valuta
           example: 199.99
         valuta:
-          type: object
+          type: string
           default: NOK
           description: Valutakode i ISO 4217 format
           example: NOK
-          properties:
-            currencyCode:
-              type: string
-            displayName:
-              type: string
-            symbol:
-              type: string
-            defaultFractionDigits:
-              type: integer
-              format: int32
-            numericCode:
-              type: integer
-              format: int32
-            numericCodeAsString:
-              type: string
       required:
       - sum
     Ammunisjonskjoployve:
@@ -3377,6 +3360,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -3389,8 +3374,6 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
