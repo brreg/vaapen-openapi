@@ -1742,25 +1742,6 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
-          - INNLEVERT_POLITI
-          - TILBAKEKALT
-          - BESLAGLAGT
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         skytevaapentype:
           type: string
           enum:
@@ -1784,6 +1765,25 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - DESTRUERT
+          - DEAKTIVERT
+          - UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         modell:
           type: string
         serienummer:
@@ -2488,11 +2488,11 @@ components:
       discriminator:
         propertyName: type
       properties:
+        qrKode:
+          type: string
         beviseierId:
           type: integer
           format: int64
-        qrKode:
-          type: string
         gyldigTil:
           type: string
           format: date
@@ -3167,11 +3167,6 @@ components:
           REVOLVERTONNE: "#/components/schemas/RevolvertonneBeviskontrollView"
           SLUTTSTYKKE: "#/components/schemas/SluttstykkeBeviskontrollView"
       properties:
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         skytevaapentype:
           type: string
           enum:
@@ -3195,6 +3190,11 @@ components:
           - LAASKASSE
           - REVOLVERTONNE
           - SLUTTSTYKKE
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         modell:
           type: string
         serienummer:

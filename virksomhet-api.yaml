@@ -2714,23 +2714,34 @@ components:
       - size
     PageSkytevaapen:
       type: object
+      description: Representerer en 'side' av data i et paginert resultatsett.
       properties:
         content:
           type: array
+          description: Listen med elementer for den gjeldende siden.
           items:
             $ref: "#/components/schemas/Skytevaapen"
         pageNumber:
           type: integer
           format: int32
+          description: Gjeldende sidenummer (1-indeksert).
+          example: 1
         pageSize:
           type: integer
           format: int32
+          description: Antall elementer på denne siden.
+          example: 50
         totalElements:
           type: integer
           format: int64
+          description: Totalt antall elementer på tvers av alle sider.
+          example: 500
         totalPages:
           type: integer
           format: int64
+          description: Beregnet totalt antall sider. Er 0 hvis det ikke finnes noen
+            elementer.
+          example: 101
         isFirst:
           type: boolean
         isLast:
@@ -2777,9 +2788,11 @@ components:
       - vaapenkobling
     PageVaapendel:
       type: object
+      description: Representerer en 'side' av data i et paginert resultatsett.
       properties:
         content:
           type: array
+          description: Listen med elementer for den gjeldende siden.
           items:
             oneOf:
             - $ref: "#/components/schemas/Laaskasse"
@@ -2789,15 +2802,24 @@ components:
         pageNumber:
           type: integer
           format: int32
+          description: Gjeldende sidenummer (1-indeksert).
+          example: 1
         pageSize:
           type: integer
           format: int32
+          description: Antall elementer på denne siden.
+          example: 50
         totalElements:
           type: integer
           format: int64
+          description: Totalt antall elementer på tvers av alle sider.
+          example: 500
         totalPages:
           type: integer
           format: int64
+          description: Beregnet totalt antall sider. Er 0 hvis det ikke finnes noen
+            elementer.
+          example: 101
         isFirst:
           type: boolean
         isLast:
