@@ -113,6 +113,62 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /avgivelse/history/eieroverforingslogg/vaapendel:
+    post:
+      tags:
+      - history-controller
+      summary: "Get eieroverforingslogg for vaapendel. Filter by involvert eier, vaapendelId,\
+        \ and paginate by offset and limit"
+      operationId: findEieroverforingsloggVaapendel
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EieroverforingsloggRequest"
+        required: true
+      responses:
+        "200":
+          description: EieroverforingsloggVaapendel
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EieroverforingsloggVaapendel"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /avgivelse/history/eieroverforingslogg/skytevaapen:
+    post:
+      tags:
+      - history-controller
+      summary: "Get eieroverforingslogg for skytevåpen. Filter by involvert eier,\
+        \ vaapenId, and paginate by offset and limit"
+      operationId: findEieroverforingsloggSkytevaapen
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EieroverforingsloggRequest"
+        required: true
+      responses:
+        "200":
+          description: EieroverforingsloggVaapen
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EieroverforingsloggVaapen"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/ervervsloyve/search:
     post:
       tags:
@@ -532,98 +588,6 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/HistoryRowLoyveObject"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-  /avgivelse/history/eieroverforingslogg/vaapendel:
-    get:
-      tags:
-      - history-controller
-      summary: "Get eieroverforingslogg for vaapendel. Filter by involvert eier, vaapendelId,\
-        \ and paginate by offset and limit"
-      operationId: findEieroverforingsloggVaapendel
-      parameters:
-      - name: involvertEier
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: vaapendelId
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int64
-      - name: offset
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int64
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: EieroverforingsloggVaapendel
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/EieroverforingsloggVaapendel"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-  /avgivelse/history/eieroverforingslogg/skytevaapen:
-    get:
-      tags:
-      - history-controller
-      summary: "Get eieroverforingslogg for skytevåpen. Filter by involvert eier,\
-        \ vaapenId, and paginate by offset and limit"
-      operationId: findEieroverforingsloggSkytevaapen
-      parameters:
-      - name: involvertEier
-        in: query
-        required: false
-        schema:
-          type: string
-      - name: vaapenId
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int64
-      - name: offset
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int64
-      - name: limit
-        in: query
-        required: false
-        schema:
-          type: integer
-          format: int32
-      responses:
-        "200":
-          description: EieroverforingsloggVaapen
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/EieroverforingsloggVaapen"
         "400":
           description: Bad request
           content:
@@ -2209,6 +2173,10 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
           vaapendeltype:
             type: string
             enum:
@@ -2220,10 +2188,6 @@ components:
             type: string
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -2358,6 +2322,121 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
+    EieroverforingsloggRequest:
+      type: object
+      description: Forespørselsobjekt for å hente en logg over eieroverføringer.
+      properties:
+        involvertEier:
+          type: string
+          description: Filtrer på en involvert eier (kjøper eller selger) via fødselsnummer
+            eller organisasjonsnummer.
+        objektId:
+          type: integer
+          format: int64
+          description: Filtrer loggen for en spesifikk våpen- eller våpendel-ID.
+        offset:
+          type: integer
+          format: int64
+          default: "0"
+          description: Pagineringsoffset. Antall oppføringer som skal hoppes over.
+        limit:
+          type: integer
+          format: int32
+          default: "100"
+          description: Pagineringsgrense. Maksimalt antall oppføringer som skal returneres.
+    EieroverforingsloggVaapendel:
+      type: object
+      properties:
+        historyId:
+          type: integer
+          format: int64
+        objektId:
+          type: integer
+          format: int64
+        tidligereHistorikkId:
+          type: integer
+          format: int64
+        endringsaarsak:
+          type: string
+          enum:
+          - MIGRERING
+          - SAKSBEHANDLERENDRING
+          - KORRIGERING
+          - SLETTING
+          - EIEROVERFORING
+          - INNFORING
+          - LAGERBEHOLDNING
+        tilInnehaver:
+          type: string
+        fraInnehaver:
+          type: string
+        tidspunkt:
+          type: string
+          format: date-time
+        nyttObjekt:
+          oneOf:
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+        tidligereObjekt:
+          oneOf:
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+      required:
+      - endringsaarsak
+      - fraInnehaver
+      - historyId
+      - nyttObjekt
+      - objektId
+      - tidligereHistorikkId
+      - tidspunkt
+      - tilInnehaver
+    EieroverforingsloggVaapen:
+      type: object
+      properties:
+        historyId:
+          type: integer
+          format: int64
+        objektId:
+          type: integer
+          format: int64
+        tidligereHistorikkId:
+          type: integer
+          format: int64
+        endringsaarsak:
+          type: string
+          enum:
+          - MIGRERING
+          - SAKSBEHANDLERENDRING
+          - KORRIGERING
+          - SLETTING
+          - EIEROVERFORING
+          - INNFORING
+          - LAGERBEHOLDNING
+        tilInnehaver:
+          type: string
+        fraInnehaver:
+          type: string
+        tidspunkt:
+          type: string
+          format: date-time
+        nyttObjekt:
+          $ref: "#/components/schemas/Skytevaapen"
+        tidligereObjekt:
+          $ref: "#/components/schemas/Skytevaapen"
+      required:
+      - endringsaarsak
+      - fraInnehaver
+      - historyId
+      - nyttObjekt
+      - objektId
+      - tidligereHistorikkId
+      - tidligereObjekt
+      - tidspunkt
+      - tilInnehaver
     LoyveSearchFilter:
       type: object
       discriminator:
@@ -3677,105 +3756,16 @@ components:
       - id
       - objekt
       - saksreferanse
-    EieroverforingsloggVaapendel:
-      type: object
-      properties:
-        historyId:
-          type: integer
-          format: int64
-        objektId:
-          type: integer
-          format: int64
-        tidligereHistorikkId:
-          type: integer
-          format: int64
-        endringsaarsak:
-          type: string
-          enum:
-          - MIGRERING
-          - SAKSBEHANDLERENDRING
-          - KORRIGERING
-          - SLETTING
-          - EIEROVERFORING
-          - INNFORING
-          - LAGERBEHOLDNING
-        tilInnehaver:
-          type: string
-        fraInnehaver:
-          type: string
-        tidspunkt:
-          type: string
-          format: date-time
-        nyttObjekt:
-          oneOf:
-          - $ref: "#/components/schemas/Laaskasse"
-          - $ref: "#/components/schemas/Pipe"
-          - $ref: "#/components/schemas/Revolvertonne"
-          - $ref: "#/components/schemas/Sluttstykke"
-        tidligereObjekt:
-          oneOf:
-          - $ref: "#/components/schemas/Laaskasse"
-          - $ref: "#/components/schemas/Pipe"
-          - $ref: "#/components/schemas/Revolvertonne"
-          - $ref: "#/components/schemas/Sluttstykke"
-      required:
-      - endringsaarsak
-      - fraInnehaver
-      - historyId
-      - nyttObjekt
-      - objektId
-      - tidligereHistorikkId
-      - tidligereObjekt
-      - tidspunkt
-      - tilInnehaver
-    EieroverforingsloggVaapen:
-      type: object
-      properties:
-        historyId:
-          type: integer
-          format: int64
-        objektId:
-          type: integer
-          format: int64
-        tidligereHistorikkId:
-          type: integer
-          format: int64
-        endringsaarsak:
-          type: string
-          enum:
-          - MIGRERING
-          - SAKSBEHANDLERENDRING
-          - KORRIGERING
-          - SLETTING
-          - EIEROVERFORING
-          - INNFORING
-          - LAGERBEHOLDNING
-        tilInnehaver:
-          type: string
-        fraInnehaver:
-          type: string
-        tidspunkt:
-          type: string
-          format: date-time
-        nyttObjekt:
-          $ref: "#/components/schemas/Skytevaapen"
-        tidligereObjekt:
-          $ref: "#/components/schemas/Skytevaapen"
-      required:
-      - endringsaarsak
-      - fraInnehaver
-      - historyId
-      - nyttObjekt
-      - objektId
-      - tidligereHistorikkId
-      - tidligereObjekt
-      - tidspunkt
-      - tilInnehaver
     HistoryRow:
       type: object
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -3789,11 +3779,6 @@ components:
           - EIEROVERFORING
           - INNFORING
           - LAGERBEHOLDNING
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
       required:
       - changeType
       - endringsaarsak
