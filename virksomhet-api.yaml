@@ -2426,20 +2426,9 @@ components:
             - HELAUTOMATISK
             - MANUELL_OMLADING
             - UKJENT
-          manuelleFunksjonsmaater:
-            type: array
-            items:
-              type: string
-              enum:
-              - ENKELTSKUDD
-              - HALVAUTOMATISK
-              - HELAUTOMATISK
-              - MANUELL_OMLADING
-              - UKJENT
       required:
       - endringstype
       - funksjonsmaate
-      - manuelleFunksjonsmaater
       - vaapenid
     EndreLademekanismeVaapen:
       allOf:
