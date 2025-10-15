@@ -418,6 +418,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Proposal"
+  /avgivelse/innehaver/person/personermedugyldigstatus:
+    get:
+      tags:
+      - innehaver-controller
+      operationId: findInnehaverMedUgyldigStatus
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PersonMedFolkeregisterStatus"
   /avgivelse/history/vaapendel:
     get:
       tags:
@@ -2138,8 +2152,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
             type: string
           modell:
@@ -2153,6 +2165,8 @@ components:
             - SLUTTSTYKKE
           serienummer:
             type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3528,6 +3542,8 @@ components:
       properties:
         proposalId:
           type: string
+        messageToCaseworker:
+          type: string
         submittedBy:
           $ref: "#/components/schemas/Submitter"
         previousData:
@@ -3551,8 +3567,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        messageToCaseworker:
-          type: string
       required:
       - previousData
       - proposalId
@@ -3578,6 +3592,28 @@ components:
           format: int64
       required:
       - registreringsobjektType
+    PersonMedFolkeregisterStatus:
+      type: object
+      properties:
+        personidentifikator:
+          type: string
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BOSATT
+          - UTFLYTTET
+          - FORSVUNNET
+          - DOED
+          - OPPHOERT
+          - FOEDSELSREGISTRERT
+          - MIDLERTIDIG
+          - INAKTIV
+          - IKKEBOSATT
+          - UKJENT
+      required:
+      - personidentifikator
+      - status
     HistoryRowRegistreringsobjektVaapendel:
       type: object
       properties:
@@ -3755,11 +3791,6 @@ components:
       properties:
         saksreferanse:
           type: string
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -3773,6 +3804,11 @@ components:
           - EIEROVERFORING
           - INNFORING
           - LAGERBEHOLDNING
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         type:
           type: string
           enum:
