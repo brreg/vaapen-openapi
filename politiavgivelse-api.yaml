@@ -194,7 +194,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /avgivelse/besittelse/valider/:
+  /avgivelse/besittelse/hendelse/valider:
     post:
       tags:
       - kripos-controller
@@ -227,7 +227,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/KriposValidationResult"
-  /andreloyver/virksomhet/:
+  /avgivelse/andreloyver/virksomhet:
     post:
       tags:
       - annet-loyve-controller
@@ -267,7 +267,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
-  /andreloyver/person/:
+  /avgivelse/andreloyver/person:
     post:
       tags:
       - annet-loyve-controller
@@ -692,25 +692,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Pall"
-  /avgivelse/besittelse/pakker/{pakkeId}:
-    get:
-      tags:
-      - kripos-controller
-      operationId: findPakkeById
-      parameters:
-      - name: pakkeId
-        in: path
-        required: true
-        schema:
-          type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Pakke"
-  /avgivelse/besittelse/besittelse/paller:
+  /avgivelse/besittelse/paller:
     get:
       tags:
       - kripos-controller
@@ -735,7 +717,25 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Pall"
-  /andreloyver/{id}:
+  /avgivelse/besittelse/pakker/{pakkeId}:
+    get:
+      tags:
+      - kripos-controller
+      operationId: findPakkeById
+      parameters:
+      - name: pakkeId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Pakke"
+  /avgivelse/andreloyver/{id}:
     get:
       tags:
       - annet-loyve-controller
@@ -1734,48 +1734,13 @@ components:
       - registreringsobjektType
       - skytevaapentype
     LoyveForInnehav:
-      type: object
+      allOf:
+      - $ref: "#/components/schemas/Loyve"
       discriminator:
         propertyName: loyvetype
         mapping:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
-      properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/DigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ManuellEier"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - NAERINGSLOYVE
-          - ANNET_LOYVE
       required:
       - innehaver
       - loyveId
@@ -2173,6 +2138,8 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
             type: string
           modell:
@@ -2186,8 +2153,6 @@ components:
             - SLUTTSTYKKE
           serienummer:
             type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3645,6 +3610,11 @@ components:
         endringstidspunkt:
           type: string
           format: date-time
+        type:
+          type: string
+          enum:
+          - REGISTRERINGSOBJEKT
+          - LOYVE
       required:
       - changeType
       - endringsaarsak
@@ -3652,6 +3622,7 @@ components:
       - id
       - objekt
       - saksreferanse
+      - type
     HistoryRowRegistreringsobjektObject:
       type: object
       properties:
@@ -3680,6 +3651,11 @@ components:
         endringstidspunkt:
           type: string
           format: date-time
+        type:
+          type: string
+          enum:
+          - REGISTRERINGSOBJEKT
+          - LOYVE
       required:
       - changeType
       - endringsaarsak
@@ -3687,6 +3663,7 @@ components:
       - id
       - objekt
       - saksreferanse
+      - type
     HistoryRowRegistreringsobjektSkytevaapen:
       type: object
       properties:
@@ -3715,6 +3692,11 @@ components:
         endringstidspunkt:
           type: string
           format: date-time
+        type:
+          type: string
+          enum:
+          - REGISTRERINGSOBJEKT
+          - LOYVE
       required:
       - changeType
       - endringsaarsak
@@ -3722,6 +3704,7 @@ components:
       - id
       - objekt
       - saksreferanse
+      - type
     HistoryRowLoyveObject:
       type: object
       properties:
@@ -3749,6 +3732,11 @@ components:
         endringstidspunkt:
           type: string
           format: date-time
+        type:
+          type: string
+          enum:
+          - REGISTRERINGSOBJEKT
+          - LOYVE
       required:
       - changeType
       - endringsaarsak
@@ -3756,8 +3744,14 @@ components:
       - id
       - objekt
       - saksreferanse
+      - type
     HistoryRow:
       type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          REGISTRERINGSOBJEKT: "#/components/schemas/HistoryRowRegistreringsobjekt"
+          LOYVE: "#/components/schemas/HistoryRowLoyve"
       properties:
         saksreferanse:
           type: string
@@ -3779,11 +3773,17 @@ components:
           - EIEROVERFORING
           - INNFORING
           - LAGERBEHOLDNING
+        type:
+          type: string
+          enum:
+          - REGISTRERINGSOBJEKT
+          - LOYVE
       required:
       - changeType
       - endringsaarsak
       - historyId
       - saksreferanse
+      - type
     HistoryRowLoyve:
       allOf:
       - $ref: "#/components/schemas/HistoryRow"
@@ -3823,6 +3823,7 @@ components:
       - id
       - objekt
       - saksreferanse
+      - type
     HistoryRowRegistreringsobjekt:
       allOf:
       - $ref: "#/components/schemas/HistoryRow"
@@ -3846,6 +3847,7 @@ components:
       - id
       - objekt
       - saksreferanse
+      - type
     Loyve:
       type: object
       discriminator:
