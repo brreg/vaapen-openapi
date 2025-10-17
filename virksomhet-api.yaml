@@ -93,7 +93,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/MasseoverforingEieroverforingsforslagView"
+                  $ref: "#/components/schemas/MasseoverforingsforslagView"
     post:
       tags:
       - eieroverforing-controller
@@ -303,7 +303,7 @@ paths:
                 type: array
                 items:
                   oneOf:
-                  - $ref: "#/components/schemas/MasseoverforingEieroverforingsforslagView"
+                  - $ref: "#/components/schemas/MasseoverforingsforslagView"
                   - $ref: "#/components/schemas/SkytevaapenEieroverforingsforslagView"
                   - $ref: "#/components/schemas/VaapendelEieroverforingsforslagView"
     post:
@@ -559,6 +559,73 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Skytevaapen"
+  /api/virksomhet/masseoverforingsforslag/{forslagId}:
+    get:
+      tags:
+      - eieroverforing-controller
+      operationId: getMasseoverforingsforslagById
+      parameters:
+      - name: forslagId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/MasseoverforingsforslagView"
+  /api/virksomhet/masseoverforingsforslag/{forslagId}/vaapendeler:
+    get:
+      tags:
+      - eieroverforing-controller
+      operationId: getMasseoverforingsforslagVaapendel
+      parameters:
+      - name: forslagId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: pageRequest
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/SimplePageRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageVaapendel"
+  /api/virksomhet/masseoverforingsforslag/{forslagId}/skytevaapen:
+    get:
+      tags:
+      - eieroverforing-controller
+      operationId: getMasseoverforingsforslagSkytevaapen
+      parameters:
+      - name: forslagId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+      - name: pageRequest
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/SimplePageRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/PageSkytevaapen"
   /api/virksomhet/ikke-naering/vaapen:
     get:
       tags:
@@ -1384,6 +1451,8 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         status:
           type: string
           enum:
@@ -1394,8 +1463,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2821,6 +2888,113 @@ components:
       - pageSize
       - totalElements
       - totalPages
+    ExistingVirksomhet:
+      allOf:
+      - $ref: "#/components/schemas/ExistingDigitalEier"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator for eieren
+            example: 1234
+          organisasjonsnummer:
+            type: string
+            description: Organisasjonsnummer
+            example: 123456789
+          navn:
+            type: string
+            description: Navn på virksomhet - kun visning ved behov
+            example: PANGPANG AS
+          eiertype:
+            type: string
+            description: Type eier
+            enum:
+            - PERSON
+            - VIRKSOMHET
+            - UKJENT_INNEHAVER
+            - POLITI
+            example: VIRKSOMHET
+      required:
+      - eiertype
+      - id
+      - organisasjonsnummer
+    MasseoverforingsforslagView:
+      allOf:
+      - $ref: "#/components/schemas/EieroverforingsforslagView"
+      - type: object
+        properties:
+          vaapeneier:
+            $ref: "#/components/schemas/ExistingVirksomhet"
+          mottakersLoyve:
+            $ref: "#/components/schemas/Naeringsloyve"
+          idSkytevaapen:
+            type: array
+            items:
+              type: integer
+              format: int64
+          idVaapendeler:
+            type: array
+            items:
+              type: integer
+              format: int64
+      required:
+      - id
+      - idSkytevaapen
+      - idVaapendeler
+      - mottakersLoyve
+      - vaapeneier
+      - validation
+    SimplePageRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+      required:
+      - page
+      - size
+    ErvervsloyveForesporsel:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        foresporrer:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+        createdDate:
+          type: string
+          format: date
+      required:
+      - createdDate
+      - foresporrer
+      - id
+    EieroverforingsforslagView:
+      type: object
+      properties:
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+        validation:
+          $ref: "#/components/schemas/EieroverforingValidationResult"
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+        id:
+          type: integer
+          format: int64
+      required:
+      - id
+      - mottakersLoyve
+      - vaapeneier
+      - validation
     ExistingDigitalEier:
       type: object
       discriminator:
@@ -2875,101 +3049,6 @@ components:
       - eiertype
       - id
       - personidentifikator
-    ExistingVirksomhet:
-      allOf:
-      - $ref: "#/components/schemas/ExistingDigitalEier"
-      - type: object
-        properties:
-          id:
-            type: integer
-            format: int64
-            description: Unik identifikator for eieren
-            example: 1234
-          organisasjonsnummer:
-            type: string
-            description: Organisasjonsnummer
-            example: 123456789
-          navn:
-            type: string
-            description: Navn på virksomhet - kun visning ved behov
-            example: PANGPANG AS
-          eiertype:
-            type: string
-            description: Type eier
-            enum:
-            - PERSON
-            - VIRKSOMHET
-            - UKJENT_INNEHAVER
-            - POLITI
-            example: VIRKSOMHET
-      required:
-      - eiertype
-      - id
-      - organisasjonsnummer
-    MasseoverforingEieroverforingsforslagView:
-      allOf:
-      - $ref: "#/components/schemas/EieroverforingsforslagView"
-      - type: object
-        properties:
-          mottakersLoyve:
-            $ref: "#/components/schemas/Naeringsloyve"
-          listeSkytevaapen:
-            type: array
-            items:
-              $ref: "#/components/schemas/Skytevaapen"
-          loseVaapendel:
-            type: array
-            items:
-              oneOf:
-              - $ref: "#/components/schemas/Laaskasse"
-              - $ref: "#/components/schemas/Pipe"
-              - $ref: "#/components/schemas/Revolvertonne"
-              - $ref: "#/components/schemas/Sluttstykke"
-      required:
-      - id
-      - listeSkytevaapen
-      - loseVaapendel
-      - mottakersLoyve
-      - vaapeneier
-      - validation
-    ErvervsloyveForesporsel:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int64
-        foresporrer:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-        createdDate:
-          type: string
-          format: date
-      required:
-      - createdDate
-      - foresporrer
-      - id
-    EieroverforingsforslagView:
-      type: object
-      properties:
-        vaapeneier:
-          oneOf:
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-        validation:
-          $ref: "#/components/schemas/EieroverforingValidationResult"
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
-        id:
-          type: integer
-          format: int64
-      required:
-      - id
-      - mottakersLoyve
-      - vaapeneier
-      - validation
     LoyveForErverv:
       type: object
       discriminator:
@@ -2978,6 +3057,8 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         status:
           type: string
           enum:
@@ -2988,8 +3069,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -3928,6 +4007,8 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
+        loyveId:
+          type: string
         status:
           type: string
           enum:
@@ -3938,8 +4019,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
