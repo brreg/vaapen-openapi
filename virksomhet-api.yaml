@@ -85,15 +85,19 @@ paths:
       tags:
       - eieroverforing-controller
       operationId: finnMasseoverforingsforslag
+      parameters:
+      - name: pageRequest
+        in: query
+        required: true
+        schema:
+          $ref: "#/components/schemas/SimplePageRequest"
       responses:
         "200":
           description: OK
           content:
             '*/*':
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/MasseoverforingsforslagView"
+                $ref: "#/components/schemas/PageMasseoverforingsforslagView"
     post:
       tags:
       - eieroverforing-controller
@@ -1451,8 +1455,6 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
         status:
           type: string
           enum:
@@ -1463,6 +1465,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2888,6 +2892,18 @@ components:
       - pageSize
       - totalElements
       - totalPages
+    SimplePageRequest:
+      type: object
+      properties:
+        page:
+          type: integer
+          format: int32
+        size:
+          type: integer
+          format: int32
+      required:
+      - page
+      - size
     ExistingVirksomhet:
       allOf:
       - $ref: "#/components/schemas/ExistingDigitalEier"
@@ -2945,18 +2961,48 @@ components:
       - mottakersLoyve
       - vaapeneier
       - validation
-    SimplePageRequest:
+    PageMasseoverforingsforslagView:
       type: object
+      description: Representerer en 'side' av data i et paginert resultatsett.
       properties:
-        page:
+        content:
+          type: array
+          description: Listen med elementer for den gjeldende siden.
+          items:
+            $ref: "#/components/schemas/MasseoverforingsforslagView"
+        pageNumber:
           type: integer
           format: int32
-        size:
+          description: Gjeldende sidenummer (1-indeksert).
+          example: 1
+        pageSize:
           type: integer
           format: int32
+          description: Antall elementer på denne siden.
+          example: 50
+        totalElements:
+          type: integer
+          format: int64
+          description: Totalt antall elementer på tvers av alle sider.
+          example: 500
+        totalPages:
+          type: integer
+          format: int64
+          description: Beregnet totalt antall sider. Er 0 hvis det ikke finnes noen
+            elementer.
+          example: 101
+        isFirst:
+          type: boolean
+        isLast:
+          type: boolean
       required:
-      - page
-      - size
+      - content
+      - isFirst
+      - isLast
+      - pageNumber
+      - pageSize
+      - totalElements
+      - totalPages
     ErvervsloyveForesporsel:
       type: object
       properties:
@@ -3057,8 +3103,6 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
         status:
           type: string
           enum:
@@ -3069,6 +3113,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -4007,8 +4053,6 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
-        loyveId:
-          type: string
         status:
           type: string
           enum:
@@ -4019,6 +4063,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
