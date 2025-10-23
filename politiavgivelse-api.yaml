@@ -832,11 +832,11 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
-          personidentifikator:
-            type: string
           foedselsdato:
             type: string
             format: date
+          personidentifikator:
+            type: string
       required:
       - eiertype
       - personidentifikator
@@ -1135,10 +1135,10 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          lokasjon:
-            type: string
           importertKategori:
             type: boolean
+          lokasjon:
+            type: string
       required:
       - eiertype
       - importertKategori
@@ -1148,8 +1148,6 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          personidentifikator:
-            type: string
           navn:
             type: string
           vaapenkortSid:
@@ -1159,6 +1157,8 @@ components:
           stilling:
             type: string
           telefon:
+            type: string
+          personidentifikator:
             type: string
       required:
       - eiertype
@@ -1493,6 +1493,7 @@ components:
       - FUNKSJONSMAATE
       - AVFYRINGSMEKANISME
       - AVFYRINGSMEKANISME_TONNE
+      - VAAPENSTATUS
     SkytevaapenSearchFilter:
       type: object
       discriminator:
@@ -1578,6 +1579,7 @@ components:
             - FUNKSJONSMAATE
             - AVFYRINGSMEKANISME
             - AVFYRINGSMEKANISME_TONNE
+            - VAAPENSTATUS
           values:
             type: array
             items:
@@ -2509,6 +2511,7 @@ components:
             - INNLEVERT_POLITI
             - TILBAKEKALT
             - BESLAGLAGT
+            - SLETTET
           avfyringsmekanisme:
             type: string
             enum:
@@ -2685,6 +2688,7 @@ components:
             - INNLEVERT_POLITI
             - TILBAKEKALT
             - BESLAGLAGT
+            - SLETTET
           innehavsloyve:
             oneOf:
             - $ref: "#/components/schemas/Innehavsloyve"
