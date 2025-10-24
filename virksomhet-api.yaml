@@ -798,6 +798,19 @@ paths:
                 - $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
                 - $ref: "#/components/schemas/DigitaltBevisSkytevaapenResponse"
                 - $ref: "#/components/schemas/DigitaltBevisVaapendelResponse"
+    delete:
+      tags:
+      - digitalt-bevis-controller
+      operationId: deleteDigitaltBevisByInnehavsloyveId
+      parameters:
+      - name: idInnehavsloyve
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
   /api/virksomhet/digitale-bevis/annetLoyveId/{idAnnetLoyve}:
     get:
       tags:
@@ -821,6 +834,19 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
+    delete:
+      tags:
+      - digitalt-bevis-controller
+      operationId: deleteDigitaltBevisByAnnetLoyveId
+      parameters:
+      - name: idAnnetLoyve
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
   /api/virksomhet/delte-ervervsloyver:
     get:
       tags:
@@ -923,21 +949,6 @@ paths:
                 - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
                 - $ref: "#/components/schemas/Privatimportloyve"
                 - $ref: "#/components/schemas/Utforrselsloyve"
-  /api/virksomhet/digitale-bevis/{id}:
-    delete:
-      tags:
-      - digitalt-bevis-controller
-      operationId: deleteDigitaltBevis
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
-        "200":
-          description: OK
 components:
   schemas:
     Aldersgrunnlag:
@@ -2258,6 +2269,7 @@ components:
           - INNLEVERT_POLITI
           - TILBAKEKALT
           - BESLAGLAGT
+          - SLETTET
         avfyringsmekanisme:
           type: string
           enum:
@@ -2464,16 +2476,16 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         skytevaapentype:
           type: string
           enum:
@@ -2500,6 +2512,7 @@ components:
           - INNLEVERT_POLITI
           - TILBAKEKALT
           - BESLAGLAGT
+          - SLETTET
         registreringsobjektType:
           type: string
           enum:
@@ -2513,13 +2526,13 @@ components:
           - REVOLVERTONNE
           - SLUTTSTYKKE
           - UKJENT
-        modell:
-          type: string
         serienummer:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
+          type: string
+        modell:
           type: string
         id:
           type: integer
@@ -2589,22 +2602,24 @@ components:
           type: string
           enum:
           - ERROR_LOYVETYPE
-          - ERROR_GRUNNLAGSTYPE
           - ERROR_FUNKSJONSMAATE
+          - CRITICAL_FUNKSJONSMAATE
           - ERROR_SKYTEVAAPENTYPE
+          - CRITICAL_SKYTEVAAPENTYPE
+          - CRITICAL_SKYTEVAAPENTYPE_UKJENT
           - ERROR_FABRIKKMERKE
           - WARNING_MODELL
           - ERROR_AVFYRINGSMEKANISME
           - ERROR_LADEMEKANISME
-          - ERROR_VAAPENDEFINERENDE
+          - CRITICAL_VAAPENDEFINERENDE
           - ERROR_VAAPENDELTYPE
+          - CRITICAL_VAAPENDELTYPE_UKJENT
           - ERROR_SKYTEVAAPEN_FINNES_IKKE
           - ERROR_ERVERVSLOYVE_FINNES_IKKE
           - ERROR_VAAPENDEL_FINNES_IKKE
           - ERROR_UGYLDIG_VAAPEN
           - ERROR_NAERINGSLOYVE_FINNES_IKKE
           - ERROR_VAAPEN_UTEN_VAAPENDEL
-          - ERROR_IKKE_INNEHAVER
           - ERROR_FORSLAG_IKKE_FUNNET
           - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
       required:
@@ -2635,9 +2650,18 @@ components:
       - warnings
     Korreksjonsmelding:
       type: object
+      discriminator:
+        propertyName: type
       properties:
         meldingTilSaksbehandler:
           type: string
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+      required:
+      - type
     Skytevaapenmelding:
       allOf:
       - $ref: "#/components/schemas/Korreksjonsmelding"
@@ -2647,6 +2671,7 @@ components:
             $ref: "#/components/schemas/Skytevaapen"
       required:
       - skytevaapen
+      - type
     Vaapendelmelding:
       allOf:
       - $ref: "#/components/schemas/Korreksjonsmelding"
@@ -2660,6 +2685,7 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
       required:
+      - type
       - vaapendel
     KorreksjonResponseStatus.Created:
       type: object
@@ -3234,16 +3260,16 @@ components:
           description: Listen med elementer for den gjeldende siden.
           items:
             $ref: "#/components/schemas/Skytevaapen"
-        pageNumber:
-          type: integer
-          format: int32
-          description: Gjeldende sidenummer (1-indeksert).
-          example: 1
         pageSize:
           type: integer
           format: int32
           description: Antall elementer på denne siden.
           example: 50
+        pageNumber:
+          type: integer
+          format: int32
+          description: Gjeldende sidenummer (1-indeksert).
+          example: 1
         totalElements:
           type: integer
           format: int64
@@ -3314,16 +3340,16 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
-        pageNumber:
-          type: integer
-          format: int32
-          description: Gjeldende sidenummer (1-indeksert).
-          example: 1
         pageSize:
           type: integer
           format: int32
           description: Antall elementer på denne siden.
           example: 50
+        pageNumber:
+          type: integer
+          format: int32
+          description: Gjeldende sidenummer (1-indeksert).
+          example: 1
         totalElements:
           type: integer
           format: int64
@@ -3394,16 +3420,16 @@ components:
           description: Listen med elementer for den gjeldende siden.
           items:
             $ref: "#/components/schemas/MasseoverforingsforslagView"
-        pageNumber:
-          type: integer
-          format: int32
-          description: Gjeldende sidenummer (1-indeksert).
-          example: 1
         pageSize:
           type: integer
           format: int32
           description: Antall elementer på denne siden.
           example: 50
+        pageNumber:
+          type: integer
+          format: int32
+          description: Gjeldende sidenummer (1-indeksert).
+          example: 1
         totalElements:
           type: integer
           format: int64
@@ -4328,13 +4354,13 @@ components:
           - REVOLVERTONNE
           - SLUTTSTYKKE
           - UKJENT
-        modell:
-          type: string
         serienummer:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
+          type: string
+        modell:
           type: string
       required:
       - registreringsobjektType
@@ -4634,10 +4660,6 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
           beskrivelse:
             type: string
           grunnlagsbeskrivelse:

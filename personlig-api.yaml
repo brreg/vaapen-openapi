@@ -492,6 +492,26 @@ paths:
                 - $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
                 - $ref: "#/components/schemas/DigitaltBevisSkytevaapenResponse"
                 - $ref: "#/components/schemas/DigitaltBevisVaapendelResponse"
+    delete:
+      tags:
+      - digitalt-bevis-controller
+      operationId: deleteDigitaltBevisByInnehavsloyveId
+      parameters:
+      - name: idInnehavsloyve
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                oneOf:
+                - $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
+                - $ref: "#/components/schemas/DigitaltBevisSkytevaapenResponse"
+                - $ref: "#/components/schemas/DigitaltBevisVaapendelResponse"
   /api/person/digitale-bevis/annetLoyveId/{idAnnetLoyve}:
     get:
       tags:
@@ -508,6 +528,23 @@ paths:
         required: false
         schema:
           type: boolean
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/DigitaltBevisAnnetLoyveResponse"
+    delete:
+      tags:
+      - digitalt-bevis-controller
+      operationId: deleteDigitaltBevisByAnnetLoyveId
+      parameters:
+      - name: idAnnetLoyve
+        in: path
+        required: true
+        schema:
+          type: string
       responses:
         "200":
           description: OK
@@ -630,21 +667,6 @@ paths:
             '*/*':
               schema:
                 type: string
-  /api/person/digitale-bevis/{id}:
-    delete:
-      tags:
-      - digitalt-bevis-controller
-      operationId: deleteDigitaltBevis
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: string
-          format: uuid
-      responses:
-        "200":
-          description: OK
 components:
   schemas:
     CreateVaapenskap:
@@ -1464,9 +1486,18 @@ components:
       - navn
     Korreksjonsmelding:
       type: object
+      discriminator:
+        propertyName: type
       properties:
         meldingTilSaksbehandler:
           type: string
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+      required:
+      - type
     Laaskasse:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -1491,6 +1522,8 @@ components:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         status:
           type: string
           enum:
@@ -1536,8 +1569,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1931,6 +1962,7 @@ components:
           - INNLEVERT_POLITI
           - TILBAKEKALT
           - BESLAGLAGT
+          - SLETTET
         avfyringsmekanisme:
           type: string
           enum:
@@ -1994,6 +2026,7 @@ components:
             $ref: "#/components/schemas/Skytevaapen"
       required:
       - skytevaapen
+      - type
     Skytterforeningsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2186,6 +2219,7 @@ components:
           - INNLEVERT_POLITI
           - TILBAKEKALT
           - BESLAGLAGT
+          - SLETTET
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -2229,6 +2263,7 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
       required:
+      - type
       - vaapendel
     KorreksjonResponseStatus.Created:
       type: object
@@ -2451,22 +2486,24 @@ components:
           type: string
           enum:
           - ERROR_LOYVETYPE
-          - ERROR_GRUNNLAGSTYPE
           - ERROR_FUNKSJONSMAATE
+          - CRITICAL_FUNKSJONSMAATE
           - ERROR_SKYTEVAAPENTYPE
+          - CRITICAL_SKYTEVAAPENTYPE
+          - CRITICAL_SKYTEVAAPENTYPE_UKJENT
           - ERROR_FABRIKKMERKE
           - WARNING_MODELL
           - ERROR_AVFYRINGSMEKANISME
           - ERROR_LADEMEKANISME
-          - ERROR_VAAPENDEFINERENDE
+          - CRITICAL_VAAPENDEFINERENDE
           - ERROR_VAAPENDELTYPE
+          - CRITICAL_VAAPENDELTYPE_UKJENT
           - ERROR_SKYTEVAAPEN_FINNES_IKKE
           - ERROR_ERVERVSLOYVE_FINNES_IKKE
           - ERROR_VAAPENDEL_FINNES_IKKE
           - ERROR_UGYLDIG_VAAPEN
           - ERROR_NAERINGSLOYVE_FINNES_IKKE
           - ERROR_VAAPEN_UTEN_VAAPENDEL
-          - ERROR_IKKE_INNEHAVER
           - ERROR_FORSLAG_IKKE_FUNNET
           - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
       required:
@@ -2756,6 +2793,8 @@ components:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         status:
           type: string
           enum:
@@ -2801,8 +2840,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -2894,11 +2931,11 @@ components:
       discriminator:
         propertyName: type
       properties:
-        qrKode:
-          type: string
         beviseierId:
           type: integer
           format: int64
+        qrKode:
+          type: string
         gyldigTil:
           type: string
           format: date
@@ -3788,6 +3825,8 @@ components:
           - GODKJENT_SKYTTERFORENING
           - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
+        loyveId:
+          type: string
         status:
           type: string
           enum:
@@ -3833,8 +3872,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -3938,10 +3975,6 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
           beskrivelse:
             type: string
           grunnlagsbeskrivelse:
