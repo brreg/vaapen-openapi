@@ -422,16 +422,31 @@ paths:
     get:
       tags:
       - innehaver-controller
+      summary: 'Hent personer med ugyldig status. '
       operationId: findInnehaverMedUgyldigStatus
+      parameters:
+      - name: sekvensnummer
+        in: query
+        required: false
+        schema:
+          type: integer
+          format: int64
       responses:
         "200":
-          description: OK
+          description: A list of PersonMedFolkeregisterStatus objects where status
+            is not AKTIV or BOSATT
           content:
             '*/*':
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/PersonMedFolkeregisterStatus"
+        "400":
+          description: Bad request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/history/vaapendel:
     get:
       tags:
@@ -1150,13 +1165,13 @@ components:
         properties:
           navn:
             type: string
-          vaapenkortSid:
-            type: string
-          adresse:
-            type: string
           stilling:
             type: string
           telefon:
+            type: string
+          vaapenkortSid:
+            type: string
+          adresse:
             type: string
           personidentifikator:
             type: string
@@ -3638,10 +3653,6 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
           beskrivelse:
             type: string
           grunnlagsbeskrivelse:
@@ -4023,6 +4034,13 @@ components:
       properties:
         proposalId:
           type: string
+        proposalType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+        messageToCaseworker:
+          type: string
         submittedBy:
           $ref: "#/components/schemas/Submitter"
         previousData:
@@ -4043,13 +4061,6 @@ components:
           - $ref: "#/components/schemas/Revolvertonne"
           - $ref: "#/components/schemas/Sluttstykke"
           - $ref: "#/components/schemas/UkjentDel"
-        proposalType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        messageToCaseworker:
-          type: string
       required:
       - previousData
       - proposalId
