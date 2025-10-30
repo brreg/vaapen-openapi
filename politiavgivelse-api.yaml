@@ -799,6 +799,48 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /avgivelse/aksjoner/virksomhet:
+    get:
+      tags:
+      - aksjon-controller
+      summary: Get aksjoner for virksomhet
+      operationId: getAksjonerOnVirksomhet
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestVirksomhet"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Aksjon"
+  /avgivelse/aksjoner/person:
+    get:
+      tags:
+      - aksjon-controller
+      summary: Get aksjoner for person
+      operationId: getAksjonerOnPerson
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RequestPerson"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Aksjon"
 components:
   schemas:
     RequestPerson:
@@ -847,11 +889,11 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
+          personidentifikator:
+            type: string
           foedselsdato:
             type: string
             format: date
-          personidentifikator:
-            type: string
       required:
       - eiertype
       - personidentifikator
@@ -1150,10 +1192,10 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          importertKategori:
-            type: boolean
           lokasjon:
             type: string
+          importertKategori:
+            type: boolean
       required:
       - eiertype
       - importertKategori
@@ -1163,17 +1205,17 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
+          personidentifikator:
+            type: string
           navn:
-            type: string
-          stilling:
-            type: string
-          telefon:
             type: string
           vaapenkortSid:
             type: string
           adresse:
             type: string
-          personidentifikator:
+          stilling:
+            type: string
+          telefon:
             type: string
       required:
       - eiertype
@@ -2714,14 +2756,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
           serienummer:
             type: string
           fabrikkmerke:
@@ -2730,6 +2764,14 @@ components:
             type: string
           modell:
             type: string
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -4034,11 +4076,6 @@ components:
       properties:
         proposalId:
           type: string
-        proposalType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         messageToCaseworker:
           type: string
         submittedBy:
@@ -4061,6 +4098,11 @@ components:
           - $ref: "#/components/schemas/Revolvertonne"
           - $ref: "#/components/schemas/Sluttstykke"
           - $ref: "#/components/schemas/UkjentDel"
+        proposalType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
       required:
       - previousData
       - proposalId
@@ -4105,8 +4147,12 @@ components:
           - INAKTIV
           - IKKEBOSATT
           - UKJENT
+        sekvensnummer:
+          type: integer
+          format: int64
       required:
       - personidentifikator
+      - sekvensnummer
       - status
     HistoryRowRegistreringsobjektVaapendel:
       type: object
@@ -4463,3 +4509,65 @@ components:
       - loyvetype
       - status
       - vedtaksdato
+    Aksjon:
+      type: object
+      properties:
+        id:
+          type: string
+        aksjonstype:
+          type: string
+          enum:
+          - FORHAANDSVARSEL
+          - TILBAKEKALL
+          - FORBUDMOTREGISTRERINGSFRIEVAAPEN
+        aksjonsdato:
+          type: string
+          format: date
+        aksjonsbeskrivelse:
+          type: string
+        saksreferanse:
+          type: string
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ExistingEier"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/DigitalPerson"
+          - $ref: "#/components/schemas/DigitalVirksomhet"
+          - $ref: "#/components/schemas/ExistingDigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingDigitalEier"
+          - $ref: "#/components/schemas/ExistingManuellEier"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          - $ref: "#/components/schemas/ExistingManuellEier"
+          - $ref: "#/components/schemas/ManuellPoliti"
+          - $ref: "#/components/schemas/ManuellUkjentPerson"
+          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        slettetDato:
+          type: string
+          format: date-time
+      required:
+      - aksjonsdato
+      - aksjonstype
+      - id
+      - innehaver
+      - saksreferanse

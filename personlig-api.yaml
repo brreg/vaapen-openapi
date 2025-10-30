@@ -1625,9 +1625,9 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          personidentifikator:
-            type: string
           navn:
+            type: string
+          personidentifikator:
             type: string
           vaapenkortSid:
             type: string

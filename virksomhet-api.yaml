@@ -1933,15 +1933,15 @@ components:
         properties:
           navn:
             type: string
-          stilling:
-            type: string
-          telefon:
-            type: string
           vaapenkortSid:
             type: string
           adresse:
             type: string
+          stilling:
+            type: string
           personidentifikator:
+            type: string
+          telefon:
             type: string
       required:
       - eiertype
