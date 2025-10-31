@@ -66,8 +66,8 @@ paths:
     put:
       tags:
       - aksjon-controller
-      summary: Opprett NY aksjon
-      operationId: nyAksjon
+      summary: Oppdater eksisterenede aksjon
+      operationId: oppdaterAksjon
       requestBody:
         content:
           application/json:
@@ -84,8 +84,8 @@ paths:
     post:
       tags:
       - aksjon-controller
-      summary: Oppdater eksisterenede aksjon
-      operationId: oppdaterAksjon
+      summary: Opprett NY aksjon
+      operationId: nyAksjon
       requestBody:
         content:
           application/json:
@@ -2624,37 +2624,11 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
-        vaapendeltype:
-          type: string
-          enum:
-          - LAASKASSE
-          - PIPE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-          - UKJENT
-        skytevaapentype:
-          type: string
-          enum:
-          - RIFLE
-          - HAGLE
-          - KOMBINASJONSVAAPEN
-          - PISTOL
-          - REVOLVER
-          - MASKINGEVAER
-          - MASKINPISTOL
-          - SALUTT
-          - KNALL
-          - LUFTFJAER
-          - MUSKETT
-          - ARMBROST
-          - UKJENT
         annetFabrikkmerke:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
-          type: string
-        serienummer:
           type: string
         vaapenstatus:
           type: string
@@ -2682,6 +2656,32 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        serienummer:
+          type: string
+        vaapendeltype:
+          type: string
+          enum:
+          - LAASKASSE
+          - PIPE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+          - UKJENT
+        skytevaapentype:
+          type: string
+          enum:
+          - RIFLE
+          - HAGLE
+          - KOMBINASJONSVAAPEN
+          - PISTOL
+          - REVOLVER
+          - MASKINGEVAER
+          - MASKINPISTOL
+          - SALUTT
+          - KNALL
+          - LUFTFJAER
+          - MUSKETT
+          - ARMBROST
+          - UKJENT
         id:
           type: integer
           format: int64
