@@ -1959,8 +1959,6 @@ components:
         properties:
           navn:
             type: string
-          personidentifikator:
-            type: string
           vaapenkortSid:
             type: string
           adresse:
@@ -1968,6 +1966,8 @@ components:
           stilling:
             type: string
           telefon:
+            type: string
+          personidentifikator:
             type: string
       required:
       - eiertype
@@ -2518,16 +2518,16 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         skytevaapentype:
           type: string
           enum:
@@ -3431,14 +3431,14 @@ components:
     Eieroverforingsforslag:
       type: object
       properties:
-        vaapeneier:
-          oneOf:
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
         mottakersLoyve:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
         id:
           type: integer
           format: int64
