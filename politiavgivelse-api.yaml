@@ -1763,8 +1763,22 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          ervervsId:
+          skytevaapentype:
             type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
           modell:
@@ -1791,7 +1805,7 @@ components:
             - LUNTE
       required:
       - brukesAvType
-      - ervervsId
+      - skytevaapentype
     BrukesAvErvervsloyvePeker:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -1807,11 +1821,26 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          skytevaapen:
-            $ref: "#/components/schemas/Skytevaapen"
-          skytevaapenid:
-            type: integer
-            format: int64
+          skytevaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
           modell:
             type: string
           funksjonsmaate:
@@ -1836,8 +1865,8 @@ components:
             - LUNTE
       required:
       - brukesAvType
-      - skytevaapen
-      - skytevaapenid
+      - funksjonsmaate
+      - skytevaapentype
     BrukesAvSkytevaapenPeker:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -2524,6 +2553,192 @@ components:
       required:
       - arrangertAv
       - navn
+    Skytterforeningsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Slaktegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Sluttstykke:
+      allOf:
+      - $ref: "#/components/schemas/Vaapendel"
+      - type: object
+        properties:
+          sluttstykketype:
+            type: string
+            enum:
+            - SLUTTSTYKKE
+            - GLIDESTYKKE
+            - LAASEBLOKK
+      required:
+      - innehavsloyve
+      - korrigeringsstatus
+      - registreringsobjektType
+      - skytevaapentype
+    Sportsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          skyteprogram:
+            $ref: "#/components/schemas/Skyteprogram"
+          reservevaapen:
+            type: boolean
+          annetSkyteprogram:
+            type: string
+      required:
+      - grunnlagsType
+      - reservevaapen
+    TestOgUtviklingsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Tjenestepersonsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    UkjentDel:
+      allOf:
+      - $ref: "#/components/schemas/Vaapendel"
+      - type: object
+        properties:
+          lademekanisme:
+            type: string
+            enum:
+            - MUNNLADER
+            - BAKLADER
+          avfyringsmekanisme:
+            type: string
+            enum:
+            - PATRON
+            - PERKUSJON
+            - FLINT
+            - LUNTE
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+      required:
+      - innehavsloyve
+      - kaliber
+      - korrigeringsstatus
+      - registreringsobjektType
+      - skytevaapentype
+    UkjentGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    UtenBehovsprovingGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Vaapendel:
+      allOf:
+      - $ref: "#/components/schemas/Registreringsobjekt"
+      - type: object
+        properties:
+          skytevaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          vaapenstatus:
+            type: string
+            enum:
+            - AKTIV
+            - DESTRUERT
+            - DEAKTIVERT
+            - UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - SLETTET
+          innehavsloyve:
+            oneOf:
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
+          korrigeringsstatus:
+            type: string
+            enum:
+            - OK
+            - TRENGER_GJENNOMGANG
+            - UNDER_KORRIGERING
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+      description: Våpendel-modellene
+      discriminator:
+        propertyName: vaapendeltype
+        mapping:
+          LAASKASSE: "#/components/schemas/Laaskasse"
+          PIPE: "#/components/schemas/Pipe"
+          REVOLVERTONNE: "#/components/schemas/Revolvertonne"
+          SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
+          UKJENT: "#/components/schemas/UkjentDel"
+      required:
+      - innehavsloyve
+      - korrigeringsstatus
+      - registreringsobjektType
+      - skytevaapentype
+    Vaapendelgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    SearchResponseSkytevaapen:
+      type: object
+      properties:
+        result:
+          type: array
+          items:
+            $ref: "#/components/schemas/Skytevaapen"
+        totalResults:
+          type: integer
+          format: int32
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+      required:
+      - result
+      - totalResults
     Skytevaapen:
       allOf:
       - $ref: "#/components/schemas/Registreringsobjekt"
@@ -2624,192 +2839,6 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
-    Skytterforeningsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Slaktegrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Sluttstykke:
-      allOf:
-      - $ref: "#/components/schemas/Vaapendel"
-      - type: object
-        properties:
-          sluttstykketype:
-            type: string
-            enum:
-            - SLUTTSTYKKE
-            - GLIDESTYKKE
-            - LAASEBLOKK
-      required:
-      - innehavsloyve
-      - korrigeringsstatus
-      - registreringsobjektType
-      - skytevaapentype
-    Sportsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          skyteprogram:
-            $ref: "#/components/schemas/Skyteprogram"
-          reservevaapen:
-            type: boolean
-          annetSkyteprogram:
-            type: string
-      required:
-      - grunnlagsType
-      - reservevaapen
-    TestOgUtviklingsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Tjenestepersonsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    UkjentDel:
-      allOf:
-      - $ref: "#/components/schemas/Vaapendel"
-      - type: object
-        properties:
-          lademekanisme:
-            type: string
-            enum:
-            - MUNNLADER
-            - BAKLADER
-          avfyringsmekanisme:
-            type: string
-            enum:
-            - PATRON
-            - PERKUSJON
-            - FLINT
-            - LUNTE
-          kaliber:
-            type: array
-            items:
-              $ref: "#/components/schemas/Kaliber"
-          annetKaliber:
-            type: string
-      required:
-      - innehavsloyve
-      - kaliber
-      - korrigeringsstatus
-      - registreringsobjektType
-      - skytevaapentype
-    UkjentGrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    UtenBehovsprovingGrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Vaapendel:
-      allOf:
-      - $ref: "#/components/schemas/Registreringsobjekt"
-      - type: object
-        properties:
-          modell:
-            type: string
-          skytevaapentype:
-            type: string
-            enum:
-            - RIFLE
-            - HAGLE
-            - KOMBINASJONSVAAPEN
-            - PISTOL
-            - REVOLVER
-            - MASKINGEVAER
-            - MASKINPISTOL
-            - SALUTT
-            - KNALL
-            - LUFTFJAER
-            - MUSKETT
-            - ARMBROST
-            - UKJENT
-          vaapenstatus:
-            type: string
-            enum:
-            - AKTIV
-            - DESTRUERT
-            - DEAKTIVERT
-            - UTFORT
-            - INNLEVERT_POLITI
-            - TILBAKEKALT
-            - BESLAGLAGT
-            - SLETTET
-          innehavsloyve:
-            oneOf:
-            - $ref: "#/components/schemas/Innehavsloyve"
-            - $ref: "#/components/schemas/Naeringsloyve"
-          korrigeringsstatus:
-            type: string
-            enum:
-            - OK
-            - TRENGER_GJENNOMGANG
-            - UNDER_KORRIGERING
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-      description: Våpendel-modellene
-      discriminator:
-        propertyName: vaapendeltype
-        mapping:
-          LAASKASSE: "#/components/schemas/Laaskasse"
-          PIPE: "#/components/schemas/Pipe"
-          REVOLVERTONNE: "#/components/schemas/Revolvertonne"
-          SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
-          UKJENT: "#/components/schemas/UkjentDel"
-      required:
-      - innehavsloyve
-      - korrigeringsstatus
-      - registreringsobjektType
-      - skytevaapentype
-    Vaapendelgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    SearchResponseSkytevaapen:
-      type: object
-      properties:
-        result:
-          type: array
-          items:
-            $ref: "#/components/schemas/Skytevaapen"
-        totalResults:
-          type: integer
-          format: int32
-        limit:
-          type: integer
-          format: int32
-        offset:
-          type: integer
-          format: int32
-      required:
-      - result
-      - totalResults
     EieroverforingsloggRequest:
       type: object
       description: Forespørselsobjekt for å hente en logg over eieroverføringer.
@@ -3676,14 +3705,16 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          godkjentForVaapen:
-            type: integer
-            format: int64
-          godkjentForErvervsloyve:
-            type: string
+          brukesAv:
+            oneOf:
+            - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
+            - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
       description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
       required:
       - annetloyveLoyvetype
+      - brukesAv
       - innehaver
       - loyveId
       - loyvetype
