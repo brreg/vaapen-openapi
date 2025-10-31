@@ -66,6 +66,7 @@ paths:
     put:
       tags:
       - aksjon-controller
+      summary: Opprett NY aksjon
       operationId: nyAksjon
       requestBody:
         content:
@@ -83,6 +84,7 @@ paths:
     post:
       tags:
       - aksjon-controller
+      summary: Oppdater eksisterenede aksjon
       operationId: oppdaterAksjon
       requestBody:
         content:
@@ -243,6 +245,7 @@ paths:
     delete:
       tags:
       - aksjon-controller
+      summary: Slett aksjon
       operationId: slettAksjon
       parameters:
       - name: aksjonsid
@@ -276,6 +279,8 @@ components:
     DigitalPerson:
       type: object
       properties:
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -284,8 +289,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        navn:
-          type: string
         personidentifikator:
           type: string
         foedselsdato:
@@ -300,6 +303,8 @@ components:
     DigitalVirksomhet:
       type: object
       properties:
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -309,8 +314,6 @@ components:
           - UKJENT_INNEHAVER
           - POLITI
         organisasjonsnummer:
-          type: string
-        navn:
           type: string
         id:
           type: integer
@@ -616,6 +619,10 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
+          navn:
+            type: string
+          personidentifikator:
+            type: string
           vaapenkortSid:
             type: string
           adresse:
@@ -623,10 +630,6 @@ components:
           stilling:
             type: string
           telefon:
-            type: string
-          navn:
-            type: string
-          personidentifikator:
             type: string
       required:
       - eiertype
@@ -2611,10 +2614,10 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        modell:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
         vaapenstatus:
           type: string
           enum:

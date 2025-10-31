@@ -2719,6 +2719,8 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
+          modell:
+            type: string
           skytevaapentype:
             type: string
             enum:
@@ -2756,14 +2758,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           vaapendeltype:
             type: string
             enum:
@@ -2772,6 +2766,12 @@ components:
             - REVOLVERTONNE
             - SLUTTSTYKKE
             - UKJENT
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -4076,8 +4076,6 @@ components:
       properties:
         proposalId:
           type: string
-        messageToCaseworker:
-          type: string
         submittedBy:
           $ref: "#/components/schemas/Submitter"
         previousData:
@@ -4103,6 +4101,8 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        messageToCaseworker:
+          type: string
       required:
       - previousData
       - proposalId
