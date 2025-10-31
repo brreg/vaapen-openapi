@@ -1017,8 +1017,22 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          ervervsId:
+          skytevaapentype:
             type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
           modell:
@@ -1045,7 +1059,7 @@ components:
             - LUNTE
       required:
       - brukesAvType
-      - ervervsId
+      - skytevaapentype
     BrukesAvErvervsloyvePeker:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -1061,14 +1075,26 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          skytevaapen:
-            description: Skytevåpen-modellen
-            required:
-            - funksjonsmaate
-            - skytevaapentype
-          skytevaapenid:
-            type: integer
-            format: int64
+          skytevaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
           modell:
             type: string
           funksjonsmaate:
@@ -1093,8 +1119,8 @@ components:
             - LUNTE
       required:
       - brukesAvType
-      - skytevaapen
-      - skytevaapenid
+      - funksjonsmaate
+      - skytevaapentype
     BrukesAvSkytevaapenPeker:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -2492,16 +2518,16 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         skytevaapentype:
           type: string
           enum:
@@ -3650,11 +3676,11 @@ components:
       discriminator:
         propertyName: type
       properties:
+        qrKode:
+          type: string
         beviseierId:
           type: integer
           format: int64
-        qrKode:
-          type: string
         gyldigTil:
           type: string
           format: date
@@ -3968,14 +3994,16 @@ components:
       - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
       - type: object
         properties:
-          godkjentForVaapen:
-            type: integer
-            format: int64
-          godkjentForErvervsloyve:
-            type: string
+          brukesAv:
+            oneOf:
+            - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
+            - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
       description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
       required:
       - annetloyveLoyvetype
+      - brukesAv
     IkkeSkytevaapenErvervsloyveBeviskontrollView:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
@@ -4675,14 +4703,16 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          godkjentForVaapen:
-            type: integer
-            format: int64
-          godkjentForErvervsloyve:
-            type: string
+          brukesAv:
+            oneOf:
+            - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
+            - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
       description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
       required:
       - annetloyveLoyvetype
+      - brukesAv
       - innehaver
       - loyveId
       - loyvetype
