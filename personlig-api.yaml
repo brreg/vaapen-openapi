@@ -793,11 +793,11 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          ervervsId:
+          ervervsloyveId:
             type: string
       required:
       - brukesAvType
-      - ervervsId
+      - ervervsloyveId
     BrukesAvSkytevaapenExpanded:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -854,12 +854,12 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          skytevaapenid:
+          skytevaapenId:
             type: integer
             format: int64
       required:
       - brukesAvType
-      - skytevaapenid
+      - skytevaapenId
     Deaktivertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"

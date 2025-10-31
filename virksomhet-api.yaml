@@ -1065,11 +1065,11 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          ervervsId:
+          ervervsloyveId:
             type: string
       required:
       - brukesAvType
-      - ervervsId
+      - ervervsloyveId
     BrukesAvSkytevaapenExpanded:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -1126,12 +1126,12 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          skytevaapenid:
+          skytevaapenId:
             type: integer
             format: int64
       required:
       - brukesAvType
-      - skytevaapenid
+      - skytevaapenId
     Deaktivertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1959,6 +1959,8 @@ components:
         properties:
           navn:
             type: string
+          personidentifikator:
+            type: string
           vaapenkortSid:
             type: string
           adresse:
@@ -1966,8 +1968,6 @@ components:
           stilling:
             type: string
           telefon:
-            type: string
-          personidentifikator:
             type: string
       required:
       - eiertype
@@ -2518,16 +2518,16 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         korrigeringsstatus:
           type: string
           enum:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         skytevaapentype:
           type: string
           enum:
@@ -3676,11 +3676,11 @@ components:
       discriminator:
         propertyName: type
       properties:
-        qrKode:
-          type: string
         beviseierId:
           type: integer
           format: int64
+        qrKode:
+          type: string
         gyldigTil:
           type: string
           format: date
