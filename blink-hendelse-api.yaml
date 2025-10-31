@@ -279,13 +279,6 @@ components:
     DigitalPerson:
       type: object
       properties:
-        navn:
-          type: string
-        personidentifikator:
-          type: string
-        foedselsdato:
-          type: string
-          format: date
         eiertype:
           type: string
           description: Type eier
@@ -294,6 +287,13 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
+        navn:
+          type: string
+        personidentifikator:
+          type: string
+        foedselsdato:
+          type: string
+          format: date
         id:
           type: integer
           format: int64
@@ -303,8 +303,6 @@ components:
     DigitalVirksomhet:
       type: object
       properties:
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
@@ -314,6 +312,8 @@ components:
           - UKJENT_INNEHAVER
           - POLITI
         organisasjonsnummer:
+          type: string
+        navn:
           type: string
         id:
           type: integer
@@ -1210,11 +1210,11 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          ervervsId:
+          ervervsloyveId:
             type: string
       required:
       - brukesAvType
-      - ervervsId
+      - ervervsloyveId
     BrukesAvSkytevaapenExpanded:
       allOf:
       - $ref: "#/components/schemas/BrukesAv"
@@ -1271,12 +1271,12 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
-          skytevaapenid:
+          skytevaapenId:
             type: integer
             format: int64
       required:
       - brukesAvType
-      - skytevaapenid
+      - skytevaapenId
     Deaktivertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2648,11 +2648,11 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        annetFabrikkmerke:
+          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
-          type: string
-        annetFabrikkmerke:
           type: string
         serienummer:
           type: string
