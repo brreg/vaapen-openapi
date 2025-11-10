@@ -226,6 +226,8 @@ paths:
               - $ref: "#/components/schemas/MottaPall"
               - $ref: "#/components/schemas/PakkeEndringReferansesamling"
               - $ref: "#/components/schemas/PakkeEndringUtlaan"
+              - $ref: "#/components/schemas/PakkeEtterregistreringDestruert"
+              - $ref: "#/components/schemas/PakkeFjernReferansesamling"
               - $ref: "#/components/schemas/PakkeFraPall"
               - $ref: "#/components/schemas/PakkerTilPall"
               - $ref: "#/components/schemas/PallUnderKonstruksjon"
@@ -279,6 +281,10 @@ components:
     DigitalPerson:
       type: object
       properties:
+        personidentifikator:
+          type: string
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -287,10 +293,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        navn:
-          type: string
-        personidentifikator:
-          type: string
         foedselsdato:
           type: string
           format: date
@@ -303,6 +305,10 @@ components:
     DigitalVirksomhet:
       type: object
       properties:
+        organisasjonsnummer:
+          type: string
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -311,10 +317,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        organisasjonsnummer:
-          type: string
-        navn:
-          type: string
         id:
           type: integer
           format: int64
@@ -619,9 +621,9 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          navn:
-            type: string
           personidentifikator:
+            type: string
+          navn:
             type: string
           vaapenkortSid:
             type: string
@@ -994,26 +996,6 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
-        saksreferanse:
-          type: string
-        annetloyveLoyvetype:
-          type: string
-          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
-          enum:
-          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
-          - AMMUNISJONSSAMLER
-          - GODKJENT_SAMLER
-          - PIRATBESKYTTELSE
-          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
-          - LAANELOYVE
-          - IKKE_ERVERVSMESSIG_INNFORSEL
-          - ERVERVSMESSIG_INNFORSEL
-          - MIDLERTIDIG_INNFORSEL
-          - UTFORSEL
-          - GODKJENT_SKYTEBANE
-          - GODKJENT_SKYTTERFORENING
-          - NYTT_SKYTEPROGRAM
-          - HOYKAPASITETSMAGASIN
         status:
           type: string
           enum:
@@ -1024,6 +1006,10 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        saksreferanse:
+          type: string
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1059,19 +1045,37 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
+        annetloyveLoyvetype:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - NYTT_SKYTEPROGRAM
+          - HOYKAPASITETSMAGASIN
         loyvetype:
           type: string
           description: Type løyve
           enum:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
+          - ERVERV_UTEN_LOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+          - UTEN_EIERSKAP
       required:
       - annetloyveLoyvetype
       - innehaver
@@ -1287,6 +1291,19 @@ components:
       - $ref: "#/components/schemas/LoyveForErverv"
       - type: object
         properties:
+          status:
+            type: string
+            enum:
+            - AKTIV
+            - BENYTTET
+            - TILBAKEKALT
+            - FRYST
+            - DELVIS_BENYTTET
+            - AVSLAATT
+            - AVSLUTTET
+          vedtaksdato:
+            type: string
+            format: date
           gyldigTil:
             type: string
             format: date
@@ -1859,6 +1876,21 @@ components:
       - $ref: "#/components/schemas/LoyveForInnehav"
       - type: object
         properties:
+          loyveId:
+            type: string
+          status:
+            type: string
+            enum:
+            - AKTIV
+            - BENYTTET
+            - TILBAKEKALT
+            - FRYST
+            - DELVIS_BENYTTET
+            - AVSLAATT
+            - AVSLUTTET
+          vedtaksdato:
+            type: string
+            format: date
           innehaver:
             oneOf:
             - $ref: "#/components/schemas/EierVirksomhet"
@@ -2228,11 +2260,100 @@ components:
           format: uuid
       required:
       - id
+    ErvervUtenLoyve:
+      allOf:
+      - $ref: "#/components/schemas/LoyveForErverv"
+      - type: object
+        properties:
+          grunnlag:
+            oneOf:
+            - $ref: "#/components/schemas/Aldersgrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
+            - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
+            - $ref: "#/components/schemas/Museumsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
+            - $ref: "#/components/schemas/Sportsgrunnlag"
+            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
+            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+      required:
+      - grunnlag
+      - innehaver
+      - loyveId
+      - loyvetype
     Innehavsloyve:
       allOf:
       - $ref: "#/components/schemas/LoyveForInnehav"
       - type: object
         properties:
+          loyveId:
+            type: string
+          status:
+            type: string
+            enum:
+            - AKTIV
+            - BENYTTET
+            - TILBAKEKALT
+            - FRYST
+            - DELVIS_BENYTTET
+            - AVSLAATT
+            - AVSLUTTET
+          vedtaksdato:
+            type: string
+            format: date
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingEier"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/DigitalPerson"
+            - $ref: "#/components/schemas/DigitalVirksomhet"
+            - $ref: "#/components/schemas/ExistingDigitalEier"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingPerson"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingDigitalEier"
+            - $ref: "#/components/schemas/ExistingManuellEier"
+            - $ref: "#/components/schemas/ExistingPerson"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingPerson"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+            - $ref: "#/components/schemas/ExistingManuellEier"
+            - $ref: "#/components/schemas/ManuellPoliti"
+            - $ref: "#/components/schemas/ManuellUkjentPerson"
+            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
           grunnlag:
             oneOf:
             - $ref: "#/components/schemas/Aldersgrunnlag"
@@ -2305,6 +2426,8 @@ components:
             - $ref: "#/components/schemas/UkjentInnehaver"
           ervervsloyve:
             $ref: "#/components/schemas/Ervervsloyve"
+          ervervUtenLoyve:
+            $ref: "#/components/schemas/ErvervUtenLoyve"
       description: Løyve for innehavelse av våpen eller våpendel
       required:
       - fritakFraAlderskrav
@@ -2337,18 +2460,9 @@ components:
         mapping:
           INNEHAVSLOYVE: "#/components/schemas/Innehavsloyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
+          UTEN_EIERSKAP: "#/components/schemas/UtenEierskap"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
-        innehaver:
+        innehaverIfEier:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
           - $ref: "#/components/schemas/EierPerson"
@@ -2383,25 +2497,20 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         loyvetype:
           type: string
           description: Type løyve
           enum:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
+          - ERVERV_UTEN_LOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+          - UTEN_EIERSKAP
+        loyveidIfEier:
+          type: string
       required:
-      - innehaver
-      - loyveId
       - loyvetype
-      - status
-      - vedtaksdato
     Pipe:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -2459,7 +2568,7 @@ components:
       - skytevaapentype
     Skytevaapen:
       type: object
-      description: Skytevåpen-modellen
+      description: Skytevåpen
       properties:
         id:
           type: integer
@@ -2494,12 +2603,17 @@ components:
           type: string
           enum:
           - AKTIV
+          - SKAL_DESTRUERES
           - DESTRUERT
           - DEAKTIVERT
-          - UTFORT
+          - DEAKTIVERT_GAMMELT_REGELVERK
+          - PERMANENT_UTFORT
           - INNLEVERT_POLITI
           - TILBAKEKALT
           - BESLAGLAGT
+          - TAPSMELDT
+          - TAPT_FRA_DODSBO
+          - STJAALET
           - SLETTET
         avfyringsmekanisme:
           type: string
@@ -2517,6 +2631,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
+          - $ref: "#/components/schemas/UtenEierskap"
         vaapendeler:
           type: array
           items:
@@ -2600,6 +2715,12 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    UtenEierskap:
+      allOf:
+      - $ref: "#/components/schemas/LoyveForInnehav"
+      description: Løyve for et våpen uten eier som oppbevares hos politiet
+      required:
+      - loyvetype
     VAAPEN:
       allOf:
       - $ref: "#/components/schemas/SaksbehandlerEndring"
@@ -2624,40 +2745,6 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
-        annetFabrikkmerke:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
-          type: string
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - DESTRUERT
-          - DEAKTIVERT
-          - UTFORT
-          - INNLEVERT_POLITI
-          - TILBAKEKALT
-          - BESLAGLAGT
-          - SLETTET
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        serienummer:
-          type: string
         vaapendeltype:
           type: string
           enum:
@@ -2682,6 +2769,46 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        innehavsloyve:
+          oneOf:
+          - $ref: "#/components/schemas/Innehavsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
+          - $ref: "#/components/schemas/UtenEierskap"
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
+        annetFabrikkmerke:
+          type: string
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - SKAL_DESTRUERES
+          - DESTRUERT
+          - DEAKTIVERT
+          - DEAKTIVERT_GAMMELT_REGELVERK
+          - PERMANENT_UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
+          - TAPSMELDT
+          - TAPT_FRA_DODSBO
+          - STJAALET
+          - SLETTET
+        korrigeringsstatus:
+          type: string
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+        serienummer:
+          type: string
         id:
           type: integer
           format: int64
@@ -2753,6 +2880,7 @@ components:
             $ref: "#/components/schemas/Skytevaapen"
           loyveForErverv:
             oneOf:
+            - $ref: "#/components/schemas/ErvervUtenLoyve"
             - $ref: "#/components/schemas/Ervervsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
       description: Eieroverføring av Skytevaapen
@@ -2767,18 +2895,11 @@ components:
         propertyName: loyvetype
         mapping:
           ERVERVSLOYVE: "#/components/schemas/Ervervsloyve"
+          ERVERV_UTEN_LOYVE: "#/components/schemas/ErvervUtenLoyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        status:
+        loyveId:
           type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2814,25 +2935,20 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         loyvetype:
           type: string
           description: Type løyve
           enum:
           - INNEHAVSLOYVE
           - ERVERVSLOYVE
+          - ERVERV_UTEN_LOYVE
           - NAERINGSLOYVE
           - ANNET_LOYVE
+          - UTEN_EIERSKAP
       required:
       - innehaver
       - loyveId
       - loyvetype
-      - status
-      - vedtaksdato
     EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER:
       allOf:
       - $ref: "#/components/schemas/SaksbehandlerEndring"
@@ -2847,6 +2963,7 @@ components:
             - $ref: "#/components/schemas/UkjentDel"
           loyveForErverv:
             oneOf:
+            - $ref: "#/components/schemas/ErvervUtenLoyve"
             - $ref: "#/components/schemas/Ervervsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
       description: Eieroverføring av Vaapendel
@@ -2926,6 +3043,8 @@ components:
       properties:
         id:
           type: string
+        serienummer:
+          type: string
         beskrivelse:
           type: string
         type:
@@ -2987,6 +3106,7 @@ components:
           PAKKE_ENDRING_KRIPOS: "#/components/schemas/EndrePakkeKripos"
           PAKKE_UTLAANSENDRING: "#/components/schemas/PakkeEndringUtlaan"
           PAKKE_ENDRING_REFERANSESAMLING: "#/components/schemas/PakkeEndringReferansesamling"
+          PAKKE_FJERN_FRA_REFERANSESAMLING: "#/components/schemas/PakkeFjernReferansesamling"
           PALL_OPPRETTET: "#/components/schemas/PallUnderKonstruksjon"
           PAKKE_TIL_PALL: "#/components/schemas/PakkerTilPall"
           PAKKE_FRA_PALL: "#/components/schemas/PakkeFraPall"
@@ -2996,6 +3116,7 @@ components:
           PALL_AAPNET: "#/components/schemas/AapnePall"
           PALL_SENDT_FORSVARET: "#/components/schemas/SendForsvaret"
           PALL_ENDELIG_DESTRUERT: "#/components/schemas/EndeligDestruksjon"
+          PAKKE_KRIPOS_ETTERREGISTRERING_ENDELIG_DESTRUERT: "#/components/schemas/PakkeEtterregistreringDestruert"
       properties:
         type:
           type: string
@@ -3011,20 +3132,15 @@ components:
           - PAKKE_SENDT
           - PAKKE_MOTTATT
           - PAKKE_KONTROLLERT_KRIPOS
-          - PAKKE_MELLOMLAGRET
-          - PAKKE_SENDT_FORSVARET
-          - PAKKE_ENDELIG_DESTRUERT
-          - PAKKE_BESLUTTET_HAANDTERING
+          - PAKKE_KRIPOS_ETTERREGISTRERING_ENDELIG_DESTRUERT
           - PALL_OPPRETTET
-          - PALL_ENDRING_DISTRIKT
           - PALL_FORSEGLET
           - PALL_SENDT
-          - PALL_MELLOMLAGRET
-          - PALL_ENDRING_KRIPOS
           - PALL_MOTTATT_KRIPOS
           - PALL_SENDT_FORSVARET
           - PALL_AAPNET
           - PALL_ENDELIG_DESTRUERT
+          - PAKKE_FJERN_FRA_REFERANSESAMLING
       required:
       - type
     MottaPall:
@@ -3081,8 +3197,6 @@ components:
           type: boolean
         merknad:
           type: string
-        straffesaksnummer:
-          type: string
         innkomstmaate:
           type: string
           enum:
@@ -3105,12 +3219,15 @@ components:
         vaapendel:
           type: integer
           format: int64
+        saksreferanse:
+          type: string
       required:
       - besluttetHandtering
       - id
       - innkomstmaate
       - lokasjon
       - pakkestatus
+      - saksreferanse
       - tilUtlaan
     PakkeEndringReferansesamling:
       allOf:
@@ -3140,6 +3257,28 @@ components:
       - pakkeId
       - type
       - utlaan
+    PakkeEtterregistreringDestruert:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakke:
+            $ref: "#/components/schemas/Pakke"
+      description: Endelig destruksjon fra Kripos
+      required:
+      - pakke
+      - type
+    PakkeFjernReferansesamling:
+      allOf:
+      - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
+      - type: object
+        properties:
+          pakkeId:
+            type: string
+      description: Pakke - fjern fra referansesamling
+      required:
+      - pakkeId
+      - type
     PakkeFraPall:
       allOf:
       - $ref: "#/components/schemas/HendelsePoltietsBesittelse"
@@ -3324,6 +3463,7 @@ components:
           - PAKKE_CHANGE_NOT_ALLOWED
           - PALL_NOT_FOUND
           - PAKKE_KAN_IKKE_FJERNES_FRA_FORSEGLET_PALL
+          - PAKKE_STATUS_IKKE_DESTRUKSJON
       required:
       - errorType
       - field
