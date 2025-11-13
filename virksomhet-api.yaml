@@ -397,6 +397,24 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
+  /api/virksomhet/eieroverforingsforslag/uten-loyve/svar:
+    post:
+      tags:
+      - eieroverforing-controller
+      operationId: svarEieroverforingUtenLoyve
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/EieroverforingsforslagSvarRequest"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/EieroverforingValidationResult"
   /api/virksomhet/eieroverforingsforslag/svar:
     post:
       tags:
@@ -625,7 +643,7 @@ paths:
     get:
       tags:
       - naering
-      operationId: getVaapendelerById
+      operationId: getVaapendelById
       parameters:
       - name: innloggetVirksomhet
         in: query
