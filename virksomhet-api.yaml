@@ -2194,11 +2194,11 @@ components:
             type: string
           adresse:
             type: string
+          telefon:
+            type: string
           vaapenkortSid:
             type: string
           stilling:
-            type: string
-          telefon:
             type: string
       required:
       - eiertype
@@ -3890,6 +3890,11 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3901,11 +3906,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -4506,11 +4506,15 @@ components:
             type: string
           grunnlagsbeskrivelse:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for erverv av våpen som ikke regnes som skytevåpen
       required:
       - annetloyveLoyvetype
       - beskrivelse
       - grunnlagsbeskrivelse
+      - gyldigTil
     ImportLinje:
       type: object
       discriminator:
@@ -4568,6 +4572,9 @@ components:
             - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
             - PISTOL_REVOLVER
             - OVRIGE_RIFLER_HAGLER
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for lån av våpen
       required:
       - annetloyveLoyvetype
@@ -4608,9 +4615,13 @@ components:
         properties:
           importBeskrivelse:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for midlertidig innførsel
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - importBeskrivelse
     NaeringsimportloyveBeviskontrollView:
       allOf:
@@ -4878,7 +4889,7 @@ components:
           LAASKASSE: "#/components/schemas/LaaskasseBeviskontrollView"
           PIPE: "#/components/schemas/PipeBeviskontrollView"
           REVOLVERTONNE: "#/components/schemas/RevolvertonneBeviskontrollView"
-          SLUTTSTYKKE: "#/components/schemas/SluttstykkeBeviskontrollView"
+          SLUTTSTYKKE: "#/components/schemas/UkjentDelBeviskontrollView"
       properties:
         serienummer:
           type: string
