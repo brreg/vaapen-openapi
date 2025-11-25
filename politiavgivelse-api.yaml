@@ -551,6 +551,33 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /avgivelse/import/beholdning/{loyveid}:
+    get:
+      tags:
+      - import-controller
+      operationId: findImportbeholdning
+      parameters:
+      - name: loyveid
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  oneOf:
+                  - $ref: "#/components/schemas/Skytevaapen"
+                  - $ref: "#/components/schemas/Vaapendel"
+                  - $ref: "#/components/schemas/Laaskasse"
+                  - $ref: "#/components/schemas/Pipe"
+                  - $ref: "#/components/schemas/Revolvertonne"
+                  - $ref: "#/components/schemas/Sluttstykke"
+                  - $ref: "#/components/schemas/UkjentDel"
   /avgivelse/history/vaapendel:
     get:
       tags:
@@ -599,6 +626,7 @@ paths:
           - EIEROVERFORING
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
+          - IMPORT
       - name: fromTime
         in: query
         required: false
@@ -686,6 +714,7 @@ paths:
           - EIEROVERFORING
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
+          - IMPORT
       - name: fromTime
         in: query
         required: false
@@ -745,6 +774,7 @@ paths:
           - EIEROVERFORING
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
+          - IMPORT
       - name: fromTime
         in: query
         required: false
@@ -3012,10 +3042,6 @@ components:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
             - $ref: "#/components/schemas/UtenEierskap"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           korrigeringsstatus:
             type: string
             enum:
@@ -3034,6 +3060,10 @@ components:
             type: string
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
+          modell:
+            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3073,101 +3103,103 @@ components:
       - result
       - totalResults
     Skytevaapen:
-      type: object
-      description: Skytevåpen
-      properties:
-        id:
-          type: integer
-          format: int64
-          description: Unik identifikator
-        funksjonsmaate:
-          type: string
-          description: Funksjonsmåte for skytevåpenet
-          enum:
-          - ENKELTSKUDD
-          - HALVAUTOMATISK
-          - HELAUTOMATISK
-          - MANUELL_OMLADING
-          - UKJENT
-        skytevaapentype:
-          type: string
-          enum:
-          - RIFLE
-          - HAGLE
-          - KOMBINASJONSVAAPEN
-          - PISTOL
-          - REVOLVER
-          - MASKINGEVAER
-          - MASKINPISTOL
-          - SALUTT
-          - KNALL
-          - LUFTFJAER
-          - MUSKETT
-          - ARMBROST
-          - UKJENT
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - SKAL_DESTRUERES
-          - DESTRUERT
-          - DEAKTIVERT
-          - DEAKTIVERT_GAMMELT_REGELVERK
-          - PERMANENT_UTFORT
-          - INNLEVERT_POLITI
-          - TILBAKEKALT
-          - BESLAGLAGT
-          - TAPSMELDT
-          - TAPT_FRA_DODSBO
-          - STJAALET
-          - SLETTET
-        avfyringsmekanisme:
-          type: string
-          enum:
-          - PATRON
-          - PERKUSJON
-          - FLINT
-          - LUNTE
-        lademekanisme:
-          type: string
-          enum:
-          - MUNNLADER
-          - BAKLADER
-        innehavsloyve:
-          oneOf:
-          - $ref: "#/components/schemas/Innehavsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
-          - $ref: "#/components/schemas/UtenEierskap"
-        vaapendeler:
-          type: array
-          items:
+      allOf:
+      - $ref: "#/components/schemas/Registreringsobjekt"
+      - type: object
+        properties:
+          id:
+            type: integer
+            format: int64
+            description: Unik identifikator
+          funksjonsmaate:
+            type: string
+            description: Funksjonsmåte for skytevåpenet
+            enum:
+            - ENKELTSKUDD
+            - HALVAUTOMATISK
+            - HELAUTOMATISK
+            - MANUELL_OMLADING
+            - UKJENT
+          skytevaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          vaapenstatus:
+            type: string
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
+          avfyringsmekanisme:
+            type: string
+            enum:
+            - PATRON
+            - PERKUSJON
+            - FLINT
+            - LUNTE
+          lademekanisme:
+            type: string
+            enum:
+            - MUNNLADER
+            - BAKLADER
+          innehavsloyve:
             oneOf:
-            - $ref: "#/components/schemas/Laaskasse"
-            - $ref: "#/components/schemas/Pipe"
-            - $ref: "#/components/schemas/Revolvertonne"
-            - $ref: "#/components/schemas/Sluttstykke"
-            - $ref: "#/components/schemas/UkjentDel"
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
-        registreringsobjektType:
-          type: string
-          description: Type registreringsobjekt
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-          example: SkyteVaapen
-        definerendeType:
-          type: string
-          enum:
-          - LAASKASSE
-          - PIPE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-          - UKJENT
+            - $ref: "#/components/schemas/Innehavsloyve"
+            - $ref: "#/components/schemas/Naeringsloyve"
+            - $ref: "#/components/schemas/UtenEierskap"
+          vaapendeler:
+            type: array
+            items:
+              oneOf:
+              - $ref: "#/components/schemas/Laaskasse"
+              - $ref: "#/components/schemas/Pipe"
+              - $ref: "#/components/schemas/Revolvertonne"
+              - $ref: "#/components/schemas/Sluttstykke"
+              - $ref: "#/components/schemas/UkjentDel"
+          korrigeringsstatus:
+            type: string
+            enum:
+            - OK
+            - TRENGER_GJENNOMGANG
+            - UNDER_KORRIGERING
+          registreringsobjektType:
+            type: string
+            description: Type registreringsobjekt
+            enum:
+            - SKYTEVAAPEN
+            - VAAPENDEL
+            example: SkyteVaapen
+          definerendeType:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+      description: Skytevåpen
       required:
       - definerendeType
       - funksjonsmaate
@@ -3219,6 +3251,7 @@ components:
           - EIEROVERFORING
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
+          - IMPORT
         tilInnehaver:
           type: string
         fraInnehaver:
@@ -3270,6 +3303,7 @@ components:
           - EIEROVERFORING
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
+          - IMPORT
         tilInnehaver:
           type: string
         fraInnehaver:
@@ -4053,7 +4087,6 @@ components:
           - UTFORSEL
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
-          - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
         saksreferanse:
           type: string
@@ -4311,9 +4344,13 @@ components:
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:
             $ref: "#/components/schemas/Verdi"
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for innførsel av våpen for næringsdrivende virksomhet
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - importlinjer
       - innehaver
       - leverandor
@@ -4349,10 +4386,14 @@ components:
         properties:
           erversloyveid:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
       - erversloyveid
+      - gyldigTil
       - innehaver
       - loyveId
       - loyvetype
@@ -4366,9 +4407,13 @@ components:
         properties:
           utforselBeskrivelse:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for utførsel av våpen
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - innehaver
       - loyveId
       - loyvetype
@@ -4607,8 +4652,19 @@ components:
       properties:
         proposalId:
           type: string
+        messageToCaseworker:
+          type: string
         submittedBy:
           $ref: "#/components/schemas/Submitter"
+        previousData:
+          oneOf:
+          - $ref: "#/components/schemas/Skytevaapen"
+          - $ref: "#/components/schemas/Vaapendel"
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+          - $ref: "#/components/schemas/UkjentDel"
         proposedData:
           oneOf:
           - $ref: "#/components/schemas/Skytevaapen"
@@ -4623,17 +4679,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        previousData:
-          oneOf:
-          - $ref: "#/components/schemas/Skytevaapen"
-          - $ref: "#/components/schemas/Vaapendel"
-          - $ref: "#/components/schemas/Laaskasse"
-          - $ref: "#/components/schemas/Pipe"
-          - $ref: "#/components/schemas/Revolvertonne"
-          - $ref: "#/components/schemas/Sluttstykke"
-          - $ref: "#/components/schemas/UkjentDel"
-        messageToCaseworker:
-          type: string
       required:
       - previousData
       - proposalId
@@ -4844,6 +4889,7 @@ components:
           - EIEROVERFORING
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
+          - IMPORT
         changeType:
           type: string
         endringstidspunkt:

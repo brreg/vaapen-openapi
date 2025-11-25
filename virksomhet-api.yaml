@@ -2194,11 +2194,11 @@ components:
             type: string
           adresse:
             type: string
-          telefon:
-            type: string
           vaapenkortSid:
             type: string
           stilling:
+            type: string
+          telefon:
             type: string
       required:
       - eiertype
@@ -2788,14 +2788,6 @@ components:
           - $ref: "#/components/schemas/UtenEierskap"
         serienummer:
           type: string
-        vaapendeltype:
-          type: string
-          enum:
-          - LAASKASSE
-          - PIPE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-          - UKJENT
         skytevaapentype:
           type: string
           enum:
@@ -2814,6 +2806,14 @@ components:
           - UKJENT
         modell:
           type: string
+        vaapendeltype:
+          type: string
+          enum:
+          - LAASKASSE
+          - PIPE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+          - UKJENT
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
@@ -3726,6 +3726,11 @@ components:
           format: int32
         serienummer:
           type: string
+        id:
+          type: array
+          items:
+            type: integer
+            format: int64
         skytevaapentype:
           type: string
           enum:
@@ -3808,6 +3813,11 @@ components:
           - LOSE
         serienummer:
           type: string
+        id:
+          type: array
+          items:
+            type: integer
+            format: int64
         vaapendeltype:
           type: string
           enum:
@@ -3890,11 +3900,6 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3906,6 +3911,11 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -4302,7 +4312,6 @@ components:
           - UTFORSEL
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
-          - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
       required:
       - annetloyveLoyvetype
@@ -4893,14 +4902,6 @@ components:
       properties:
         serienummer:
           type: string
-        vaapendeltype:
-          type: string
-          enum:
-          - LAASKASSE
-          - PIPE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-          - UKJENT
         skytevaapentype:
           type: string
           enum:
@@ -4919,6 +4920,14 @@ components:
           - UKJENT
         modell:
           type: string
+        vaapendeltype:
+          type: string
+          enum:
+          - LAASKASSE
+          - PIPE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+          - UKJENT
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
@@ -5124,7 +5133,6 @@ components:
           - UTFORSEL
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
-          - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
         loyvetype:
           type: string
@@ -5345,9 +5353,13 @@ components:
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:
             $ref: "#/components/schemas/Verdi"
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for innførsel av våpen for næringsdrivende virksomhet
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - importlinjer
       - innehaver
       - leverandor
@@ -5383,10 +5395,14 @@ components:
         properties:
           erversloyveid:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
       - erversloyveid
+      - gyldigTil
       - innehaver
       - loyveId
       - loyvetype
@@ -5400,9 +5416,13 @@ components:
         properties:
           utforselBeskrivelse:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for utførsel av våpen
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - innehaver
       - loyveId
       - loyvetype

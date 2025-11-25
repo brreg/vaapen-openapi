@@ -283,8 +283,6 @@ components:
       properties:
         personidentifikator:
           type: string
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
@@ -293,6 +291,8 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
+        navn:
+          type: string
         foedselsdato:
           type: string
           format: date
@@ -307,8 +307,6 @@ components:
       properties:
         organisasjonsnummer:
           type: string
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
@@ -317,6 +315,8 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
+        navn:
+          type: string
         id:
           type: integer
           format: int64
@@ -910,11 +910,6 @@ components:
       - antall
       - merke
       - type
-    Ammunisjonsalg:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
     Ammunisjonskjoployve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -1008,8 +1003,6 @@ components:
           - AVSLUTTET
         saksreferanse:
           type: string
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -1045,6 +1038,8 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1796,7 +1791,7 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    NaeringAmmunisjon:
+    NaeringAmmunisjonsalg:
       allOf:
       - $ref: "#/components/schemas/Naeringstype"
       required:
@@ -1909,8 +1904,7 @@ components:
             type: array
             items:
               oneOf:
-              - $ref: "#/components/schemas/Ammunisjonsalg"
-              - $ref: "#/components/schemas/NaeringAmmunisjon"
+              - $ref: "#/components/schemas/NaeringAmmunisjonsalg"
               - $ref: "#/components/schemas/NaeringBegrensetHandel"
               - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
               - $ref: "#/components/schemas/NaeringHandel"
@@ -1956,7 +1950,7 @@ components:
           HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
           BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
           BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
-          AMMUNISJON: "#/components/schemas/Ammunisjonsalg"
+          AMMUNISJON: "#/components/schemas/NaeringAmmunisjonsalg"
       properties:
         type:
           type: string
@@ -2462,41 +2456,6 @@ components:
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
           UTEN_EIERSKAP: "#/components/schemas/UtenEierskap"
       properties:
-        innehaverIfEier:
-          oneOf:
-          - $ref: "#/components/schemas/DigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingEier"
-          - $ref: "#/components/schemas/ManuellEier"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/DigitalPerson"
-          - $ref: "#/components/schemas/DigitalVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ManuellPoliti"
-          - $ref: "#/components/schemas/ManuellUkjentPerson"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
         loyvetype:
           type: string
           description: Type løyve
@@ -2774,11 +2733,13 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
         modell:
           type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
+          type: string
+        serienummer:
           type: string
         vaapenstatus:
           type: string
@@ -2807,8 +2768,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        serienummer:
-          type: string
         id:
           type: integer
           format: int64
@@ -2898,8 +2857,6 @@ components:
           ERVERV_UTEN_LOYVE: "#/components/schemas/ErvervUtenLoyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2935,6 +2892,8 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         loyvetype:
           type: string
           description: Type løyve
