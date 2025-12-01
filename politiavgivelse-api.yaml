@@ -3005,6 +3005,12 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          modell:
+            type: string
           skytevaapentype:
             type: string
             enum:
@@ -3020,6 +3026,14 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
+            - UKJENT
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type: string
@@ -3048,21 +3062,7 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
-            type: string
-          modell:
             type: string
       description: Våpendel-modellene
       discriminator:
@@ -4652,8 +4652,6 @@ components:
       properties:
         proposalId:
           type: string
-        messageToCaseworker:
-          type: string
         submittedBy:
           $ref: "#/components/schemas/Submitter"
         previousData:
@@ -4679,6 +4677,8 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        messageToCaseworker:
+          type: string
       required:
       - previousData
       - proposalId
@@ -4877,6 +4877,11 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4890,11 +4895,6 @@ components:
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
           - IMPORT
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         type:
           type: string
           enum:

@@ -1001,6 +1001,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         saksreferanse:
           type: string
         innehaver:
@@ -1038,8 +1040,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -1059,7 +1059,6 @@ components:
           - UTFORSEL
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
-          - NYTT_SKYTEPROGRAM
           - HOYKAPASITETSMAGASIN
         loyvetype:
           type: string
@@ -1853,9 +1852,13 @@ components:
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:
             $ref: "#/components/schemas/Verdi"
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for innførsel av våpen for næringsdrivende virksomhet
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - importlinjer
       - innehaver
       - leverandor
@@ -1995,10 +1998,14 @@ components:
         properties:
           erversloyveid:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
       - erversloyveid
+      - gyldigTil
       - innehaver
       - loyveId
       - loyvetype
@@ -2127,9 +2134,13 @@ components:
         properties:
           utforselBeskrivelse:
             type: string
+          gyldigTil:
+            type: string
+            format: date
       description: Løyve for utførsel av våpen
       required:
       - annetloyveLoyvetype
+      - gyldigTil
       - innehaver
       - loyveId
       - loyvetype
@@ -2733,10 +2744,10 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        modell:
-          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
+          type: string
         annetFabrikkmerke:
           type: string
         serienummer:
@@ -2857,6 +2868,8 @@ components:
           ERVERV_UTEN_LOYVE: "#/components/schemas/ErvervUtenLoyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -2892,8 +2905,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         loyvetype:
           type: string
           description: Type løyve
