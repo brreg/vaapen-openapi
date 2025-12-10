@@ -283,6 +283,8 @@ components:
       properties:
         personidentifikator:
           type: string
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -291,8 +293,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        navn:
-          type: string
         foedselsdato:
           type: string
           format: date
@@ -307,6 +307,8 @@ components:
       properties:
         organisasjonsnummer:
           type: string
+        navn:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -315,8 +317,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        navn:
-          type: string
         id:
           type: integer
           format: int64
@@ -3170,9 +3170,10 @@ components:
         innkomstmaate:
           type: string
           enum:
-          - INNLEVERT
+          - FRIVILLIG_INNLEVERT
+          - MIDLERTIDIG_INNLEVERT
           - TILBAKEKALT
-          - BESLAGLAGT
+          - TATT_I_BESLAG
         besluttetHandtering:
           type: string
           enum:
@@ -3197,7 +3198,6 @@ components:
       - innkomstmaate
       - lokasjon
       - pakkestatus
-      - saksreferanse
       - tilUtlaan
     PakkeEndringReferansesamling:
       allOf:

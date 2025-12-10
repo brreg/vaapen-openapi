@@ -415,6 +415,7 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/EieroverforingValidationResult"
+      deprecated: true
   /api/virksomhet/eieroverforingsforslag/svar:
     post:
       tags:
@@ -579,8 +580,14 @@ paths:
     get:
       tags:
       - naeringsloyve-controller
+      summary: Hent et begrenset næringsløyve på en annen virksomhet
       operationId: getNaeringsloyveTilInnsyn
       parameters:
+      - name: paVegneAv
+        in: query
+        required: true
+        schema:
+          type: string
       - name: orgnummer
         in: path
         required: true
@@ -593,6 +600,12 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/NaeringsloyveInnsyn"
+        "400":
+          description: Bad Request
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/ErrorMessageModel"
   /api/virksomhet/naering/vaapen:
     get:
       tags:
@@ -2781,6 +2794,14 @@ components:
           - OK
           - TRENGER_GJENNOMGANG
           - UNDER_KORRIGERING
+        vaapendeltype:
+          type: string
+          enum:
+          - LAASKASSE
+          - PIPE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+          - UKJENT
         innehavsloyve:
           oneOf:
           - $ref: "#/components/schemas/Innehavsloyve"
@@ -2806,14 +2827,6 @@ components:
           - UKJENT
         modell:
           type: string
-        vaapendeltype:
-          type: string
-          enum:
-          - LAASKASSE
-          - PIPE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-          - UKJENT
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
@@ -2913,6 +2926,7 @@ components:
           - ERROR_SKYTEVAAPENTYPE
           - CRITICAL_SKYTEVAAPENTYPE
           - CRITICAL_SKYTEVAAPENTYPE_UKJENT
+          - CRITICAL_MOTTAKER_ER_DEG_SELV
           - ERROR_FABRIKKMERKE
           - WARNING_MODELL
           - ERROR_AVFYRINGSMEKANISME
@@ -3484,9 +3498,17 @@ components:
           enum:
           - AKSEPTER
           - AVSLAA
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          - VAAPENDEL_UTEN_LOYVE
+          - MASSEOVERFORING
       required:
       - eieroverforingId
       - svar
+      - type
     OpprettDigitaltBevisAnnetLoyveRequest:
       allOf:
       - $ref: "#/components/schemas/OpprettDigitaltBevisRequest"
@@ -3715,6 +3737,20 @@ components:
       - innehaver
       - loyveId
       - typeNaeringsvirksomhet
+    ErrorMessageModel:
+      type: object
+      properties:
+        status:
+          type: integer
+          format: int32
+        message:
+          type: string
+        type:
+          type: string
+        parameters:
+          type: string
+        reason:
+          type: string
     PageRequestVaapen:
       type: object
       properties:
@@ -3727,6 +3763,11 @@ components:
         serienummer:
           type: string
         id:
+          type: array
+          items:
+            type: integer
+            format: int64
+        unntattId:
           type: array
           items:
             type: integer
@@ -3814,6 +3855,11 @@ components:
         serienummer:
           type: string
         id:
+          type: array
+          items:
+            type: integer
+            format: int64
+        unntattId:
           type: array
           items:
             type: integer
@@ -4176,11 +4222,11 @@ components:
       discriminator:
         propertyName: type
       properties:
+        qrKode:
+          type: string
         beviseierId:
           type: integer
           format: int64
-        qrKode:
-          type: string
         id:
           type: string
           format: uuid
@@ -4900,6 +4946,14 @@ components:
           REVOLVERTONNE: "#/components/schemas/RevolvertonneBeviskontrollView"
           SLUTTSTYKKE: "#/components/schemas/UkjentDelBeviskontrollView"
       properties:
+        vaapendeltype:
+          type: string
+          enum:
+          - LAASKASSE
+          - PIPE
+          - REVOLVERTONNE
+          - SLUTTSTYKKE
+          - UKJENT
         serienummer:
           type: string
         skytevaapentype:
@@ -4920,14 +4974,6 @@ components:
           - UKJENT
         modell:
           type: string
-        vaapendeltype:
-          type: string
-          enum:
-          - LAASKASSE
-          - PIPE
-          - REVOLVERTONNE
-          - SLUTTSTYKKE
-          - UKJENT
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
@@ -5112,11 +5158,11 @@ components:
           - $ref: "#/components/schemas/UkjentInnehaver"
         loyveId:
           type: string
+        saksreferanse:
+          type: string
         vedtaksdato:
           type: string
           format: date
-        saksreferanse:
-          type: string
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
