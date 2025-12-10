@@ -2944,6 +2944,7 @@ components:
           - ERROR_UGYLDIG_VAAPENDEL
           - ERROR_UGYLDIG_KALIBER
           - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
+          - CRITICAL_VAAPENSTATUS_NOT_ALLOWED
       required:
       - errorType
       - loyveFelt
@@ -4222,11 +4223,11 @@ components:
       discriminator:
         propertyName: type
       properties:
-        qrKode:
-          type: string
         beviseierId:
           type: integer
           format: int64
+        qrKode:
+          type: string
         id:
           type: string
           format: uuid

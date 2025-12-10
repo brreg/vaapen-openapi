@@ -2744,12 +2744,17 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        modell:
+        korrigeringsstatus:
           type: string
-        annetFabrikkmerke:
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
+        registreringsobjektType:
           type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         serienummer:
           type: string
         vaapenstatus:
@@ -2768,17 +2773,12 @@ components:
           - TAPT_FRA_DODSBO
           - STJAALET
           - SLETTET
-        korrigeringsstatus:
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        modell:
           type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
-        registreringsobjektType:
+        annetFabrikkmerke:
           type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         id:
           type: integer
           format: int64

@@ -1835,9 +1835,9 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          personidentifikator:
-            type: string
           navn:
+            type: string
+          personidentifikator:
             type: string
           adresse:
             type: string
@@ -2863,6 +2863,7 @@ components:
           - ERROR_UGYLDIG_VAAPENDEL
           - ERROR_UGYLDIG_KALIBER
           - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
+          - CRITICAL_VAAPENSTATUS_NOT_ALLOWED
       required:
       - errorType
       - loyveFelt
@@ -3152,11 +3153,6 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3168,6 +3164,11 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -4300,11 +4301,11 @@ components:
           - $ref: "#/components/schemas/UkjentInnehaver"
         loyveId:
           type: string
+        saksreferanse:
+          type: string
         vedtaksdato:
           type: string
           format: date
-        saksreferanse:
-          type: string
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
