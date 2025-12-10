@@ -3641,9 +3641,10 @@ components:
         innkomstmaate:
           type: string
           enum:
-          - INNLEVERT
+          - FRIVILLIG_INNLEVERT
+          - MIDLERTIDIG_INNLEVERT
           - TILBAKEKALT
-          - BESLAGLAGT
+          - TATT_I_BESLAG
         besluttetHandtering:
           type: string
           enum:
@@ -3668,7 +3669,6 @@ components:
       - innkomstmaate
       - lokasjon
       - pakkestatus
-      - saksreferanse
       - tilUtlaan
     PakkeEndringReferansesamling:
       allOf:
