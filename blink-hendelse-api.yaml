@@ -283,8 +283,6 @@ components:
       properties:
         personidentifikator:
           type: string
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
@@ -293,6 +291,8 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
+        navn:
+          type: string
         foedselsdato:
           type: string
           format: date
@@ -307,8 +307,6 @@ components:
       properties:
         organisasjonsnummer:
           type: string
-        navn:
-          type: string
         eiertype:
           type: string
           description: Type eier
@@ -317,6 +315,8 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
+        navn:
+          type: string
         id:
           type: integer
           format: int64
@@ -2715,6 +2715,35 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
+        vaapenstatus:
+          type: string
+          enum:
+          - AKTIV
+          - SKAL_DESTRUERES
+          - DESTRUERT
+          - DEAKTIVERT
+          - DEAKTIVERT_GAMMELT_REGELVERK
+          - PERMANENT_UTFORT
+          - INNLEVERT_POLITI
+          - TILBAKEKALT
+          - BESLAGLAGT
+          - TAPSMELDT
+          - TAPT_FRA_DODSBO
+          - STJAALET
+          - SLETTET
+        korrigeringsstatus:
+          type: string
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
+        registreringsobjektType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+        serienummer:
+          type: string
         vaapendeltype:
           type: string
           enum:
@@ -2744,35 +2773,6 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
-        registreringsobjektType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-        serienummer:
-          type: string
-        vaapenstatus:
-          type: string
-          enum:
-          - AKTIV
-          - SKAL_DESTRUERES
-          - DESTRUERT
-          - DEAKTIVERT
-          - DEAKTIVERT_GAMMELT_REGELVERK
-          - PERMANENT_UTFORT
-          - INNLEVERT_POLITI
-          - TILBAKEKALT
-          - BESLAGLAGT
-          - TAPSMELDT
-          - TAPT_FRA_DODSBO
-          - STJAALET
-          - SLETTET
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         modell:
@@ -3154,13 +3154,15 @@ components:
           type: string
           enum:
           - REGISTRERT
-          - SENDT_FRA_POLITIDISTRIKT
-          - MOTTATT_KRIPOS
-          - REFERANSESAMLING
-          - KONTROLLERT_KRIPOS
+          - UNDER_TRANSPORT
+          - UTLEVERT
           - MELLOMLAGRET
+          - MOTTATT_KRIPOS
           - SENDT_FORSVARET
           - ENDELIG_DESTRUERT
+          - REFERANSESAMLING
+          - FERDIGBEHANDLET_KRIPOS
+          - INAKTIVT
         lagerplassering:
           type: string
         tilUtlaan:

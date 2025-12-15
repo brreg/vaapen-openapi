@@ -3005,6 +3005,12 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
           skytevaapentype:
             type: string
             enum:
@@ -3020,6 +3026,14 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
+            - UKJENT
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type: string
@@ -3042,28 +3056,14 @@ components:
             - $ref: "#/components/schemas/Innehavsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
             - $ref: "#/components/schemas/UtenEierskap"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
           korrigeringsstatus:
             type: string
             enum:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          vaapendeltype:
+          modell:
             type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3625,13 +3625,15 @@ components:
           type: string
           enum:
           - REGISTRERT
-          - SENDT_FRA_POLITIDISTRIKT
-          - MOTTATT_KRIPOS
-          - REFERANSESAMLING
-          - KONTROLLERT_KRIPOS
+          - UNDER_TRANSPORT
+          - UTLEVERT
           - MELLOMLAGRET
+          - MOTTATT_KRIPOS
           - SENDT_FORSVARET
           - ENDELIG_DESTRUERT
+          - REFERANSESAMLING
+          - FERDIGBEHANDLET_KRIPOS
+          - INAKTIVT
         lagerplassering:
           type: string
         tilUtlaan:
@@ -4652,22 +4654,8 @@ components:
       properties:
         proposalId:
           type: string
-        proposalType:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
         submittedBy:
           $ref: "#/components/schemas/Submitter"
-        proposedData:
-          oneOf:
-          - $ref: "#/components/schemas/Skytevaapen"
-          - $ref: "#/components/schemas/Vaapendel"
-          - $ref: "#/components/schemas/Laaskasse"
-          - $ref: "#/components/schemas/Pipe"
-          - $ref: "#/components/schemas/Revolvertonne"
-          - $ref: "#/components/schemas/Sluttstykke"
-          - $ref: "#/components/schemas/UkjentDel"
         previousData:
           oneOf:
           - $ref: "#/components/schemas/Skytevaapen"
@@ -4677,6 +4665,20 @@ components:
           - $ref: "#/components/schemas/Revolvertonne"
           - $ref: "#/components/schemas/Sluttstykke"
           - $ref: "#/components/schemas/UkjentDel"
+        proposedData:
+          oneOf:
+          - $ref: "#/components/schemas/Skytevaapen"
+          - $ref: "#/components/schemas/Vaapendel"
+          - $ref: "#/components/schemas/Laaskasse"
+          - $ref: "#/components/schemas/Pipe"
+          - $ref: "#/components/schemas/Revolvertonne"
+          - $ref: "#/components/schemas/Sluttstykke"
+          - $ref: "#/components/schemas/UkjentDel"
+        proposalType:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
         messageToCaseworker:
           type: string
       required:
@@ -4877,9 +4879,6 @@ components:
       properties:
         saksreferanse:
           type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4895,6 +4894,9 @@ components:
           - IMPORT
         changeType:
           type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         type:
           type: string
           enum:

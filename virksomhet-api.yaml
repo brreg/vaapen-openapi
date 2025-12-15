@@ -2920,7 +2920,8 @@ components:
         errorType:
           type: string
           enum:
-          - ERROR_LOYVETYPE
+          - CRITICAL_LOYVETYPE
+          - WARNING_LOYVETYPE
           - ERROR_FUNKSJONSMAATE
           - CRITICAL_FUNKSJONSMAATE
           - ERROR_SKYTEVAAPENTYPE
@@ -3947,6 +3948,11 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3958,11 +3964,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
