@@ -1835,9 +1835,9 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          navn:
-            type: string
           personidentifikator:
+            type: string
+          navn:
             type: string
           adresse:
             type: string
@@ -2847,11 +2847,13 @@ components:
           - CRITICAL_SKYTEVAAPENTYPE
           - CRITICAL_SKYTEVAAPENTYPE_UKJENT
           - CRITICAL_MOTTAKER_ER_DEG_SELV
+          - CRITICAL_MANGLENDE_SERIENUMMER
           - ERROR_FABRIKKMERKE
           - WARNING_MODELL
           - ERROR_AVFYRINGSMEKANISME
           - ERROR_LADEMEKANISME
           - CRITICAL_VAAPENDEFINERENDE
+          - CRITICAL_IKKE_LAASKASSE
           - ERROR_VAAPENDELTYPE
           - CRITICAL_VAAPENDELTYPE_UKJENT
           - ERROR_SKYTEVAAPEN_FINNES_IKKE
