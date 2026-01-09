@@ -391,6 +391,20 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/Skytevaapen"
+  /api/person/samleromraade:
+    get:
+      tags:
+      - samleromraade-controller
+      operationId: getSamleromraaderOnPerson
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Samleromraade"
   /api/person/personinfo/navn:
     get:
       tags:
@@ -1787,6 +1801,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - laaskassetype
       - registreringsobjektType
       - skytevaapentype
     LoyveForInnehav:
@@ -2347,6 +2362,7 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+      - sluttstykketype
     Sportsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -3156,11 +3172,6 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3172,6 +3183,11 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -3203,6 +3219,8 @@ components:
           ERVERV_UTEN_LOYVE: "#/components/schemas/ErvervUtenLoyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -3238,8 +3256,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -4267,6 +4283,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -4302,8 +4320,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         vedtaksdato:
           type: string
           format: date

@@ -1345,11 +1345,11 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
-          personidentifikator:
-            type: string
           foedselsdato:
             type: string
             format: date
+          personidentifikator:
+            type: string
       required:
       - eiertype
       - personidentifikator
@@ -2108,6 +2108,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - laaskassetype
       - registreringsobjektType
       - skytevaapentype
     Lagerbeholdning:
@@ -2201,17 +2202,17 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          navn:
-            type: string
-          personidentifikator:
-            type: string
-          adresse:
-            type: string
           vaapenkortSid:
             type: string
           stilling:
             type: string
           telefon:
+            type: string
+          navn:
+            type: string
+          personidentifikator:
+            type: string
+          adresse:
             type: string
       required:
       - eiertype
@@ -2656,6 +2657,7 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+      - sluttstykketype
     Sportsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -4226,11 +4228,11 @@ components:
       discriminator:
         propertyName: type
       properties:
+        qrKode:
+          type: string
         beviseierId:
           type: integer
           format: int64
-        qrKode:
-          type: string
         id:
           type: string
           format: uuid

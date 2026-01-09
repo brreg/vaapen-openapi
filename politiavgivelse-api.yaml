@@ -2581,6 +2581,7 @@ components:
       required:
       - innehavsloyve
       - korrigeringsstatus
+      - laaskassetype
       - registreringsobjektType
       - skytevaapentype
     LoyveForInnehav:
@@ -2930,6 +2931,7 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+      - sluttstykketype
     Sportsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -3011,6 +3013,8 @@ components:
             $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
             type: string
+          modell:
+            type: string
           skytevaapentype:
             type: string
             enum:
@@ -3062,8 +3066,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          modell:
-            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -4892,11 +4894,11 @@ components:
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
           - IMPORT
-        changeType:
-          type: string
         endringstidspunkt:
           type: string
           format: date-time
+        changeType:
+          type: string
         type:
           type: string
           enum:
