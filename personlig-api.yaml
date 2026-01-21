@@ -3172,6 +3172,11 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3183,11 +3188,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -4273,16 +4273,6 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         loyveId:
           type: string
         innehaver:
@@ -4342,6 +4332,16 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         loyvetype:
           type: string
           description: Type løyve

@@ -117,6 +117,26 @@ paths:
             '*/*':
               schema:
                 type: string
+  /blink-hendelse/opprettelse:
+    post:
+      tags:
+      - saksbehandler-opprettelse-controller
+      operationId: opprett
+      requestBody:
+        content:
+          application/json:
+            schema:
+              oneOf:
+              - $ref: "#/components/schemas/IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN"
+              - $ref: "#/components/schemas/IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL"
+        required: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: object
   /blink-hendelse/loyve/endring:
     post:
       tags:
@@ -893,74 +913,6 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    AmmunisjonsLinje:
-      allOf:
-      - $ref: "#/components/schemas/ImportLinje"
-      - type: object
-        properties:
-          merke:
-            type: string
-          kaliber:
-            $ref: "#/components/schemas/Kaliber"
-          antall:
-            type: integer
-            format: int32
-      description: Linje for ammunisjon i import
-      required:
-      - antall
-      - merke
-      - type
-    Ammunisjonskjoployve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-          kaliber:
-            type: array
-            items:
-              $ref: "#/components/schemas/Kaliber"
-          annetKaliber:
-            type: string
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for tidsbegrenset engangskjøp av ammunisjon til våpen som
-        ikke er registreringspliktig
-      required:
-      - annetloyveLoyvetype
-      - gyldigTil
-      - innehaver
-      - kaliber
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    Ammunisjonssamlerloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-          beskrivelse:
-            type: string
-      description: Løyve for ammunisjonssamlere
-      required:
-      - annetloyveLoyvetype
-      - beskrivelse
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
     Amnestigrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -972,170 +924,11 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    AnnetLoyve:
-      type: object
-      discriminator:
-        propertyName: annetloyveLoyvetype
-        mapping:
-          AMMUNISJONSKJOP_IKKEREGPLIKTIG: "#/components/schemas/Ammunisjonskjoployve"
-          AMMUNISJONSSAMLER: "#/components/schemas/Ammunisjonssamlerloyve"
-          GODKJENT_SAMLER: "#/components/schemas/GodkjentSamlerloyve"
-          PIRATBESKYTTELSE: "#/components/schemas/Piratbeskyttelsesloyve"
-          ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
-          LAANELOYVE: "#/components/schemas/Laaneloyve"
-          IKKE_ERVERVSMESSIG_INNFORSEL: "#/components/schemas/Privatimportloyve"
-          ERVERVSMESSIG_INNFORSEL: "#/components/schemas/Naeringsimportloyve"
-          MIDLERTIDIG_INNFORSEL: "#/components/schemas/MidlertidigInnforselsloyve"
-          UTFORSEL: "#/components/schemas/Utforrselsloyve"
-          GODKJENT_SKYTEBANE: "#/components/schemas/GodkjentSkytebaneloyve"
-          GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
-          HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
-      properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
-        loyveId:
-          type: string
-        saksreferanse:
-          type: string
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/DigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingEier"
-          - $ref: "#/components/schemas/ManuellEier"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/DigitalPerson"
-          - $ref: "#/components/schemas/DigitalVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ManuellPoliti"
-          - $ref: "#/components/schemas/ManuellUkjentPerson"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        vedtaksdato:
-          type: string
-          format: date
-        annetloyveLoyvetype:
-          type: string
-          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
-          enum:
-          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
-          - AMMUNISJONSSAMLER
-          - GODKJENT_SAMLER
-          - PIRATBESKYTTELSE
-          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
-          - LAANELOYVE
-          - IKKE_ERVERVSMESSIG_INNFORSEL
-          - ERVERVSMESSIG_INNFORSEL
-          - MIDLERTIDIG_INNFORSEL
-          - UTFORSEL
-          - GODKJENT_SKYTEBANE
-          - GODKJENT_SKYTTERFORENING
-          - HOYKAPASITETSMAGASIN
-        loyvetype:
-          type: string
-          description: Type løyve
-          enum:
-          - INNEHAVSLOYVE
-          - ERVERVSLOYVE
-          - ERVERV_UTEN_LOYVE
-          - NAERINGSLOYVE
-          - ANNET_LOYVE
-          - UTEN_EIERSKAP
-      required:
-      - annetloyveLoyvetype
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    AnnetLoyveEndring:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
-      - type: object
-        properties:
-          annetLoyve:
-            oneOf:
-            - $ref: "#/components/schemas/Ammunisjonskjoployve"
-            - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
-            - $ref: "#/components/schemas/GodkjentSamlerloyve"
-            - $ref: "#/components/schemas/GodkjentSkytebaneloyve"
-            - $ref: "#/components/schemas/GodkjentSkytterforeningsloyve"
-            - $ref: "#/components/schemas/Hoykapasitetsmagasinloyve"
-            - $ref: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
-            - $ref: "#/components/schemas/Laaneloyve"
-            - $ref: "#/components/schemas/MidlertidigInnforselsloyve"
-            - $ref: "#/components/schemas/Naeringsimportloyve"
-            - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
-            - $ref: "#/components/schemas/Privatimportloyve"
-            - $ref: "#/components/schemas/Utforrselsloyve"
-      required:
-      - annetLoyve
-      - changeType
     Avlivingsgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
-    AvslattSoknad:
-      type: object
-      description: Spesifisering for avslått søknad
-      properties:
-        ervervsloyve:
-          $ref: "#/components/schemas/Ervervsloyve"
-        imiSak:
-          type: boolean
-        imiSaksnummer:
-          type: string
-        avslagsgrunnlag:
-          type: string
-          enum:
-          - VANDEL
-          - EDRUELIGHET
-          - SKIKKETHET
-          - BEHOV
-      required:
-      - avslagsgrunnlag
-      - ervervsloyve
-    AvslattSoknadEndring:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
-      - type: object
-        properties:
-          avslag:
-            $ref: "#/components/schemas/AvslattSoknad"
-      required:
-      - avslag
-      - changeType
     BrukesAv:
       type: object
       discriminator:
@@ -1280,6 +1073,45 @@ components:
       - $ref: "#/components/schemas/Grunnlag"
       required:
       - grunnlagsType
+    ErvervUtenLoyve:
+      allOf:
+      - $ref: "#/components/schemas/LoyveForErverv"
+      - type: object
+        properties:
+          grunnlag:
+            oneOf:
+            - $ref: "#/components/schemas/Aldersgrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
+            - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
+            - $ref: "#/components/schemas/Museumsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
+            - $ref: "#/components/schemas/Sportsgrunnlag"
+            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
+            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+      required:
+      - grunnlag
+      - innehaver
+      - loyveId
+      - loyvetype
     Ervervsloyve:
       allOf:
       - $ref: "#/components/schemas/LoyveForErverv"
@@ -1421,16 +1253,6 @@ components:
       - status
       - typeErverv
       - vedtaksdato
-    ErvervsloyveEndring:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
-      - type: object
-        properties:
-          ervervsloyve:
-            $ref: "#/components/schemas/Ervervsloyve"
-      required:
-      - changeType
-      - ervervsloyve
     ErvervsloyveSpesifikt:
       type: object
       properties:
@@ -1474,66 +1296,6 @@ components:
       required:
       - id
       - navn
-    GodkjentSamlerloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-          samlerorganisasjon:
-            type: string
-      description: Løyve som godkjent samler
-      required:
-      - annetloyveLoyvetype
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - samlerorganisasjon
-      - status
-      - vedtaksdato
-    GodkjentSkytebaneloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierVirksomhet"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-          beskrivelse:
-            type: string
-      description: Løyve for godkjent skytebane
-      required:
-      - annetloyveLoyvetype
-      - beskrivelse
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    GodkjentSkytterforeningsloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierVirksomhet"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-      description: Løyve for godkjenning som skytterforening
-      required:
-      - annetloyveLoyvetype
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
     Grunnlag:
       type: object
       discriminator:
@@ -1600,710 +1362,37 @@ components:
             type: string
       required:
       - grunnlagsType
-    Hoykapasitetsmagasinloyve:
+    IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN:
       allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
+      - $ref: "#/components/schemas/SaksbehandlerOpprettelse"
       - type: object
         properties:
-          brukesAv:
+          vaapen:
+            $ref: "#/components/schemas/Skytevaapen"
+      description: Gjennomføring av privatimport av Skytevåpen
+      required:
+      - arkivreferanse
+      - ervervsloyveId
+      - opprettelseType
+      - vaapen
+    IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerOpprettelse"
+      - type: object
+        properties:
+          vaapendel:
             oneOf:
-            - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
-            - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
-            - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
-            - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
-      description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
+            - $ref: "#/components/schemas/Laaskasse"
+            - $ref: "#/components/schemas/Pipe"
+            - $ref: "#/components/schemas/Revolvertonne"
+            - $ref: "#/components/schemas/Sluttstykke"
+            - $ref: "#/components/schemas/UkjentDel"
+      description: Gjennomføring av privatimport av Våpendel
       required:
-      - annetloyveLoyvetype
-      - brukesAv
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    IkkeSkytevaapenErvervsloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          beskrivelse:
-            type: string
-          grunnlagsbeskrivelse:
-            type: string
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for erverv av våpen som ikke regnes som skytevåpen
-      required:
-      - annetloyveLoyvetype
-      - beskrivelse
-      - grunnlagsbeskrivelse
-      - gyldigTil
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    ImportLinje:
-      type: object
-      discriminator:
-        propertyName: type
-        mapping:
-          SKYTEVAAPEN: "#/components/schemas/VaapenLinje"
-          VAAPENDEL: "#/components/schemas/VaapendelLinje"
-          AMMUNISJON: "#/components/schemas/AmmunisjonsLinje"
-      properties:
-        type:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-          - AMMUNISJON
-      required:
-      - type
-    Isbjornbeskyttelsesgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Jaktgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          unntattFraRegistreringIJegerregisteret:
-            type: boolean
-          tilleggsvaapen:
-            type: boolean
-      required:
-      - grunnlagsType
-      - tilleggsvaapen
-      - unntattFraRegistreringIJegerregisteret
-    Kaliber:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        navn:
-          type: string
-      required:
-      - id
-      - navn
-    Laaneloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          grunnlag:
-            oneOf:
-            - $ref: "#/components/schemas/Aldersgrunnlag"
-            - $ref: "#/components/schemas/Amnestigrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/Avlivingsgrunnlag"
-            - $ref: "#/components/schemas/Deaktivertgrunnlag"
-            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
-            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
-            - $ref: "#/components/schemas/Jaktgrunnlag"
-            - $ref: "#/components/schemas/Minneverdegrunnlag"
-            - $ref: "#/components/schemas/Museumsgrunnlag"
-            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
-            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/Samlergrunnlag"
-            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
-            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
-            - $ref: "#/components/schemas/Slaktegrunnlag"
-            - $ref: "#/components/schemas/Sportsgrunnlag"
-            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
-            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
-            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
-            - $ref: "#/components/schemas/Vaapendelgrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
-          laanenivaaSport:
-            type: string
-            enum:
-            - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
-            - PISTOL_REVOLVER
-            - OVRIGE_RIFLER_HAGLER
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for lån av våpen
-      required:
-      - annetloyveLoyvetype
-      - grunnlag
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    Leverandor:
-      type: object
-      properties:
-        firmanavn:
-          type: string
-        adresse:
-          type: string
-        postnummer:
-          type: string
-        sted:
-          type: string
-        land:
-          type: string
-        telefon:
-          type: string
-    MidlertidigInnforselsloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          importBeskrivelse:
-            type: string
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for midlertidig innførsel
-      required:
-      - annetloyveLoyvetype
-      - gyldigTil
-      - importBeskrivelse
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    Minneverdegrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Museumsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    NaeringAmmunisjonsalg:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringBegrensetHandel:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringBegrensetTilvirkning:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringHandel:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringIkkeRegpliktigeVaapen:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringMekling:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringTilvirkning:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    NaeringUtleie:
-      allOf:
-      - $ref: "#/components/schemas/Naeringstype"
-      required:
-      - type
-    Naeringsimportloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierVirksomhet"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-          naeringsloyveid:
-            type: string
-          leverandor:
-            $ref: "#/components/schemas/Leverandor"
-          importlinjer:
-            type: array
-            items:
-              oneOf:
-              - $ref: "#/components/schemas/AmmunisjonsLinje"
-              - $ref: "#/components/schemas/VaapenLinje"
-              - $ref: "#/components/schemas/VaapendelLinje"
-          totalVerdi:
-            $ref: "#/components/schemas/Verdi"
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for innførsel av våpen for næringsdrivende virksomhet
-      required:
-      - annetloyveLoyvetype
-      - gyldigTil
-      - importlinjer
-      - innehaver
-      - leverandor
-      - loyveId
-      - loyvetype
-      - naeringsloyveid
-      - saksreferanse
-      - status
-      - totalVerdi
-      - vedtaksdato
-    Naeringsloyve:
-      allOf:
-      - $ref: "#/components/schemas/LoyveForInnehav"
-      - type: object
-        properties:
-          loyveId:
-            type: string
-          status:
-            type: string
-            enum:
-            - AKTIV
-            - BENYTTET
-            - TILBAKEKALT
-            - FRYST
-            - DELVIS_BENYTTET
-            - AVSLAATT
-            - AVSLUTTET
-          vedtaksdato:
-            type: string
-            format: date
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierVirksomhet"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-          loyvehaver:
-            description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-          dagligAnsvarshavende:
-            description: Den daglige utførende ansvarshavende - Ikke obligatorisk
-            oneOf:
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-          typeNaeringsvirksomhet:
-            type: array
-            items:
-              oneOf:
-              - $ref: "#/components/schemas/NaeringAmmunisjonsalg"
-              - $ref: "#/components/schemas/NaeringBegrensetHandel"
-              - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
-              - $ref: "#/components/schemas/NaeringHandel"
-              - $ref: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
-              - $ref: "#/components/schemas/NaeringMekling"
-              - $ref: "#/components/schemas/NaeringTilvirkning"
-              - $ref: "#/components/schemas/NaeringUtleie"
-          avgrensninger:
-            type: string
-          dispensasjon:
-            type: string
-          saksreferanse:
-            type: string
-      - $ref: "#/components/schemas/LoyveForErverv"
-      description: Løyve for næringsdrivende virksomhet
-      required:
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - typeNaeringsvirksomhet
-      - vedtaksdato
-    NaeringsloyveEndring:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
-      - type: object
-        properties:
-          naeringsloyve:
-            $ref: "#/components/schemas/Naeringsloyve"
-      required:
-      - changeType
-      - naeringsloyve
-    Naeringstype:
-      type: object
-      discriminator:
-        propertyName: annetloyveLoyvetype
-        mapping:
-          HANDEL: "#/components/schemas/NaeringHandel"
-          UTLEIE: "#/components/schemas/NaeringUtleie"
-          MEKLING: "#/components/schemas/NaeringMekling"
-          TILVIRKNING: "#/components/schemas/NaeringTilvirkning"
-          HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
-          BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
-          BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
-          AMMUNISJON: "#/components/schemas/NaeringAmmunisjonsalg"
-      properties:
-        type:
-          type: string
-          enum:
-          - HANDEL
-          - BEGRENSETHANDEL
-          - UTLEIE
-          - MEKLING
-          - TILVIRKNING
-          - BEGRENSETTILVIRKNING
-          - HANDELIKKEREGPLIKTIGEVAAPEN
-          - AMMUNISJON
-      required:
-      - type
-    Naeringsvirksomhetgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Piratbeskyttelsesloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          innehaver:
-            oneOf:
-            - $ref: "#/components/schemas/EierVirksomhet"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-      description: Løyve for godkjenning av beskyttelse av skip mot piratvirksomhet
-      required:
-      - annetloyveLoyvetype
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    Privatimportloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          erversloyveid:
-            type: string
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for innførsel av våpen som ikke er ervervsmessig
-      required:
-      - annetloyveLoyvetype
-      - erversloyveid
-      - gyldigTil
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - vedtaksdato
-    ReplikaLuftOgFjaergrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    SaerskiltGrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    SaksbehandlerEndringLoyve:
-      type: object
-      discriminator:
-        propertyName: changeType
-      properties:
-        changeType:
-          type: string
-          enum:
-          - NAERINGSLOYVE
-          - ERVERVSLOYVE
-          - AVSLAG_SOKNAD_ERVERV
-          - ANNET_LOYVE
-      required:
-      - changeType
-    Samlergrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          samlerOmraade:
-            $ref: "#/components/schemas/Samleromraade"
-      required:
-      - grunnlagsType
-    Skadedyrsutryddelsesgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Skyteprogram:
-      type: object
-      properties:
-        id:
-          type: integer
-          format: int32
-        navn:
-          type: string
-        arrangertAv:
-          type: string
-        skytevaapentyper:
-          type: array
-          items:
-            type: string
-            enum:
-            - RIFLE
-            - HAGLE
-            - KOMBINASJONSVAAPEN
-            - PISTOL
-            - REVOLVER
-            - MASKINGEVAER
-            - MASKINPISTOL
-            - SALUTT
-            - KNALL
-            - LUFTFJAER
-            - MUSKETT
-            - ARMBROST
-            - UKJENT
-      required:
-      - arrangertAv
-      - navn
-    Skytterforeningsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Slaktegrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Sportsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      - type: object
-        properties:
-          skyteprogram:
-            $ref: "#/components/schemas/Skyteprogram"
-          reservevaapen:
-            type: boolean
-          annetSkyteprogram:
-            type: string
-      required:
-      - grunnlagsType
-      - reservevaapen
-    TestOgUtviklingsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Tjenestepersonsgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    UkjentGrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    UtenBehovsprovingGrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Utforrselsloyve:
-      allOf:
-      - $ref: "#/components/schemas/AnnetLoyve"
-      - type: object
-        properties:
-          utforselBeskrivelse:
-            type: string
-          gyldigTil:
-            type: string
-            format: date
-      description: Løyve for utførsel av våpen
-      required:
-      - annetloyveLoyvetype
-      - gyldigTil
-      - innehaver
-      - loyveId
-      - loyvetype
-      - saksreferanse
-      - status
-      - utforselBeskrivelse
-      - vedtaksdato
-    VaapenLinje:
-      allOf:
-      - $ref: "#/components/schemas/ImportLinje"
-      - type: object
-        properties:
-          vaapentype:
-            type: string
-            enum:
-            - RIFLE
-            - HAGLE
-            - KOMBINASJONSVAAPEN
-            - PISTOL
-            - REVOLVER
-            - MASKINGEVAER
-            - MASKINPISTOL
-            - SALUTT
-            - KNALL
-            - LUFTFJAER
-            - MUSKETT
-            - ARMBROST
-            - UKJENT
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
-            type: string
-          funksjonsmaate:
-            type: string
-            enum:
-            - ENKELTSKUDD
-            - HALVAUTOMATISK
-            - HELAUTOMATISK
-            - MANUELL_OMLADING
-            - UKJENT
-          kaliber:
-            type: array
-            items:
-              $ref: "#/components/schemas/Kaliber"
-          antall:
-            type: integer
-            format: int32
-      description: Linje for skytevåpen i import
-      required:
-      - antall
-      - fabrikkmerke
-      - funksjonsmaate
-      - kaliber
-      - modell
-      - type
-      - vaapentype
-    VaapendelLinje:
-      allOf:
-      - $ref: "#/components/schemas/ImportLinje"
-      - type: object
-        properties:
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
-            type: string
-          funksjonsmaate:
-            type: string
-            enum:
-            - ENKELTSKUDD
-            - HALVAUTOMATISK
-            - HELAUTOMATISK
-            - MANUELL_OMLADING
-            - UKJENT
-          kaliber:
-            type: array
-            items:
-              $ref: "#/components/schemas/Kaliber"
-          antall:
-            type: integer
-            format: int32
-      description: Linje for våpendeler i import
-      required:
-      - antall
-      - fabrikkmerke
-      - kaliber
-      - modell
-      - type
-      - vaapendeltype
-    Vaapendelgrunnlag:
-      allOf:
-      - $ref: "#/components/schemas/Grunnlag"
-      required:
-      - grunnlagsType
-    Verdi:
-      type: object
-      description: Verdi i Valuta
-      properties:
-        sum:
-          type: number
-          description: Beløp i gitt valuta
-          example: 199.99
-        valuta:
-          type: string
-          default: NOK
-          description: Valutakode i ISO 4217 format
-          example: NOK
-      required:
-      - sum
-    KorreksjonsId:
-      type: object
-      properties:
-        id:
-          type: string
-          format: uuid
-      required:
-      - id
-    ErvervUtenLoyve:
-      allOf:
-      - $ref: "#/components/schemas/LoyveForErverv"
-      - type: object
-        properties:
-          grunnlag:
-            oneOf:
-            - $ref: "#/components/schemas/Aldersgrunnlag"
-            - $ref: "#/components/schemas/Amnestigrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/Avlivingsgrunnlag"
-            - $ref: "#/components/schemas/Deaktivertgrunnlag"
-            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
-            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
-            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
-            - $ref: "#/components/schemas/Jaktgrunnlag"
-            - $ref: "#/components/schemas/Minneverdegrunnlag"
-            - $ref: "#/components/schemas/Museumsgrunnlag"
-            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
-            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/Samlergrunnlag"
-            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
-            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
-            - $ref: "#/components/schemas/Slaktegrunnlag"
-            - $ref: "#/components/schemas/Sportsgrunnlag"
-            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
-            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
-            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
-            - $ref: "#/components/schemas/Vaapendelgrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
-      required:
-      - grunnlag
-      - innehaver
-      - loyveId
-      - loyvetype
+      - arkivreferanse
+      - ervervsloyveId
+      - opprettelseType
+      - vaapendel
     Innehavsloyve:
       allOf:
       - $ref: "#/components/schemas/LoyveForInnehav"
@@ -2442,6 +1531,35 @@ components:
       - loyvetype
       - status
       - vedtaksdato
+    Isbjornbeskyttelsesgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Jaktgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          unntattFraRegistreringIJegerregisteret:
+            type: boolean
+          tilleggsvaapen:
+            type: boolean
+      required:
+      - grunnlagsType
+      - tilleggsvaapen
+      - unntattFraRegistreringIJegerregisteret
+    Kaliber:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
+      - navn
     Laaskasse:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -2482,6 +1600,150 @@ components:
           type: string
       required:
       - loyvetype
+    Minneverdegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Museumsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    NaeringAmmunisjonsalg:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringBegrensetTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringHandel:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringIkkeRegpliktigeVaapen:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringMekling:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringTilvirkning:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    NaeringUtleie:
+      allOf:
+      - $ref: "#/components/schemas/Naeringstype"
+      required:
+      - type
+    Naeringsloyve:
+      allOf:
+      - $ref: "#/components/schemas/LoyveForInnehav"
+      - type: object
+        properties:
+          loyveId:
+            type: string
+          status:
+            type: string
+            enum:
+            - AKTIV
+            - BENYTTET
+            - TILBAKEKALT
+            - FRYST
+            - DELVIS_BENYTTET
+            - AVSLAATT
+            - AVSLUTTET
+          vedtaksdato:
+            type: string
+            format: date
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+          loyvehaver:
+            description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
+            oneOf:
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+          dagligAnsvarshavende:
+            description: Den daglige utførende ansvarshavende - Ikke obligatorisk
+            oneOf:
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+          typeNaeringsvirksomhet:
+            type: array
+            items:
+              oneOf:
+              - $ref: "#/components/schemas/NaeringAmmunisjonsalg"
+              - $ref: "#/components/schemas/NaeringBegrensetHandel"
+              - $ref: "#/components/schemas/NaeringBegrensetTilvirkning"
+              - $ref: "#/components/schemas/NaeringHandel"
+              - $ref: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+              - $ref: "#/components/schemas/NaeringMekling"
+              - $ref: "#/components/schemas/NaeringTilvirkning"
+              - $ref: "#/components/schemas/NaeringUtleie"
+          avgrensninger:
+            type: string
+          dispensasjon:
+            type: string
+          saksreferanse:
+            type: string
+      - $ref: "#/components/schemas/LoyveForErverv"
+      description: Løyve for næringsdrivende virksomhet
+      required:
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - typeNaeringsvirksomhet
+      - vedtaksdato
+    Naeringstype:
+      type: object
+      discriminator:
+        propertyName: annetloyveLoyvetype
+        mapping:
+          HANDEL: "#/components/schemas/NaeringHandel"
+          UTLEIE: "#/components/schemas/NaeringUtleie"
+          MEKLING: "#/components/schemas/NaeringMekling"
+          TILVIRKNING: "#/components/schemas/NaeringTilvirkning"
+          HANDELIKKEREGPLIKTIGEVAAPEN: "#/components/schemas/NaeringIkkeRegpliktigeVaapen"
+          BEGRENSETHANDEL: "#/components/schemas/NaeringBegrensetHandel"
+          BEGRENSETTILVIRKNING: "#/components/schemas/NaeringBegrensetTilvirkning"
+          AMMUNISJON: "#/components/schemas/NaeringAmmunisjonsalg"
+      properties:
+        type:
+          type: string
+          enum:
+          - HANDEL
+          - BEGRENSETHANDEL
+          - UTLEIE
+          - MEKLING
+          - TILVIRKNING
+          - BEGRENSETTILVIRKNING
+          - HANDELIKKEREGPLIKTIGEVAAPEN
+          - AMMUNISJON
+      required:
+      - type
+    Naeringsvirksomhetgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Pipe:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -2506,6 +1768,11 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    ReplikaLuftOgFjaergrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Revolvertonne:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -2537,6 +1804,82 @@ components:
       - lademekanisme
       - registreringsobjektType
       - skytevaapentype
+    SaerskiltGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    SaksbehandlerOpprettelse:
+      type: object
+      description: Saksbehandler opprettelse av våpen enten via import eller opprettelse
+        på andre grunnlag.
+      discriminator:
+        propertyName: opprettelseType
+        mapping:
+          IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN: "#/components/schemas/IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN"
+          IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL: "#/components/schemas/IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL"
+      properties:
+        arkivreferanse:
+          type: string
+        ervervsloyveId:
+          type: string
+        opprettelseType:
+          type: string
+          enum:
+          - IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN
+          - IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL
+        ikkeervervsmessigInnforselsloyveId:
+          type: string
+      required:
+      - arkivreferanse
+      - ervervsloyveId
+      - opprettelseType
+    Samlergrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          samlerOmraade:
+            $ref: "#/components/schemas/Samleromraade"
+      required:
+      - grunnlagsType
+    Skadedyrsutryddelsesgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Skyteprogram:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+        arrangertAv:
+          type: string
+        skytevaapentyper:
+          type: array
+          items:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+      required:
+      - arrangertAv
+      - navn
     Skytevaapen:
       type: object
       description: Skytevåpen
@@ -2641,6 +1984,16 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - vaapendeler
+    Skytterforeningsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Slaktegrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     Sluttstykke:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -2658,6 +2011,30 @@ components:
       - registreringsobjektType
       - skytevaapentype
       - sluttstykketype
+    Sportsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          skyteprogram:
+            $ref: "#/components/schemas/Skyteprogram"
+          reservevaapen:
+            type: boolean
+          annetSkyteprogram:
+            type: string
+      required:
+      - grunnlagsType
+      - reservevaapen
+    TestOgUtviklingsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    Tjenestepersonsgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     UkjentDel:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -2687,24 +2064,23 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    UkjentGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    UtenBehovsprovingGrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
     UtenEierskap:
       allOf:
       - $ref: "#/components/schemas/LoyveForInnehav"
       description: Løyve for et våpen uten eier som oppbevares hos politiet
       required:
       - loyvetype
-    VAAPEN:
-      allOf:
-      - $ref: "#/components/schemas/SaksbehandlerEndring"
-      - type: object
-        properties:
-          vaapen:
-            $ref: "#/components/schemas/Skytevaapen"
-      description: Endring av skytevaapen
-      required:
-      - arkivreferanse
-      - changeType
-      - vaapen
     Vaapendel:
       type: object
       description: Våpendel-modellene
@@ -2746,12 +2122,6 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        modell:
-          type: string
-        annetFabrikkmerke:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
         vaapenstatus:
           type: string
           enum:
@@ -2781,6 +2151,12 @@ components:
           - VAAPENDEL
         serienummer:
           type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        modell:
+          type: string
         id:
           type: integer
           format: int64
@@ -2789,6 +2165,706 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    Vaapendelgrunnlag:
+      allOf:
+      - $ref: "#/components/schemas/Grunnlag"
+      required:
+      - grunnlagsType
+    AmmunisjonsLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kaliber:
+            $ref: "#/components/schemas/Kaliber"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for ammunisjon i import
+      required:
+      - antall
+      - merke
+      - type
+    Ammunisjonskjoployve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for tidsbegrenset engangskjøp av ammunisjon til våpen som
+        ikke er registreringspliktig
+      required:
+      - annetloyveLoyvetype
+      - gyldigTil
+      - innehaver
+      - kaliber
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    Ammunisjonssamlerloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+          beskrivelse:
+            type: string
+      description: Løyve for ammunisjonssamlere
+      required:
+      - annetloyveLoyvetype
+      - beskrivelse
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    AnnetLoyve:
+      type: object
+      discriminator:
+        propertyName: annetloyveLoyvetype
+        mapping:
+          AMMUNISJONSKJOP_IKKEREGPLIKTIG: "#/components/schemas/Ammunisjonskjoployve"
+          AMMUNISJONSSAMLER: "#/components/schemas/Ammunisjonssamlerloyve"
+          GODKJENT_SAMLER: "#/components/schemas/GodkjentSamlerloyve"
+          PIRATBESKYTTELSE: "#/components/schemas/Piratbeskyttelsesloyve"
+          ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
+          LAANELOYVE: "#/components/schemas/Laaneloyve"
+          IKKE_ERVERVSMESSIG_INNFORSEL: "#/components/schemas/Privatimportloyve"
+          ERVERVSMESSIG_INNFORSEL: "#/components/schemas/Naeringsimportloyve"
+          MIDLERTIDIG_INNFORSEL: "#/components/schemas/MidlertidigInnforselsloyve"
+          UTFORSEL: "#/components/schemas/Utforrselsloyve"
+          GODKJENT_SKYTEBANE: "#/components/schemas/GodkjentSkytebaneloyve"
+          GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
+          HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
+      properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
+        loyveId:
+          type: string
+        saksreferanse:
+          type: string
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/DigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ExistingEier"
+          - $ref: "#/components/schemas/ManuellEier"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+          - $ref: "#/components/schemas/DigitalPerson"
+          - $ref: "#/components/schemas/DigitalVirksomhet"
+          - $ref: "#/components/schemas/ExistingDigitalEier"
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingDigitalEier"
+          - $ref: "#/components/schemas/ExistingManuellEier"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
+          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          - $ref: "#/components/schemas/ExistingManuellEier"
+          - $ref: "#/components/schemas/ManuellPoliti"
+          - $ref: "#/components/schemas/ManuellUkjentPerson"
+          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        vedtaksdato:
+          type: string
+          format: date
+        annetloyveLoyvetype:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - HOYKAPASITETSMAGASIN
+        loyvetype:
+          type: string
+          description: Type løyve
+          enum:
+          - INNEHAVSLOYVE
+          - ERVERVSLOYVE
+          - ERVERV_UTEN_LOYVE
+          - NAERINGSLOYVE
+          - ANNET_LOYVE
+          - UTEN_EIERSKAP
+      required:
+      - annetloyveLoyvetype
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    AnnetLoyveEndring:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
+      - type: object
+        properties:
+          annetLoyve:
+            oneOf:
+            - $ref: "#/components/schemas/Ammunisjonskjoployve"
+            - $ref: "#/components/schemas/Ammunisjonssamlerloyve"
+            - $ref: "#/components/schemas/GodkjentSamlerloyve"
+            - $ref: "#/components/schemas/GodkjentSkytebaneloyve"
+            - $ref: "#/components/schemas/GodkjentSkytterforeningsloyve"
+            - $ref: "#/components/schemas/Hoykapasitetsmagasinloyve"
+            - $ref: "#/components/schemas/IkkeSkytevaapenErvervsloyve"
+            - $ref: "#/components/schemas/Laaneloyve"
+            - $ref: "#/components/schemas/MidlertidigInnforselsloyve"
+            - $ref: "#/components/schemas/Naeringsimportloyve"
+            - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
+            - $ref: "#/components/schemas/Privatimportloyve"
+            - $ref: "#/components/schemas/Utforrselsloyve"
+      required:
+      - annetLoyve
+      - changeType
+    AvslattSoknad:
+      type: object
+      description: Spesifisering for avslått søknad
+      properties:
+        ervervsloyve:
+          $ref: "#/components/schemas/Ervervsloyve"
+        imiSak:
+          type: boolean
+        imiSaksnummer:
+          type: string
+        avslagsgrunnlag:
+          type: string
+          enum:
+          - VANDEL
+          - EDRUELIGHET
+          - SKIKKETHET
+          - BEHOV
+      required:
+      - avslagsgrunnlag
+      - ervervsloyve
+    AvslattSoknadEndring:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
+      - type: object
+        properties:
+          avslag:
+            $ref: "#/components/schemas/AvslattSoknad"
+      required:
+      - avslag
+      - changeType
+    ErvervsloyveEndring:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
+      - type: object
+        properties:
+          ervervsloyve:
+            $ref: "#/components/schemas/Ervervsloyve"
+      required:
+      - changeType
+      - ervervsloyve
+    GodkjentSamlerloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+          samlerorganisasjon:
+            type: string
+      description: Løyve som godkjent samler
+      required:
+      - annetloyveLoyvetype
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - samlerorganisasjon
+      - status
+      - vedtaksdato
+    GodkjentSkytebaneloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+          beskrivelse:
+            type: string
+      description: Løyve for godkjent skytebane
+      required:
+      - annetloyveLoyvetype
+      - beskrivelse
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    GodkjentSkytterforeningsloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+      description: Løyve for godkjenning som skytterforening
+      required:
+      - annetloyveLoyvetype
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    Hoykapasitetsmagasinloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          brukesAv:
+            oneOf:
+            - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
+            - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
+      description: Løyve for høykapasitetsmagasin knyttet til våpen eller ervervsløyve
+      required:
+      - annetloyveLoyvetype
+      - brukesAv
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    IkkeSkytevaapenErvervsloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          beskrivelse:
+            type: string
+          grunnlagsbeskrivelse:
+            type: string
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for erverv av våpen som ikke regnes som skytevåpen
+      required:
+      - annetloyveLoyvetype
+      - beskrivelse
+      - grunnlagsbeskrivelse
+      - gyldigTil
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    ImportLinje:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          SKYTEVAAPEN: "#/components/schemas/VaapenLinje"
+          VAAPENDEL: "#/components/schemas/VaapendelLinje"
+          AMMUNISJON: "#/components/schemas/AmmunisjonsLinje"
+      properties:
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          - AMMUNISJON
+      required:
+      - type
+    Laaneloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          grunnlag:
+            oneOf:
+            - $ref: "#/components/schemas/Aldersgrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
+            - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
+            - $ref: "#/components/schemas/Museumsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
+            - $ref: "#/components/schemas/Sportsgrunnlag"
+            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
+            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+          laanenivaaSport:
+            type: string
+            enum:
+            - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
+            - PISTOL_REVOLVER
+            - OVRIGE_RIFLER_HAGLER
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for lån av våpen
+      required:
+      - annetloyveLoyvetype
+      - grunnlag
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    Leverandor:
+      type: object
+      properties:
+        firmanavn:
+          type: string
+        adresse:
+          type: string
+        postnummer:
+          type: string
+        sted:
+          type: string
+        land:
+          type: string
+        telefon:
+          type: string
+    MidlertidigInnforselsloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          importBeskrivelse:
+            type: string
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for midlertidig innførsel
+      required:
+      - annetloyveLoyvetype
+      - gyldigTil
+      - importBeskrivelse
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    Naeringsimportloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+          naeringsloyveid:
+            type: string
+          leverandor:
+            $ref: "#/components/schemas/Leverandor"
+          importlinjer:
+            type: array
+            items:
+              oneOf:
+              - $ref: "#/components/schemas/AmmunisjonsLinje"
+              - $ref: "#/components/schemas/VaapenLinje"
+              - $ref: "#/components/schemas/VaapendelLinje"
+          totalVerdi:
+            $ref: "#/components/schemas/Verdi"
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for innførsel av våpen for næringsdrivende virksomhet
+      required:
+      - annetloyveLoyvetype
+      - gyldigTil
+      - importlinjer
+      - innehaver
+      - leverandor
+      - loyveId
+      - loyvetype
+      - naeringsloyveid
+      - saksreferanse
+      - status
+      - totalVerdi
+      - vedtaksdato
+    NaeringsloyveEndring:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerEndringLoyve"
+      - type: object
+        properties:
+          naeringsloyve:
+            $ref: "#/components/schemas/Naeringsloyve"
+      required:
+      - changeType
+      - naeringsloyve
+    Piratbeskyttelsesloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+      description: Løyve for godkjenning av beskyttelse av skip mot piratvirksomhet
+      required:
+      - annetloyveLoyvetype
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    Privatimportloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          erversloyveid:
+            type: string
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for innførsel av våpen som ikke er ervervsmessig
+      required:
+      - annetloyveLoyvetype
+      - erversloyveid
+      - gyldigTil
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - vedtaksdato
+    SaksbehandlerEndringLoyve:
+      type: object
+      discriminator:
+        propertyName: changeType
+      properties:
+        changeType:
+          type: string
+          enum:
+          - NAERINGSLOYVE
+          - ERVERVSLOYVE
+          - AVSLAG_SOKNAD_ERVERV
+          - ANNET_LOYVE
+      required:
+      - changeType
+    Utforrselsloyve:
+      allOf:
+      - $ref: "#/components/schemas/AnnetLoyve"
+      - type: object
+        properties:
+          utforselBeskrivelse:
+            type: string
+          gyldigTil:
+            type: string
+            format: date
+      description: Løyve for utførsel av våpen
+      required:
+      - annetloyveLoyvetype
+      - gyldigTil
+      - innehaver
+      - loyveId
+      - loyvetype
+      - saksreferanse
+      - status
+      - utforselBeskrivelse
+      - vedtaksdato
+    VaapenLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          vaapentype:
+            type: string
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          modell:
+            type: string
+          funksjonsmaate:
+            type: string
+            enum:
+            - ENKELTSKUDD
+            - HALVAUTOMATISK
+            - HELAUTOMATISK
+            - MANUELL_OMLADING
+            - UKJENT
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for skytevåpen i import
+      required:
+      - antall
+      - fabrikkmerke
+      - funksjonsmaate
+      - kaliber
+      - modell
+      - type
+      - vaapentype
+    VaapendelLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          modell:
+            type: string
+          funksjonsmaate:
+            type: string
+            enum:
+            - ENKELTSKUDD
+            - HALVAUTOMATISK
+            - HELAUTOMATISK
+            - MANUELL_OMLADING
+            - UKJENT
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for våpendeler i import
+      required:
+      - antall
+      - fabrikkmerke
+      - kaliber
+      - modell
+      - type
+      - vaapendeltype
+    Verdi:
+      type: object
+      description: Verdi i Valuta
+      properties:
+        sum:
+          type: number
+          description: Beløp i gitt valuta
+          example: 199.99
+        valuta:
+          type: string
+          default: NOK
+          description: Valutakode i ISO 4217 format
+          example: NOK
+      required:
+      - sum
+    KorreksjonsId:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+      required:
+      - id
+    VAAPEN:
+      allOf:
+      - $ref: "#/components/schemas/SaksbehandlerEndring"
+      - type: object
+        properties:
+          vaapen:
+            $ref: "#/components/schemas/Skytevaapen"
+      description: Endring av skytevaapen
+      required:
+      - arkivreferanse
+      - changeType
+      - vaapen
     VAAPENDEL:
       allOf:
       - $ref: "#/components/schemas/SaksbehandlerEndring"

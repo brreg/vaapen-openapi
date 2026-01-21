@@ -807,14 +807,7 @@ paths:
               schema:
                 type: array
                 items:
-                  oneOf:
-                  - $ref: "#/components/schemas/HistoryRowAnnetLoyve"
-                  - $ref: "#/components/schemas/HistoryRowErvervsloyve"
-                  - $ref: "#/components/schemas/HistoryRowLoyve"
-                  - $ref: "#/components/schemas/HistoryRowNaeringsloyve"
-                  - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
-                  - $ref: "#/components/schemas/HistoryRowSkytevaapen"
-                  - $ref: "#/components/schemas/HistoryRowVaapendel"
+                  $ref: "#/components/schemas/HistoryRow"
         "400":
           description: Bad request
           content:
@@ -2593,8 +2586,6 @@ components:
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
           UTEN_EIERSKAP: "#/components/schemas/UtenEierskap"
       properties:
-        loyveidIfEier:
-          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -2605,6 +2596,8 @@ components:
           - NAERINGSLOYVE
           - ANNET_LOYVE
           - UTEN_EIERSKAP
+        loyveidIfEier:
+          type: string
       required:
       - loyvetype
     Minneverdegrunnlag:
@@ -3011,8 +3004,6 @@ components:
             type: string
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
           modell:
             type: string
           skytevaapentype:
@@ -3066,6 +3057,8 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          annetFabrikkmerke:
+            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -4038,8 +4031,30 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        saksreferanse:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
         loyveId:
           type: string
+        annetloyveLoyvetype:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - HOYKAPASITETSMAGASIN
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -4075,28 +4090,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        annetloyveLoyvetype:
-          type: string
-          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
-          enum:
-          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
-          - AMMUNISJONSSAMLER
-          - GODKJENT_SAMLER
-          - PIRATBESKYTTELSE
-          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
-          - LAANELOYVE
-          - IKKE_ERVERVSMESSIG_INNFORSEL
-          - ERVERVSMESSIG_INNFORSEL
-          - MIDLERTIDIG_INNFORSEL
-          - UTFORSEL
-          - GODKJENT_SKYTEBANE
-          - GODKJENT_SKYTTERFORENING
-          - HOYKAPASITETSMAGASIN
-        saksreferanse:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         loyvetype:
           type: string
           description: Type løyve
@@ -4736,7 +4729,7 @@ components:
       - status
     HistoryRowVaapendel:
       allOf:
-      - $ref: "#/components/schemas/HistoryRow"
+      - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
       - type: object
         properties:
           id:
@@ -4749,6 +4742,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -4758,6 +4752,7 @@ components:
       - saksreferanse
       - type
     HistoryRowRegistreringsobjekt:
+      type: object
       allOf:
       - $ref: "#/components/schemas/HistoryRow"
       discriminator:
@@ -4765,6 +4760,38 @@ components:
         mapping:
           SKYTEVAAPEN: "#/components/schemas/HistoryRowSkytevaapen"
           VAAPENDEL: "#/components/schemas/HistoryRowVaapendel"
+      oneOf:
+      - $ref: "#/components/schemas/HistoryRowSkytevaapen"
+      - $ref: "#/components/schemas/HistoryRowVaapendel"
+      properties:
+        saksreferanse:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
+        historyId:
+          type: integer
+          format: int64
+        endringsaarsak:
+          type: string
+          enum:
+          - MIGRERING
+          - SAKSBEHANDLERENDRING
+          - FORHANDLERENDRING
+          - EIEROVERFORING
+          - LAGERBEHOLDNING
+          - POLITIETS_BESITTELSE
+          - IMPORT
+        changeType:
+          type: string
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          - NAERINGSLOYVE
+          - ERVERVSLOYVE
+          - ANNET_LOYVE
       required:
       - changeType
       - endringsaarsak
@@ -4773,7 +4800,7 @@ components:
       - type
     HistoryRowSkytevaapen:
       allOf:
-      - $ref: "#/components/schemas/HistoryRow"
+      - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
       - type: object
         properties:
           id:
@@ -4781,6 +4808,7 @@ components:
             format: int64
           objekt:
             $ref: "#/components/schemas/Skytevaapen"
+      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -4791,7 +4819,7 @@ components:
       - type
     HistoryRowAnnetLoyve:
       allOf:
-      - $ref: "#/components/schemas/HistoryRow"
+      - $ref: "#/components/schemas/HistoryRowLoyve"
       - type: object
         properties:
           id:
@@ -4811,6 +4839,7 @@ components:
             - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
             - $ref: "#/components/schemas/Privatimportloyve"
             - $ref: "#/components/schemas/Utforrselsloyve"
+      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -4821,13 +4850,14 @@ components:
       - type
     HistoryRowErvervsloyve:
       allOf:
-      - $ref: "#/components/schemas/HistoryRow"
+      - $ref: "#/components/schemas/HistoryRowLoyve"
       - type: object
         properties:
           id:
             type: string
           objekt:
             $ref: "#/components/schemas/Ervervsloyve"
+      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -4837,6 +4867,7 @@ components:
       - saksreferanse
       - type
     HistoryRowLoyve:
+      type: object
       allOf:
       - $ref: "#/components/schemas/HistoryRow"
       discriminator:
@@ -4845,6 +4876,39 @@ components:
           NAERINGSLOYVE: "#/components/schemas/HistoryRowNaeringsloyve"
           ERVERVSLOYVE: "#/components/schemas/HistoryRowErvervsloyve"
           ANNET_LOYVE: "#/components/schemas/HistoryRowAnnetLoyve"
+      oneOf:
+      - $ref: "#/components/schemas/HistoryRowNaeringsloyve"
+      - $ref: "#/components/schemas/HistoryRowErvervsloyve"
+      - $ref: "#/components/schemas/HistoryRowAnnetLoyve"
+      properties:
+        saksreferanse:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
+        historyId:
+          type: integer
+          format: int64
+        endringsaarsak:
+          type: string
+          enum:
+          - MIGRERING
+          - SAKSBEHANDLERENDRING
+          - FORHANDLERENDRING
+          - EIEROVERFORING
+          - LAGERBEHOLDNING
+          - POLITIETS_BESITTELSE
+          - IMPORT
+        changeType:
+          type: string
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          - NAERINGSLOYVE
+          - ERVERVSLOYVE
+          - ANNET_LOYVE
       required:
       - changeType
       - endringsaarsak
@@ -4853,13 +4917,14 @@ components:
       - type
     HistoryRowNaeringsloyve:
       allOf:
-      - $ref: "#/components/schemas/HistoryRow"
+      - $ref: "#/components/schemas/HistoryRowLoyve"
       - type: object
         properties:
           id:
             type: string
           objekt:
             $ref: "#/components/schemas/Naeringsloyve"
+      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -4878,9 +4943,18 @@ components:
           NAERINGSLOYVE: "#/components/schemas/HistoryRowNaeringsloyve"
           ERVERVSLOYVE: "#/components/schemas/HistoryRowErvervsloyve"
           ANNET_LOYVE: "#/components/schemas/HistoryRowAnnetLoyve"
+      oneOf:
+      - $ref: "#/components/schemas/HistoryRowSkytevaapen"
+      - $ref: "#/components/schemas/HistoryRowVaapendel"
+      - $ref: "#/components/schemas/HistoryRowNaeringsloyve"
+      - $ref: "#/components/schemas/HistoryRowErvervsloyve"
+      - $ref: "#/components/schemas/HistoryRowAnnetLoyve"
       properties:
         saksreferanse:
           type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4894,9 +4968,6 @@ components:
           - LAGERBEHOLDNING
           - POLITIETS_BESITTELSE
           - IMPORT
-        endringstidspunkt:
-          type: string
-          format: date-time
         changeType:
           type: string
         type:

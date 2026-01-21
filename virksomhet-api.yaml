@@ -1345,11 +1345,11 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
+          personidentifikator:
+            type: string
           foedselsdato:
             type: string
             format: date
-          personidentifikator:
-            type: string
       required:
       - eiertype
       - personidentifikator
@@ -2202,17 +2202,17 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          vaapenkortSid:
-            type: string
-          stilling:
-            type: string
-          telefon:
-            type: string
           navn:
             type: string
           personidentifikator:
             type: string
           adresse:
+            type: string
+          vaapenkortSid:
+            type: string
+          stilling:
+            type: string
+          telefon:
             type: string
       required:
       - eiertype
@@ -2930,7 +2930,6 @@ components:
           - CRITICAL_SKYTEVAAPENTYPE
           - CRITICAL_SKYTEVAAPENTYPE_UKJENT
           - CRITICAL_MOTTAKER_ER_DEG_SELV
-          - CRITICAL_MANGLENDE_SERIENUMMER
           - ERROR_FABRIKKMERKE
           - WARNING_MODELL
           - ERROR_AVFYRINGSMEKANISME
@@ -3952,11 +3951,6 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -3968,6 +3962,11 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -5445,7 +5444,7 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          erversloyveid:
+          ervervsloyveid:
             type: string
           gyldigTil:
             type: string
@@ -5453,7 +5452,7 @@ components:
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
-      - erversloyveid
+      - ervervsloyveid
       - gyldigTil
       - innehaver
       - loyveId
