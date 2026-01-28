@@ -625,6 +625,7 @@ paths:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
       - name: fromTime
@@ -713,6 +714,7 @@ paths:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
       - name: fromTime
@@ -773,6 +775,7 @@ paths:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
       - name: fromTime
@@ -2586,6 +2589,8 @@ components:
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
           UTEN_EIERSKAP: "#/components/schemas/UtenEierskap"
       properties:
+        loyveidIfEier:
+          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -2596,8 +2601,6 @@ components:
           - NAERINGSLOYVE
           - ANNET_LOYVE
           - UTEN_EIERSKAP
-        loyveidIfEier:
-          type: string
       required:
       - loyvetype
     Minneverdegrunnlag:
@@ -3000,12 +3003,6 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
-            type: string
           skytevaapentype:
             type: string
             enum:
@@ -3021,14 +3018,6 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
-            - UKJENT
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type: string
@@ -3057,7 +3046,21 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
+            type: string
+          modell:
             type: string
       description: Våpendel-modellene
       discriminator:
@@ -3245,6 +3248,7 @@ components:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
         tilInnehaver:
@@ -3297,6 +3301,7 @@ components:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
         tilInnehaver:
@@ -4031,30 +4036,8 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        saksreferanse:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         loyveId:
           type: string
-        annetloyveLoyvetype:
-          type: string
-          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
-          enum:
-          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
-          - AMMUNISJONSSAMLER
-          - GODKJENT_SAMLER
-          - PIRATBESKYTTELSE
-          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
-          - LAANELOYVE
-          - IKKE_ERVERVSMESSIG_INNFORSEL
-          - ERVERVSMESSIG_INNFORSEL
-          - MIDLERTIDIG_INNFORSEL
-          - UTFORSEL
-          - GODKJENT_SKYTEBANE
-          - GODKJENT_SKYTTERFORENING
-          - HOYKAPASITETSMAGASIN
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/DigitalEier"
@@ -4090,6 +4073,28 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        annetloyveLoyvetype:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - HOYKAPASITETSMAGASIN
+        saksreferanse:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
         loyvetype:
           type: string
           description: Type løyve
@@ -4381,7 +4386,7 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          erversloyveid:
+          ervervsloyveid:
             type: string
           gyldigTil:
             type: string
@@ -4389,7 +4394,7 @@ components:
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
-      - erversloyveid
+      - ervervsloyveid
       - gyldigTil
       - innehaver
       - loyveId
@@ -4723,10 +4728,14 @@ components:
         sekvensnummer:
           type: integer
           format: int64
+        statusGyldighetstidspunkt:
+          type: string
+          format: date
       required:
       - personidentifikator
       - sekvensnummer
       - status
+      - statusGyldighetstidspunkt
     HistoryRowVaapendel:
       allOf:
       - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
@@ -4766,6 +4775,8 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
         endringstidspunkt:
           type: string
           format: date-time
@@ -4780,10 +4791,9 @@ components:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
-        changeType:
-          type: string
         type:
           type: string
           enum:
@@ -4883,6 +4893,8 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
         endringstidspunkt:
           type: string
           format: date-time
@@ -4897,10 +4909,9 @@ components:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
-        changeType:
-          type: string
         type:
           type: string
           enum:
@@ -4952,6 +4963,8 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
         endringstidspunkt:
           type: string
           format: date-time
@@ -4966,10 +4979,9 @@ components:
           - FORHANDLERENDRING
           - EIEROVERFORING
           - LAGERBEHOLDNING
+          - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
-        changeType:
-          type: string
         type:
           type: string
           enum:
