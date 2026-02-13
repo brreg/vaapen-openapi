@@ -1846,11 +1846,20 @@ components:
         offset:
           type: integer
           format: int32
+          default: "0"
+          description: "Pagineringssidenummer. Bruk denne eller 'fromId', men ikke\
+            \ begge."
+        fromId:
+          type: integer
+          format: int64
+          default: "null"
+          description: Alternativ pagineringsstrategi (cursor-basert istedet for offset-basert).
+            'null' betyr bruk offset-basert paginering. Begynn med '0' for å hente
+            første side.
       required:
       - combineWith
       - filters
       - limit
-      - offset
       - sortDir
     Aldersgrunnlag:
       allOf:
@@ -2862,6 +2871,11 @@ components:
         offset:
           type: integer
           format: int32
+        lastId:
+          type: integer
+          format: int64
+          default: "null"
+          description: Brukes til å hente neste side hvis `fromId` brukes i VaapenSearchQuery.
       required:
       - result
       - totalResults
@@ -3003,6 +3017,14 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
+          modell:
+            type: string
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
+          annetFabrikkmerke:
+            type: string
           skytevaapentype:
             type: string
             enum:
@@ -3018,6 +3040,14 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
+            - UKJENT
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type: string
@@ -3046,22 +3076,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
-            type: string
-          modell:
-            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3097,6 +3111,11 @@ components:
         offset:
           type: integer
           format: int32
+        lastId:
+          type: integer
+          format: int64
+          default: "null"
+          description: Brukes til å hente neste side hvis `fromId` brukes i VaapenSearchQuery.
       required:
       - result
       - totalResults
@@ -3445,6 +3464,11 @@ components:
         offset:
           type: integer
           format: int32
+        lastId:
+          type: integer
+          format: int64
+          default: "null"
+          description: Brukes til å hente neste side hvis `fromId` brukes i VaapenSearchQuery.
       required:
       - result
       - totalResults
@@ -4725,6 +4749,7 @@ components:
           - INAKTIV
           - IKKEBOSATT
           - UKJENT
+          - MISLYKKET_OPPSLAG
         sekvensnummer:
           type: integer
           format: int64
@@ -4777,9 +4802,6 @@ components:
           type: string
         changeType:
           type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4794,6 +4816,9 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+        endringstidspunkt:
+          type: string
+          format: date-time
         type:
           type: string
           enum:
@@ -4895,9 +4920,6 @@ components:
           type: string
         changeType:
           type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4912,6 +4934,9 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+        endringstidspunkt:
+          type: string
+          format: date-time
         type:
           type: string
           enum:
@@ -4965,9 +4990,6 @@ components:
           type: string
         changeType:
           type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4982,6 +5004,9 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+        endringstidspunkt:
+          type: string
+          format: date-time
         type:
           type: string
           enum:
