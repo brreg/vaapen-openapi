@@ -628,6 +628,7 @@ paths:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
       - name: fromTime
         in: query
         required: false
@@ -717,6 +718,7 @@ paths:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
       - name: fromTime
         in: query
         required: false
@@ -778,6 +780,7 @@ paths:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
       - name: fromTime
         in: query
         required: false
@@ -3017,13 +3020,11 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
-          modell:
-            type: string
           serienummer:
             type: string
           fabrikkmerke:
             $ref: "#/components/schemas/Fabrikkmerke"
-          annetFabrikkmerke:
+          modell:
             type: string
           skytevaapentype:
             type: string
@@ -3076,6 +3077,8 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          annetFabrikkmerke:
+            type: string
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3270,6 +3273,7 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
         tilInnehaver:
           type: string
         fraInnehaver:
@@ -3323,6 +3327,7 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
         tilInnehaver:
           type: string
         fraInnehaver:
@@ -4816,6 +4821,7 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
         endringstidspunkt:
           type: string
           format: date-time
@@ -4934,6 +4940,7 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
         endringstidspunkt:
           type: string
           format: date-time
@@ -5004,6 +5011,7 @@ components:
           - FOLKEREGISTER
           - POLITIETS_BESITTELSE
           - IMPORT
+          - MASKINELL
         endringstidspunkt:
           type: string
           format: date-time
