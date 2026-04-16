@@ -2625,6 +2625,8 @@ components:
         properties:
           loyveId:
             type: string
+            maxLength: 100
+            minLength: 0
       required:
       - ervervsloyveForesporselId
       - loyveId
@@ -2738,6 +2740,8 @@ components:
         properties:
           erverversLoyveId:
             type: string
+            maxLength: 100
+            minLength: 0
           skytevaapen:
             type: array
             items:
@@ -2760,6 +2764,8 @@ components:
         properties:
           naeringsloyveId:
             type: string
+            maxLength: 100
+            minLength: 0
           skytevaapenId:
             type: integer
             format: int64
@@ -2780,6 +2786,8 @@ components:
         properties:
           ervervsloyveId:
             type: string
+            maxLength: 100
+            minLength: 0
           skytevaapenId:
             type: integer
             format: int64
@@ -2800,6 +2808,8 @@ components:
         properties:
           naeringsloyveId:
             type: string
+            maxLength: 100
+            minLength: 0
           vaapendelId:
             type: integer
             format: int64
@@ -2814,6 +2824,8 @@ components:
         properties:
           ervervsloyveId:
             type: string
+            maxLength: 100
+            minLength: 0
           vaapendelId:
             type: integer
             format: int64
@@ -2832,6 +2844,8 @@ components:
           laaskasseSerienummer:
             type: string
             description: Serienummer på låskasse fra våpenkort
+            maxLength: 100
+            minLength: 0
           vaapendelId:
             type: integer
             format: int64
@@ -2840,6 +2854,8 @@ components:
             type: string
             description: Serienummer på våpendel som erverver leverer inn hvis bytte
               av våpendel
+            maxLength: 100
+            minLength: 0
       required:
       - eieroverforingsforslagType
       - erverversIdentifikator
@@ -2863,7 +2879,6 @@ components:
           - CRITICAL_SKYTEVAAPENTYPE
           - CRITICAL_SKYTEVAAPENTYPE_UKJENT
           - CRITICAL_MOTTAKER_ER_DEG_SELV
-          - CRITICAL_MANGLENDE_SERIENUMMER
           - ERROR_FABRIKKMERKE
           - WARNING_MODELL
           - ERROR_AVFYRINGSMEKANISME
@@ -2938,6 +2953,8 @@ components:
         properties:
           annetLoyveId:
             type: string
+            maxLength: 100
+            minLength: 0
       required:
       - annetLoyveId
       - gyldigTil
@@ -2949,6 +2966,8 @@ components:
         properties:
           innehavsloyveId:
             type: string
+            maxLength: 100
+            minLength: 0
       required:
       - gyldigTil
       - innehavsloyveId
@@ -4273,6 +4292,16 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         loyveId:
           type: string
         innehaver:
@@ -4332,16 +4361,6 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         loyvetype:
           type: string
           description: Type løyve
@@ -4601,7 +4620,7 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          erversloyveid:
+          ervervsloyveid:
             type: string
           gyldigTil:
             type: string
@@ -4609,7 +4628,7 @@ components:
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
-      - erversloyveid
+      - ervervsloyveid
       - gyldigTil
       - innehaver
       - loyveId

@@ -334,7 +334,21 @@ paths:
       tags:
       - annet-loyve-controller
       summary: Search for annetLoyve using personidentifikator
+      description: Returns aktiv AnnetLoyve. Optional filter using the 'inkluderInaktiv'
+        query parameter.
       operationId: findAndreLoyverPerson
+      parameters:
+      - name: inkluderInaktiv
+        in: query
+        description: |-
+          Optional filter for user status.\n" +
+                          "    If provided and set to true; inaktive, ugyldige and aktive annetLoyve are returned.\n" +
+                          "    Valid values: 'true', 'false'.\n" +
+                          "    Defaults to false if omitted, and will return only aktive annetLoyve.
+        required: false
+        schema:
+          type: boolean
+          default: false
       requestBody:
         content:
           application/json:
@@ -3020,12 +3034,6 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
-          serienummer:
-            type: string
-          fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
-          modell:
-            type: string
           skytevaapentype:
             type: string
             enum:
@@ -3041,14 +3049,6 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
-            - UKJENT
-          vaapendeltype:
-            type: string
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type: string
@@ -3077,7 +3077,21 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          vaapendeltype:
+            type: string
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          serienummer:
+            type: string
+          fabrikkmerke:
+            $ref: "#/components/schemas/Fabrikkmerke"
           annetFabrikkmerke:
+            type: string
+          modell:
             type: string
       description: Våpendel-modellene
       discriminator:
@@ -4805,8 +4819,6 @@ components:
       properties:
         saksreferanse:
           type: string
-        changeType:
-          type: string
         historyId:
           type: integer
           format: int64
@@ -4822,6 +4834,8 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
+        changeType:
+          type: string
         endringstidspunkt:
           type: string
           format: date-time
@@ -4924,8 +4938,6 @@ components:
       properties:
         saksreferanse:
           type: string
-        changeType:
-          type: string
         historyId:
           type: integer
           format: int64
@@ -4941,6 +4953,8 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
+        changeType:
+          type: string
         endringstidspunkt:
           type: string
           format: date-time
@@ -4995,8 +5009,6 @@ components:
       properties:
         saksreferanse:
           type: string
-        changeType:
-          type: string
         historyId:
           type: integer
           format: int64
@@ -5012,6 +5024,8 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
+        changeType:
+          type: string
         endringstidspunkt:
           type: string
           format: date-time

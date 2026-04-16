@@ -1824,13 +1824,13 @@ components:
           type: string
         ervervsloyveId:
           type: string
+        ikkeervervsmessigInnforselsloyveId:
+          type: string
         opprettelseType:
           type: string
           enum:
           - IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN
           - IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL
-        ikkeervervsmessigInnforselsloyveId:
-          type: string
       required:
       - arkivreferanse
       - ervervsloyveId
@@ -2690,7 +2690,7 @@ components:
       - $ref: "#/components/schemas/AnnetLoyve"
       - type: object
         properties:
-          erversloyveid:
+          ervervsloyveid:
             type: string
           gyldigTil:
             type: string
@@ -2698,7 +2698,7 @@ components:
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
-      - erversloyveid
+      - ervervsloyveid
       - gyldigTil
       - innehaver
       - loyveId
