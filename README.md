@@ -1,12 +1,18 @@
 # Oppdatere Swagger
 
-Rutine for å oppdatere Swagger-spesifikasjoner.
+## Rutine for å oppdatere Swagger-spesifikasjoner.
 
 Repo: [brreg/vaapen-openapi](https://github.com/brreg/vaapen-openapi)
 
-## Steg
+Publisert dokumentasjon:
 
-### 1. `vapen-openapi`
+* [blink-hendelse-api dokumentasjon](https://brreg.github.io/vaapen-openapi/)
+* [politiavgivelse-api dokumentasjon](https://brreg.github.io/vaapen-openapi/?url=politiavgivelse-api.yaml)
+* [kodelister dokumentasjon](https://brreg.github.io/vaapen-openapi/?url=kodelister.yaml)
+* [virksomhet-api dokumentasjon](https://brreg.github.io/vaapen-openapi/?url=virksomhet-api.yaml)
+* [personlig-api dokumentasjon](https://brreg.github.io/vaapen-openapi/?url=personlig-api.yaml)
+
+## Steg
 
 Sjekk at du er på `master` og i synk:
 
@@ -33,8 +39,4 @@ git push
 
 ### 3. GitHub Actions feiler?
 
-Prøv å [re-run jobben](https://github.com/brreg/vaapen-openapi/actions) via GitHub UI, eller med `gh` CLI:
-
-```shell
-gh run rerun --failed
-```
+Prøv å [re-run jobben](https://github.com/brreg/vaapen-openapi/actions) via GitHub UI
