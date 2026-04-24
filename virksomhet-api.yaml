@@ -1370,11 +1370,11 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
+          personidentifikator:
+            type: string
           foedselsdato:
             type: string
             format: date
-          personidentifikator:
-            type: string
       required:
       - eiertype
       - personidentifikator
@@ -2233,17 +2233,17 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          vaapenkortSid:
-            type: string
-          stilling:
-            type: string
-          telefon:
-            type: string
           navn:
             type: string
           personidentifikator:
             type: string
           adresse:
+            type: string
+          vaapenkortSid:
+            type: string
+          stilling:
+            type: string
+          telefon:
             type: string
       required:
       - eiertype
@@ -4012,11 +4012,6 @@ components:
       discriminator:
         propertyName: eieroverforingType
       properties:
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -4028,6 +4023,11 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -5177,23 +5177,6 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
-        annetloyveLoyvetype:
-          type: string
-          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
-          enum:
-          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
-          - AMMUNISJONSSAMLER
-          - GODKJENT_SAMLER
-          - PIRATBESKYTTELSE
-          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
-          - LAANELOYVE
-          - IKKE_ERVERVSMESSIG_INNFORSEL
-          - ERVERVSMESSIG_INNFORSEL
-          - MIDLERTIDIG_INNFORSEL
-          - UTFORSEL
-          - GODKJENT_SKYTEBANE
-          - GODKJENT_SKYTTERFORENING
-          - HOYKAPASITETSMAGASIN
         status:
           type: string
           enum:
@@ -5246,6 +5229,23 @@ components:
         vedtaksdato:
           type: string
           format: date
+        annetloyveLoyvetype:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - HOYKAPASITETSMAGASIN
         loyvetype:
           type: string
           description: Type løyve

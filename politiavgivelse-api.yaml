@@ -341,10 +341,10 @@ paths:
       - name: inkluderInaktiv
         in: query
         description: |-
-          Optional filter for user status.\n" +
-                          "    If provided and set to true; inaktive, ugyldige and aktive annetLoyve are returned.\n" +
-                          "    Valid values: 'true', 'false'.\n" +
-                          "    Defaults to false if omitted, and will return only aktive annetLoyve.
+          Optional filter for user status.
+                          If provided and set to true; inaktive, ugyldige and aktive annetLoyve are returned.
+                          Valid values: 'true', 'false'.
+                          Defaults to false if omitted, and will return only aktive annetLoyve.
         required: false
         schema:
           type: boolean
