@@ -4819,6 +4819,11 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4834,11 +4839,6 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         type:
           type: string
           enum:
@@ -4938,6 +4938,11 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -4953,11 +4958,6 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         type:
           type: string
           enum:
@@ -5009,6 +5009,11 @@ components:
       properties:
         saksreferanse:
           type: string
+        changeType:
+          type: string
+        endringstidspunkt:
+          type: string
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -5024,11 +5029,6 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
-        changeType:
-          type: string
-        endringstidspunkt:
-          type: string
-          format: date-time
         type:
           type: string
           enum:

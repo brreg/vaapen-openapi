@@ -931,6 +931,7 @@ components:
       properties:
         navn:
           type: string
+          minLength: 1
         aliasBetegnelse:
           type: string
       required:
@@ -956,6 +957,7 @@ components:
       properties:
         navn:
           type: string
+          minLength: 1
         merknad:
           type: string
         advarsel:
@@ -1448,6 +1450,13 @@ components:
           - PERKUSJON
           - FLINT
           - LUNTE
+        pipelengde:
+          type: integer
+          format: int32
+        kaliber:
+          type: array
+          items:
+            $ref: "#/components/schemas/Kaliber"
     Etterregistrertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -1555,6 +1564,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
       description: Gjennomføring av privatimport av Våpendel
       required:
       - arkivreferanse
@@ -1754,6 +1764,8 @@ components:
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
           UTEN_EIERSKAP: "#/components/schemas/UtenEierskap"
       properties:
+        loyveidIfEier:
+          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -1764,8 +1776,6 @@ components:
           - NAERINGSLOYVE
           - ANNET_LOYVE
           - UTEN_EIERSKAP
-        loyveidIfEier:
-          type: string
       required:
       - loyvetype
     Minneverdegrunnlag:
@@ -2123,6 +2133,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
         korrigeringsstatus:
           type: string
           enum:
@@ -2290,12 +2301,6 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        serienummer:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         modell:
           type: string
         vaapenstatus:
@@ -2325,11 +2330,34 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
+        annetFabrikkmerke:
+          type: string
+        serienummer:
+          type: string
         id:
           type: integer
           format: int64
       required:
       - innehavsloyve
+      - korrigeringsstatus
+      - registreringsobjektType
+      - skytevaapentype
+    VaapendelMedKaliber:
+      allOf:
+      - $ref: "#/components/schemas/Vaapendel"
+      - type: object
+        properties:
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+      required:
+      - innehavsloyve
+      - kaliber
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
@@ -2474,9 +2502,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        vedtaksdato:
-          type: string
-          format: date
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -2494,6 +2519,9 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
+        vedtaksdato:
+          type: string
+          format: date
         loyvetype:
           type: string
           description: Type løyve
@@ -3045,6 +3073,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
       description: Endring av vaapendel
       required:
       - arkivreferanse
@@ -3081,6 +3110,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
       description: Korreksjon av vaapendel
       required:
       - arkivreferanse
@@ -3177,6 +3207,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
           loyveForErverv:
             oneOf:
             - $ref: "#/components/schemas/ErvervUtenLoyve"

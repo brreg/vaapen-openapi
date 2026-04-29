@@ -684,6 +684,7 @@ paths:
                 - $ref: "#/components/schemas/Revolvertonne"
                 - $ref: "#/components/schemas/Sluttstykke"
                 - $ref: "#/components/schemas/UkjentDel"
+                - $ref: "#/components/schemas/VaapendelMedKaliber"
   /api/virksomhet/naering/vaapen/{id}:
     get:
       tags:
@@ -822,6 +823,7 @@ paths:
                   - $ref: "#/components/schemas/Revolvertonne"
                   - $ref: "#/components/schemas/Sluttstykke"
                   - $ref: "#/components/schemas/UkjentDel"
+                  - $ref: "#/components/schemas/VaapendelMedKaliber"
   /api/virksomhet/ikke-naering/vaapendeler/{id}:
     get:
       tags:
@@ -850,6 +852,7 @@ paths:
                 - $ref: "#/components/schemas/Revolvertonne"
                 - $ref: "#/components/schemas/Sluttstykke"
                 - $ref: "#/components/schemas/UkjentDel"
+                - $ref: "#/components/schemas/VaapendelMedKaliber"
   /api/virksomhet/ikke-naering/vaapen/{id}:
     get:
       tags:
@@ -1687,6 +1690,13 @@ components:
           - PERKUSJON
           - FLINT
           - LUNTE
+        pipelengde:
+          type: integer
+          format: int32
+        kaliber:
+          type: array
+          items:
+            $ref: "#/components/schemas/Kaliber"
     Etterregistrertgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2166,6 +2176,7 @@ components:
           - $ref: "#/components/schemas/Revolvertonne"
           - $ref: "#/components/schemas/Sluttstykke"
           - $ref: "#/components/schemas/UkjentDel"
+          - $ref: "#/components/schemas/VaapendelMedKaliber"
         lagerId:
           type: string
         possibleDuplicate:
@@ -2633,6 +2644,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
         korrigeringsstatus:
           type: string
           enum:
@@ -2893,6 +2905,23 @@ components:
       - korrigeringsstatus
       - registreringsobjektType
       - skytevaapentype
+    VaapendelMedKaliber:
+      allOf:
+      - $ref: "#/components/schemas/Vaapendel"
+      - type: object
+        properties:
+          kaliber:
+            type: array
+            items:
+              $ref: "#/components/schemas/Kaliber"
+          annetKaliber:
+            type: string
+      required:
+      - innehavsloyve
+      - kaliber
+      - korrigeringsstatus
+      - registreringsobjektType
+      - skytevaapentype
     Vaapendelgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2982,6 +3011,8 @@ components:
           - ERROR_UGYLDIG_KALIBER
           - ERROR_ERVERVER_MATCHER_IKKE_LOYVEINNEHAVER
           - CRITICAL_VAAPENSTATUS_NOT_ALLOWED
+          - WARNING_KALIBER
+          - WARNING_PIPELENGDE
       required:
       - errorType
       - loyveFelt
@@ -3044,6 +3075,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
       required:
       - type
       - vaapendel
@@ -3961,6 +3993,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
         pageSize:
           type: integer
           format: int32
@@ -4016,6 +4049,11 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
+        mottakersLoyve:
+          oneOf:
+          - $ref: "#/components/schemas/ErvervUtenLoyve"
+          - $ref: "#/components/schemas/Ervervsloyve"
+          - $ref: "#/components/schemas/Naeringsloyve"
         eieroverforingType:
           type: string
           enum:
@@ -4023,11 +4061,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          oneOf:
-          - $ref: "#/components/schemas/ErvervUtenLoyve"
-          - $ref: "#/components/schemas/Ervervsloyve"
-          - $ref: "#/components/schemas/Naeringsloyve"
         id:
           type: integer
           format: int64
@@ -4194,6 +4227,7 @@ components:
               - $ref: "#/components/schemas/Revolvertonne"
               - $ref: "#/components/schemas/Sluttstykke"
               - $ref: "#/components/schemas/UkjentDel"
+              - $ref: "#/components/schemas/VaapendelMedKaliber"
       required:
       - eieroverforingType
       - id
@@ -4213,6 +4247,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
       required:
       - eieroverforingType
       - id
@@ -4235,6 +4270,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
           vaapendelRetur:
             oneOf:
             - $ref: "#/components/schemas/Laaskasse"
@@ -4242,6 +4278,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - $ref: "#/components/schemas/VaapendelMedKaliber"
       required:
       - eieroverforingType
       - id
@@ -4288,11 +4325,11 @@ components:
       discriminator:
         propertyName: type
       properties:
+        qrKode:
+          type: string
         beviseierId:
           type: integer
           format: int64
-        qrKode:
-          type: string
         id:
           type: string
           format: uuid
