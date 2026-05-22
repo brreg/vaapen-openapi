@@ -404,7 +404,14 @@ components:
       - type: object
         properties:
           navn:
-            type: string
+            type:
+            - string
+            - "null"
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
       discriminator:
         propertyName: eiertype
         mapping:
@@ -482,24 +489,30 @@ components:
       - eiertype
     EierPerson:
       allOf:
-      - $ref: "#/components/schemas/DigitalPerson"
+      - $ref: "#/components/schemas/Eier"
       - type: object
         properties:
           id:
-            type: integer
+            type:
+            - integer
+            - "null"
             format: int64
             description: Unik identifikator for eieren
             example: 5678
           personidentifikator:
             type: string
             description: Fødselsnummer eller D-nummer
-            example: 12345678901
+            example: "12345678901"
           navn:
-            type: string
+            type:
+            - string
+            - "null"
             description: Navn på fysisk person - kun visning ved behov
             example: Kari Ole Normann
           foedselsdato:
-            type: string
+            type:
+            - string
+            - "null"
             format: date
             description: Fødselsdato - kun visning ved behov
             example: 1991-01-01
@@ -512,27 +525,31 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
-      - $ref: "#/components/schemas/Eier"
+      - $ref: "#/components/schemas/DigitalPerson"
       description: Representerer en person
       required:
       - eiertype
       - personidentifikator
     EierVirksomhet:
       allOf:
-      - $ref: "#/components/schemas/DigitalVirksomhet"
+      - $ref: "#/components/schemas/Eier"
       - type: object
         properties:
           id:
-            type: integer
+            type:
+            - integer
+            - "null"
             format: int64
             description: Unik identifikator for eieren
             example: 1234
           organisasjonsnummer:
             type: string
             description: Organisasjonsnummer
-            example: 123456789
+            example: "123456789"
           navn:
-            type: string
+            type:
+            - string
+            - "null"
             description: Navn på virksomhet - kun visning ved behov
             example: PANGPANG AS
           eiertype:
@@ -544,15 +561,20 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: VIRKSOMHET
-      - $ref: "#/components/schemas/Eier"
+      - $ref: "#/components/schemas/DigitalVirksomhet"
       description: Representerer en virksomhet
       required:
       - eiertype
       - organisasjonsnummer
     ExistingDigitalEier:
       allOf:
-      - $ref: "#/components/schemas/DigitalEier"
       - $ref: "#/components/schemas/ExistingEier"
+      - type: object
+        properties:
+          navn:
+            type:
+            - string
+            - "null"
       required:
       - eiertype
       - id
@@ -569,7 +591,6 @@ components:
       - id
     ExistingManuellEier:
       allOf:
-      - $ref: "#/components/schemas/ExistingEier"
       - $ref: "#/components/schemas/ManuellEier"
       required:
       - eiertype
@@ -587,13 +608,17 @@ components:
           personidentifikator:
             type: string
             description: Fødselsnummer eller D-nummer
-            example: 12345678901
+            example: "12345678901"
           navn:
-            type: string
+            type:
+            - string
+            - "null"
             description: Navn på fysisk person - kun visning ved behov
             example: Kari Ole Normann
           foedselsdato:
-            type: string
+            type:
+            - string
+            - "null"
             format: date
             description: Fødselsdato - kun visning ved behov
             example: 1991-01-01
@@ -606,8 +631,6 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
-      - $ref: "#/components/schemas/ExistingDigitalEier"
-      - $ref: "#/components/schemas/ExistingEier"
       description: Representerer en person
       required:
       - eiertype
@@ -615,7 +638,7 @@ components:
       - personidentifikator
     ExistingPolitiInnehaver:
       allOf:
-      - $ref: "#/components/schemas/ExistingManuellEier"
+      - $ref: "#/components/schemas/ManuellPoliti"
       - type: object
         properties:
           id:
@@ -640,7 +663,6 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
-      - $ref: "#/components/schemas/ManuellPoliti"
       description: Representerer en innehaver uten gyldig indentifikator (person eller
         virksomhet)
       required:
@@ -650,7 +672,7 @@ components:
       - lokasjon
     ExistingUkjentInnehaver:
       allOf:
-      - $ref: "#/components/schemas/ExistingManuellEier"
+      - $ref: "#/components/schemas/ManuellUkjentPerson"
       - type: object
         properties:
           id:
@@ -661,25 +683,33 @@ components:
           personidentifikator:
             type: string
             description: "Identifikator for person, som regel fødselsdato"
-            example: 311280
+            example: "311280"
           vaapenkortSid:
             type: string
             description: Referanse til gammelt vaapenkort
             example: 01-1111111111
           navn:
-            type: string
+            type:
+            - string
+            - "null"
             description: Navn på utenlandsk person
             example: Kari Ole Normann
           adresse:
-            type: string
+            type:
+            - string
+            - "null"
             description: Adressen til utenlandsk person
             example: Kari Ole Normann
           stilling:
-            type: string
+            type:
+            - string
+            - "null"
             description: Stilling til utenlandsk person
             example: Diplomat
           telefon:
-            type: string
+            type:
+            - string
+            - "null"
             description: Telefon til utenlandsk person
             example: +47 13131313
           eiertype:
@@ -691,7 +721,6 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
-      - $ref: "#/components/schemas/ManuellUkjentPerson"
       description: Representerer en innehaver uten gyldig indentifikator (person eller
         virksomhet)
       required:
@@ -712,9 +741,11 @@ components:
           organisasjonsnummer:
             type: string
             description: Organisasjonsnummer
-            example: 123456789
+            example: "123456789"
           navn:
-            type: string
+            type:
+            - string
+            - "null"
             description: Navn på virksomhet - kun visning ved behov
             example: PANGPANG AS
           eiertype:
@@ -726,8 +757,6 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: VIRKSOMHET
-      - $ref: "#/components/schemas/ExistingDigitalEier"
-      - $ref: "#/components/schemas/ExistingEier"
       required:
       - eiertype
       - id
@@ -735,6 +764,13 @@ components:
     ManuellEier:
       allOf:
       - $ref: "#/components/schemas/Eier"
+      - type: object
+        properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
       required:
       - eiertype
     ManuellPoliti:
@@ -746,6 +782,11 @@ components:
             type: string
           importertKategori:
             type: boolean
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
       required:
       - eiertype
       - importertKategori
@@ -758,26 +799,41 @@ components:
           personidentifikator:
             type: string
           navn:
-            type: string
+            type:
+            - string
+            - "null"
           vaapenkortSid:
             type: string
           adresse:
-            type: string
+            type:
+            - string
+            - "null"
           stilling:
-            type: string
+            type:
+            - string
+            - "null"
           telefon:
-            type: string
+            type:
+            - string
+            - "null"
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
       required:
       - eiertype
       - personidentifikator
       - vaapenkortSid
     PolitiInnehaver:
       allOf:
-      - $ref: "#/components/schemas/ManuellPoliti"
+      - $ref: "#/components/schemas/Eier"
       - type: object
         properties:
           id:
-            type: integer
+            type:
+            - integer
+            - "null"
             format: int64
             description: Unik intern identifikator for eieren
             example: 5678
@@ -798,7 +854,6 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
-      - $ref: "#/components/schemas/Eier"
       description: Representerer en innehaver uten gyldig indentifikator (person eller
         virksomhet)
       required:
@@ -807,36 +862,46 @@ components:
       - lokasjon
     UkjentInnehaver:
       allOf:
-      - $ref: "#/components/schemas/ManuellUkjentPerson"
+      - $ref: "#/components/schemas/Eier"
       - type: object
         properties:
           id:
-            type: integer
+            type:
+            - integer
+            - "null"
             format: int64
             description: Unik intern identifikator for eieren
             example: 5678
           personidentifikator:
             type: string
             description: "Identifikator for person, som regel fødselsdato"
-            example: 311280
+            example: "311280"
           vaapenkortSid:
             type: string
             description: Referanse til gammelt vaapenkort
             example: 01-1111111111
           navn:
-            type: string
+            type:
+            - string
+            - "null"
             description: Navn på ukjent person
             example: Kari Ole Normann
           adresse:
-            type: string
+            type:
+            - string
+            - "null"
             description: Adressen til ukjent person
             example: Kari Ole Normann
           stilling:
-            type: string
+            type:
+            - string
+            - "null"
             description: Stilling til ukjent person
             example: Diplomat
           telefon:
-            type: string
+            type:
+            - string
+            - "null"
             description: Telefon til ukjent person
             example: +47 13131313
           eiertype:
@@ -848,7 +913,6 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
-      - $ref: "#/components/schemas/Eier"
       description: Representerer en innehaver uten gyldig indentifikator (person eller
         virksomhet)
       required:
@@ -874,29 +938,13 @@ components:
           - $ref: "#/components/schemas/DigitalPerson"
           - $ref: "#/components/schemas/DigitalVirksomhet"
           - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/ExistingManuellEier"
           - $ref: "#/components/schemas/ManuellPoliti"
           - $ref: "#/components/schemas/ManuellUkjentPerson"
           - $ref: "#/components/schemas/ExistingPolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
         status:
           type: string
           description: Status på våpenrom
@@ -909,15 +957,21 @@ components:
           type: string
           description: Alle våpenrom som innvilges må ha en saksreferanse i websak
         matrikkelnummer:
-          type: string
+          type:
+          - string
+          - "null"
           description: identifikator for fast eiendom i Norge hvor våpenrommet er
         createdDate:
-          type: string
+          type:
+          - string
+          - "null"
           format: date-time
           description: "Tidspunktet når våpenrommet ble opprettet i databasen, blir\
             \ satt på lagringstidspunktet, skal være tom ved innsending"
         deletedDate:
-          type: string
+          type:
+          - string
+          - "null"
           format: date-time
           description: "Tidspunktet når våpenrommet ble soft-slettet i databasen,\
             \ skal være tom ved innsending"
@@ -933,7 +987,9 @@ components:
           type: string
           minLength: 1
         aliasBetegnelse:
-          type: string
+          type:
+          - string
+          - "null"
       required:
       - navn
     KaliberDetailed:
@@ -945,9 +1001,13 @@ components:
         navn:
           type: string
         aliasBetegnelse:
-          type: string
+          type:
+          - string
+          - "null"
         slettetDato:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
       required:
       - id
@@ -959,9 +1019,13 @@ components:
           type: string
           minLength: 1
         merknad:
-          type: string
+          type:
+          - string
+          - "null"
         advarsel:
-          type: string
+          type:
+          - string
+          - "null"
       required:
       - navn
     FabrikkmerkeDetailed:
@@ -973,11 +1037,17 @@ components:
         navn:
           type: string
         merknad:
-          type: string
+          type:
+          - string
+          - "null"
         advarsel:
-          type: string
+          type:
+          - string
+          - "null"
         slettetDato:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
       required:
       - id
@@ -997,7 +1067,9 @@ components:
           type: string
           format: date
         aksjonsbeskrivelse:
-          type: string
+          type:
+          - string
+          - "null"
         saksreferanse:
           type: string
         innehaver:
@@ -1012,31 +1084,17 @@ components:
           - $ref: "#/components/schemas/DigitalPerson"
           - $ref: "#/components/schemas/DigitalVirksomhet"
           - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/ExistingManuellEier"
           - $ref: "#/components/schemas/ManuellPoliti"
           - $ref: "#/components/schemas/ManuellUkjentPerson"
           - $ref: "#/components/schemas/ExistingPolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
         slettetDato:
-          type: string
+          type:
+          - string
+          - "null"
           format: date-time
       required:
       - aksjonsdato
@@ -1057,7 +1115,9 @@ components:
         beskrivelse:
           type: string
         antallVaapen:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
       required:
       - beskrivelse
@@ -1090,8 +1150,13 @@ components:
       - grunnlagsType
     AndreBehovsgrunnlag:
       allOf:
-      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
       - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          beskrivelse:
+            type:
+            - string
+            - "null"
       required:
       - grunnlagsType
     Avlivingsgrunnlag:
@@ -1123,6 +1188,10 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
+          ervervsloyveId:
+            type:
+            - string
+            - "null"
           skytevaapentype:
             type: string
             enum:
@@ -1140,11 +1209,17 @@ components:
             - ARMBROST
             - UKJENT
           fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
           modell:
-            type: string
+            type:
+            - string
+            - "null"
           funksjonsmaate:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - ENKELTSKUDD
             - HALVAUTOMATISK
@@ -1152,12 +1227,16 @@ components:
             - MANUELL_OMLADING
             - UKJENT
           lademekanisme:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - MUNNLADER
             - BAKLADER
           avfyringsmekanisme:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - PATRON
             - PERKUSJON
@@ -1181,6 +1260,11 @@ components:
       - $ref: "#/components/schemas/BrukesAv"
       - type: object
         properties:
+          skytevaapenId:
+            type:
+            - integer
+            - "null"
+            format: int64
           skytevaapentype:
             type: string
             enum:
@@ -1198,11 +1282,17 @@ components:
             - ARMBROST
             - UKJENT
           fabrikkmerke:
-            $ref: "#/components/schemas/Fabrikkmerke"
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
           annetFabrikkmerke:
-            type: string
+            type:
+            - string
+            - "null"
           modell:
-            type: string
+            type:
+            - string
+            - "null"
           funksjonsmaate:
             type: string
             enum:
@@ -1212,12 +1302,16 @@ components:
             - MANUELL_OMLADING
             - UKJENT
           lademekanisme:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - MUNNLADER
             - BAKLADER
           avfyringsmekanisme:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - PATRON
             - PERKUSJON
@@ -1248,6 +1342,25 @@ components:
       - $ref: "#/components/schemas/LoyveForErverv"
       - type: object
         properties:
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingEier"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/DigitalPerson"
+            - $ref: "#/components/schemas/DigitalVirksomhet"
+            - $ref: "#/components/schemas/ExistingDigitalEier"
+            - $ref: "#/components/schemas/ExistingPerson"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingManuellEier"
+            - $ref: "#/components/schemas/ManuellPoliti"
+            - $ref: "#/components/schemas/ManuellUkjentPerson"
+            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           grunnlag:
             oneOf:
             - $ref: "#/components/schemas/Aldersgrunnlag"
@@ -1274,9 +1387,34 @@ components:
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
             - $ref: "#/components/schemas/Vaapendelgrunnlag"
+      - type: object
+        properties:
+          grunnlag:
+            oneOf:
+            - $ref: "#/components/schemas/Aldersgrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
             - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
+            - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
+            - $ref: "#/components/schemas/Museumsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
             - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
+            - $ref: "#/components/schemas/Sportsgrunnlag"
+            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
+            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
             - $ref: "#/components/schemas/UkjentGrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
       required:
       - grunnlag
       - innehaver
@@ -1300,8 +1438,29 @@ components:
           vedtaksdato:
             type: string
             format: date
+          innehaver:
+            oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingEier"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/DigitalPerson"
+            - $ref: "#/components/schemas/DigitalVirksomhet"
+            - $ref: "#/components/schemas/ExistingDigitalEier"
+            - $ref: "#/components/schemas/ExistingPerson"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingManuellEier"
+            - $ref: "#/components/schemas/ManuellPoliti"
+            - $ref: "#/components/schemas/ManuellUkjentPerson"
+            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           gyldigTil:
-            type: string
+            type:
+            - string
+            - "null"
             format: date
           typeErverv:
             type: string
@@ -1309,7 +1468,9 @@ components:
             - SKYTEVAAPEN
             - VAAPENDEL
           skytevaapentype:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - RIFLE
             - HAGLE
@@ -1325,7 +1486,9 @@ components:
             - ARMBROST
             - UKJENT
           vaapendeltype:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - LAASKASSE
             - PIPE
@@ -1358,18 +1521,19 @@ components:
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
             - $ref: "#/components/schemas/Vaapendelgrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
           spesifisering:
-            $ref: "#/components/schemas/ErvervsloyveSpesifikt"
+            oneOf:
+            - $ref: "#/components/schemas/ErvervsloyveSpesifikt"
+            - type: "null"
           paaVegneAv:
+            type: "null"
             oneOf:
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/ExistingPerson"
           fritakFraAlderskrav:
             type: boolean
           oppbevaringsansvarlig:
+            type: "null"
             oneOf:
             - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
@@ -1378,33 +1542,133 @@ components:
             - $ref: "#/components/schemas/ManuellEier"
             - $ref: "#/components/schemas/PolitiInnehaver"
             - $ref: "#/components/schemas/UkjentInnehaver"
-            - $ref: "#/components/schemas/DigitalPerson"
             - $ref: "#/components/schemas/DigitalVirksomhet"
             - $ref: "#/components/schemas/ExistingDigitalEier"
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/EierVirksomhet"
             - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingDigitalEier"
-            - $ref: "#/components/schemas/ExistingManuellEier"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
             - $ref: "#/components/schemas/ExistingManuellEier"
             - $ref: "#/components/schemas/ManuellPoliti"
             - $ref: "#/components/schemas/ManuellUkjentPerson"
             - $ref: "#/components/schemas/ExistingPolitiInnehaver"
             - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-            - $ref: "#/components/schemas/PolitiInnehaver"
-            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-            - $ref: "#/components/schemas/UkjentInnehaver"
           brukesAv:
+            type: "null"
+            oneOf:
+            - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
+            - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
+            - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
+          saksreferanse:
+            type: string
+      - type: object
+        properties:
+          status:
+            type: string
+            enum:
+            - AKTIV
+            - BENYTTET
+            - TILBAKEKALT
+            - FRYST
+            - DELVIS_BENYTTET
+            - AVSLAATT
+            - AVSLUTTET
+          vedtaksdato:
+            type: string
+            format: date
+          gyldigTil:
+            type:
+            - string
+            - "null"
+            format: date
+          typeErverv:
+            type: string
+            enum:
+            - SKYTEVAAPEN
+            - VAAPENDEL
+          skytevaapentype:
+            type:
+            - string
+            - "null"
+            enum:
+            - RIFLE
+            - HAGLE
+            - KOMBINASJONSVAAPEN
+            - PISTOL
+            - REVOLVER
+            - MASKINGEVAER
+            - MASKINPISTOL
+            - SALUTT
+            - KNALL
+            - LUFTFJAER
+            - MUSKETT
+            - ARMBROST
+            - UKJENT
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          grunnlag:
+            oneOf:
+            - $ref: "#/components/schemas/Aldersgrunnlag"
+            - $ref: "#/components/schemas/Amnestigrunnlag"
+            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
+            - $ref: "#/components/schemas/Avlivingsgrunnlag"
+            - $ref: "#/components/schemas/Deaktivertgrunnlag"
+            - $ref: "#/components/schemas/Etterregistrertgrunnlag"
+            - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
+            - $ref: "#/components/schemas/Isbjornbeskyttelsesgrunnlag"
+            - $ref: "#/components/schemas/Jaktgrunnlag"
+            - $ref: "#/components/schemas/Minneverdegrunnlag"
+            - $ref: "#/components/schemas/Museumsgrunnlag"
+            - $ref: "#/components/schemas/Naeringsvirksomhetgrunnlag"
+            - $ref: "#/components/schemas/ReplikaLuftOgFjaergrunnlag"
+            - $ref: "#/components/schemas/SaerskiltGrunnlag"
+            - $ref: "#/components/schemas/Samlergrunnlag"
+            - $ref: "#/components/schemas/Skadedyrsutryddelsesgrunnlag"
+            - $ref: "#/components/schemas/Skytterforeningsgrunnlag"
+            - $ref: "#/components/schemas/Slaktegrunnlag"
+            - $ref: "#/components/schemas/Sportsgrunnlag"
+            - $ref: "#/components/schemas/TestOgUtviklingsgrunnlag"
+            - $ref: "#/components/schemas/Tjenestepersonsgrunnlag"
+            - $ref: "#/components/schemas/UkjentGrunnlag"
+            - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
+            - $ref: "#/components/schemas/Vaapendelgrunnlag"
+          spesifisering:
+            oneOf:
+            - $ref: "#/components/schemas/ErvervsloyveSpesifikt"
+            - type: "null"
+          paaVegneAv:
+            type: "null"
+            oneOf:
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/ExistingPerson"
+          fritakFraAlderskrav:
+            type: boolean
+          oppbevaringsansvarlig:
+            type: "null"
+            oneOf:
+            - $ref: "#/components/schemas/DigitalEier"
+            - $ref: "#/components/schemas/EierPerson"
+            - $ref: "#/components/schemas/EierVirksomhet"
+            - $ref: "#/components/schemas/ExistingEier"
+            - $ref: "#/components/schemas/ManuellEier"
+            - $ref: "#/components/schemas/PolitiInnehaver"
+            - $ref: "#/components/schemas/UkjentInnehaver"
+            - $ref: "#/components/schemas/DigitalVirksomhet"
+            - $ref: "#/components/schemas/ExistingDigitalEier"
+            - $ref: "#/components/schemas/ExistingVirksomhet"
+            - $ref: "#/components/schemas/ExistingManuellEier"
+            - $ref: "#/components/schemas/ManuellPoliti"
+            - $ref: "#/components/schemas/ManuellUkjentPerson"
+            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
+            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+          brukesAv:
+            type: "null"
             oneOf:
             - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
             - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
@@ -1427,11 +1691,17 @@ components:
       type: object
       properties:
         fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
         modell:
-          type: string
+          type:
+          - string
+          - "null"
         funksjonsmaate:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - ENKELTSKUDD
           - HALVAUTOMATISK
@@ -1439,22 +1709,30 @@ components:
           - MANUELL_OMLADING
           - UKJENT
         lademekanisme:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - MUNNLADER
           - BAKLADER
         avfyringsmekanisme:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - PATRON
           - PERKUSJON
           - FLINT
           - LUNTE
         pipelengde:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
         kaliber:
-          type: array
+          type:
+          - array
+          - "null"
           items:
             $ref: "#/components/schemas/Kaliber"
     Etterregistrertgrunnlag:
@@ -1509,7 +1787,6 @@ components:
           - SPORT
           - MINNEVERDE
           - SAMLER
-          - REPLIKA_LUFT_FJAER
           - ISBJORN
           - TJENESTEPERSON
           - UTEN_BEHOVSPROVING
@@ -1525,6 +1802,7 @@ components:
           - SAERSKILT_TILFELLE
           - ANDRE_BEHOV
           - VAAPENDEL
+          - REPLIKA_LUFT_FJAER
           - UTRYDDELSE_AV_SKADEDYR
           - SLAKTING
           - UKJENT
@@ -1536,7 +1814,9 @@ components:
       - type: object
         properties:
           beskrivelse:
-            type: string
+            type:
+            - string
+            - "null"
       required:
       - grunnlagsType
     IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN:
@@ -1546,6 +1826,10 @@ components:
         properties:
           vaapen:
             $ref: "#/components/schemas/Skytevaapen"
+          ikkeervervsmessigInnforselsloyveId:
+            type:
+            - string
+            - "null"
       description: Gjennomføring av privatimport av Skytevåpen
       required:
       - arkivreferanse
@@ -1565,6 +1849,10 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
             - $ref: "#/components/schemas/VaapendelMedKaliber"
+          ikkeervervsmessigInnforselsloyveId:
+            type:
+            - string
+            - "null"
       description: Gjennomføring av privatimport av Våpendel
       required:
       - arkivreferanse
@@ -1603,29 +1891,13 @@ components:
             - $ref: "#/components/schemas/DigitalPerson"
             - $ref: "#/components/schemas/DigitalVirksomhet"
             - $ref: "#/components/schemas/ExistingDigitalEier"
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/EierVirksomhet"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
             - $ref: "#/components/schemas/ExistingPerson"
             - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingDigitalEier"
-            - $ref: "#/components/schemas/ExistingManuellEier"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
             - $ref: "#/components/schemas/ExistingManuellEier"
             - $ref: "#/components/schemas/ManuellPoliti"
             - $ref: "#/components/schemas/ManuellUkjentPerson"
             - $ref: "#/components/schemas/ExistingPolitiInnehaver"
             - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-            - $ref: "#/components/schemas/PolitiInnehaver"
-            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-            - $ref: "#/components/schemas/UkjentInnehaver"
           grunnlag:
             oneOf:
             - $ref: "#/components/schemas/Aldersgrunnlag"
@@ -1652,16 +1924,15 @@ components:
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
             - $ref: "#/components/schemas/Vaapendelgrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
           paaVegneAv:
+            type: "null"
             oneOf:
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/ExistingPerson"
           fritakFraAlderskrav:
             type: boolean
           oppbevaringsansvarlig:
+            type: "null"
             oneOf:
             - $ref: "#/components/schemas/DigitalEier"
             - $ref: "#/components/schemas/EierPerson"
@@ -1670,36 +1941,22 @@ components:
             - $ref: "#/components/schemas/ManuellEier"
             - $ref: "#/components/schemas/PolitiInnehaver"
             - $ref: "#/components/schemas/UkjentInnehaver"
-            - $ref: "#/components/schemas/DigitalPerson"
             - $ref: "#/components/schemas/DigitalVirksomhet"
             - $ref: "#/components/schemas/ExistingDigitalEier"
-            - $ref: "#/components/schemas/EierPerson"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/EierVirksomhet"
             - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingDigitalEier"
-            - $ref: "#/components/schemas/ExistingManuellEier"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPerson"
-            - $ref: "#/components/schemas/ExistingVirksomhet"
-            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
             - $ref: "#/components/schemas/ExistingManuellEier"
             - $ref: "#/components/schemas/ManuellPoliti"
             - $ref: "#/components/schemas/ManuellUkjentPerson"
             - $ref: "#/components/schemas/ExistingPolitiInnehaver"
             - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-            - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-            - $ref: "#/components/schemas/PolitiInnehaver"
-            - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-            - $ref: "#/components/schemas/UkjentInnehaver"
           ervervsloyve:
-            $ref: "#/components/schemas/Ervervsloyve"
+            oneOf:
+            - $ref: "#/components/schemas/Ervervsloyve"
+            - type: "null"
           ervervUtenLoyve:
-            $ref: "#/components/schemas/ErvervUtenLoyve"
+            oneOf:
+            - $ref: "#/components/schemas/ErvervUtenLoyve"
+            - type: "null"
       description: Løyve for innehavelse av våpen eller våpendel
       required:
       - fritakFraAlderskrav
@@ -1743,6 +2000,55 @@ components:
       - $ref: "#/components/schemas/Vaapendel"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          vaapenstatus:
+            type:
+            - string
+            - "null"
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
           laaskassetype:
             type: string
             enum:
@@ -1830,11 +2136,9 @@ components:
       - type
     Naeringsloyve:
       allOf:
-      - $ref: "#/components/schemas/LoyveForInnehav"
+      - $ref: "#/components/schemas/LoyveForErverv"
       - type: object
         properties:
-          loyveId:
-            type: string
           status:
             type: string
             enum:
@@ -1853,11 +2157,13 @@ components:
             - $ref: "#/components/schemas/EierVirksomhet"
             - $ref: "#/components/schemas/ExistingVirksomhet"
           loyvehaver:
+            type: "null"
             description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
             oneOf:
             - $ref: "#/components/schemas/EierPerson"
             - $ref: "#/components/schemas/ExistingPerson"
           dagligAnsvarshavende:
+            type: "null"
             description: Den daglige utførende ansvarshavende - Ikke obligatorisk
             oneOf:
             - $ref: "#/components/schemas/EierPerson"
@@ -1875,12 +2181,15 @@ components:
               - $ref: "#/components/schemas/NaeringTilvirkning"
               - $ref: "#/components/schemas/NaeringUtleie"
           avgrensninger:
-            type: string
+            type:
+            - string
+            - "null"
           dispensasjon:
-            type: string
+            type:
+            - string
+            - "null"
           saksreferanse:
             type: string
-      - $ref: "#/components/schemas/LoyveForErverv"
       description: Løyve for næringsdrivende virksomhet
       required:
       - innehaver
@@ -1927,8 +2236,59 @@ components:
       - $ref: "#/components/schemas/Vaapendel"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          vaapenstatus:
+            type:
+            - string
+            - "null"
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
           pipelengde:
-            type: integer
+            type:
+            - integer
+            - "null"
             format: int32
           antallLop:
             type: integer
@@ -1938,7 +2298,9 @@ components:
             items:
               $ref: "#/components/schemas/Kaliber"
           annetKaliber:
-            type: string
+            type:
+            - string
+            - "null"
       required:
       - antallLop
       - innehavsloyve
@@ -1956,6 +2318,55 @@ components:
       - $ref: "#/components/schemas/Vaapendel"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          vaapenstatus:
+            type:
+            - string
+            - "null"
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
           lademekanisme:
             type: string
             enum:
@@ -1973,7 +2384,9 @@ components:
             items:
               $ref: "#/components/schemas/Kaliber"
           annetKaliber:
-            type: string
+            type:
+            - string
+            - "null"
       required:
       - avfyringsmekanisme
       - innehavsloyve
@@ -1984,8 +2397,13 @@ components:
       - skytevaapentype
     SaerskiltGrunnlag:
       allOf:
-      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
       - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          beskrivelse:
+            type:
+            - string
+            - "null"
       required:
       - grunnlagsType
     SaksbehandlerOpprettelse:
@@ -2019,7 +2437,9 @@ components:
       - type: object
         properties:
           samlerOmraade:
-            $ref: "#/components/schemas/Samleromraade"
+            oneOf:
+            - $ref: "#/components/schemas/Samleromraade"
+            - type: "null"
       required:
       - grunnlagsType
     Skadedyrsutryddelsesgrunnlag:
@@ -2031,14 +2451,18 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
         navn:
           type: string
         arrangertAv:
           type: string
         skytevaapentyper:
-          type: array
+          type:
+          - array
+          - "null"
           items:
             type: string
             enum:
@@ -2063,7 +2487,9 @@ components:
       description: Skytevåpen
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
           description: Unik identifikator
         funksjonsmaate:
@@ -2092,7 +2518,9 @@ components:
           - ARMBROST
           - UKJENT
         vaapenstatus:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - AKTIV
           - SKAL_DESTRUERES
@@ -2108,14 +2536,18 @@ components:
           - STJAALET
           - SLETTET
         avfyringsmekanisme:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - PATRON
           - PERKUSJON
           - FLINT
           - LUNTE
         lademekanisme:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - MUNNLADER
           - BAKLADER
@@ -2178,6 +2610,55 @@ components:
       - $ref: "#/components/schemas/Vaapendel"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          vaapenstatus:
+            type:
+            - string
+            - "null"
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
           sluttstykketype:
             type: string
             enum:
@@ -2196,11 +2677,15 @@ components:
       - type: object
         properties:
           skyteprogram:
-            $ref: "#/components/schemas/Skyteprogram"
+            oneOf:
+            - $ref: "#/components/schemas/Skyteprogram"
+            - type: "null"
           reservevaapen:
             type: boolean
           annetSkyteprogram:
-            type: string
+            type:
+            - string
+            - "null"
       required:
       - grunnlagsType
       - reservevaapen
@@ -2219,13 +2704,66 @@ components:
       - $ref: "#/components/schemas/Vaapendel"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          vaapenstatus:
+            type:
+            - string
+            - "null"
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
           lademekanisme:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - MUNNLADER
             - BAKLADER
           avfyringsmekanisme:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - PATRON
             - PERKUSJON
@@ -2236,7 +2774,9 @@ components:
             items:
               $ref: "#/components/schemas/Kaliber"
           annetKaliber:
-            type: string
+            type:
+            - string
+            - "null"
       required:
       - innehavsloyve
       - kaliber
@@ -2245,8 +2785,13 @@ components:
       - skytevaapentype
     UkjentGrunnlag:
       allOf:
-      - $ref: "#/components/schemas/GrunnlagWithBeskrivelse"
       - $ref: "#/components/schemas/Grunnlag"
+      - type: object
+        properties:
+          beskrivelse:
+            type:
+            - string
+            - "null"
       required:
       - grunnlagsType
     UtenBehovsprovingGrunnlag:
@@ -2301,8 +2846,6 @@ components:
           - $ref: "#/components/schemas/Innehavsloyve"
           - $ref: "#/components/schemas/Naeringsloyve"
           - $ref: "#/components/schemas/UtenEierskap"
-        modell:
-          type: string
         vaapenstatus:
           type: string
           enum:
@@ -2330,11 +2873,13 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        serienummer:
+          type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
           type: string
-        serienummer:
+        modell:
           type: string
         id:
           type: integer
@@ -2354,7 +2899,58 @@ components:
             items:
               $ref: "#/components/schemas/Kaliber"
           annetKaliber:
-            type: string
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          vaapenstatus:
+            type:
+            - string
+            - "null"
+            enum:
+            - AKTIV
+            - SKAL_DESTRUERES
+            - DESTRUERT
+            - DEAKTIVERT
+            - DEAKTIVERT_GAMMELT_REGELVERK
+            - PERMANENT_UTFORT
+            - INNLEVERT_POLITI
+            - TILBAKEKALT
+            - BESLAGLAGT
+            - TAPSMELDT
+            - TAPT_FRA_DODSBO
+            - STJAALET
+            - SLETTET
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
       required:
       - innehavsloyve
       - kaliber
@@ -2374,7 +2970,9 @@ components:
           merke:
             type: string
           kaliber:
-            $ref: "#/components/schemas/Kaliber"
+            oneOf:
+            - $ref: "#/components/schemas/Kaliber"
+            - type: "null"
           antall:
             type: integer
             format: int32
@@ -2397,7 +2995,9 @@ components:
             items:
               $ref: "#/components/schemas/Kaliber"
           annetKaliber:
-            type: string
+            type:
+            - string
+            - "null"
           gyldigTil:
             type: string
             format: date
@@ -2479,29 +3079,13 @@ components:
           - $ref: "#/components/schemas/DigitalPerson"
           - $ref: "#/components/schemas/DigitalVirksomhet"
           - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/ExistingManuellEier"
           - $ref: "#/components/schemas/ManuellPoliti"
           - $ref: "#/components/schemas/ManuellUkjentPerson"
           - $ref: "#/components/schemas/ExistingPolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -2570,9 +3154,13 @@ components:
         ervervsloyve:
           $ref: "#/components/schemas/Ervervsloyve"
         imiSak:
-          type: boolean
+          type:
+          - boolean
+          - "null"
         imiSaksnummer:
-          type: string
+          type:
+          - string
+          - "null"
         avslagsgrunnlag:
           type: string
           enum:
@@ -2756,17 +3344,18 @@ components:
             - $ref: "#/components/schemas/UkjentGrunnlag"
             - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
             - $ref: "#/components/schemas/Vaapendelgrunnlag"
-            - $ref: "#/components/schemas/AndreBehovsgrunnlag"
-            - $ref: "#/components/schemas/SaerskiltGrunnlag"
-            - $ref: "#/components/schemas/UkjentGrunnlag"
           laanenivaaSport:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - HALVAUTOMATISK_MED_HOY_PATRONKAPASITET
             - PISTOL_REVOLVER
             - OVRIGE_RIFLER_HAGLER
           gyldigTil:
-            type: string
+            type:
+            - string
+            - "null"
             format: date
       description: Løyve for lån av våpen
       required:
@@ -2782,17 +3371,29 @@ components:
       type: object
       properties:
         firmanavn:
-          type: string
+          type:
+          - string
+          - "null"
         adresse:
-          type: string
+          type:
+          - string
+          - "null"
         postnummer:
-          type: string
+          type:
+          - string
+          - "null"
         sted:
-          type: string
+          type:
+          - string
+          - "null"
         land:
-          type: string
+          type:
+          - string
+          - "null"
         telefon:
-          type: string
+          type:
+          - string
+          - "null"
     MidlertidigInnforselsloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -3004,7 +3605,9 @@ components:
           modell:
             type: string
           funksjonsmaate:
-            type: string
+            type:
+            - string
+            - "null"
             enum:
             - ENKELTSKUDD
             - HALVAUTOMATISK
@@ -3056,6 +3659,10 @@ components:
         properties:
           vaapen:
             $ref: "#/components/schemas/Skytevaapen"
+          melding:
+            type:
+            - string
+            - "null"
       description: Endring av skytevaapen
       required:
       - arkivreferanse
@@ -3074,6 +3681,10 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
             - $ref: "#/components/schemas/VaapendelMedKaliber"
+          melding:
+            type:
+            - string
+            - "null"
       description: Endring av vaapendel
       required:
       - arkivreferanse
@@ -3089,6 +3700,10 @@ components:
             format: uuid
           vaapen:
             $ref: "#/components/schemas/Skytevaapen"
+          melding:
+            type:
+            - string
+            - "null"
       description: Korreksjon av skytevaapen
       required:
       - arkivreferanse
@@ -3111,6 +3726,10 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
             - $ref: "#/components/schemas/VaapendelMedKaliber"
+          melding:
+            type:
+            - string
+            - "null"
       description: Korreksjon av vaapendel
       required:
       - arkivreferanse
@@ -3129,6 +3748,10 @@ components:
             - $ref: "#/components/schemas/ErvervUtenLoyve"
             - $ref: "#/components/schemas/Ervervsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
+          melding:
+            type:
+            - string
+            - "null"
       description: Eieroverføring av Skytevaapen
       required:
       - arkivreferanse
@@ -3155,32 +3778,12 @@ components:
           - $ref: "#/components/schemas/ManuellEier"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-          - $ref: "#/components/schemas/DigitalPerson"
-          - $ref: "#/components/schemas/DigitalVirksomhet"
           - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingDigitalEier"
-          - $ref: "#/components/schemas/ExistingManuellEier"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
           - $ref: "#/components/schemas/ExistingManuellEier"
           - $ref: "#/components/schemas/ManuellPoliti"
           - $ref: "#/components/schemas/ManuellUkjentPerson"
           - $ref: "#/components/schemas/ExistingPolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/ExistingPolitiInnehaver"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/ExistingUkjentInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
         loyvetype:
           type: string
           description: Type løyve
@@ -3213,6 +3816,10 @@ components:
             - $ref: "#/components/schemas/ErvervUtenLoyve"
             - $ref: "#/components/schemas/Ervervsloyve"
             - $ref: "#/components/schemas/Naeringsloyve"
+          melding:
+            type:
+            - string
+            - "null"
       description: Eieroverføring av Vaapendel
       required:
       - arkivreferanse
@@ -3244,7 +3851,9 @@ components:
           - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
           - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
         melding:
-          type: string
+          type:
+          - string
+          - "null"
       required:
       - arkivreferanse
       - changeType
@@ -3291,11 +3900,17 @@ components:
         id:
           type: string
         serienummer:
-          type: string
+          type:
+          - string
+          - "null"
         beskrivelse:
-          type: string
+          type:
+          - string
+          - "null"
         type:
-          type: string
+          type:
+          - string
+          - "null"
       required:
       - id
     EndeligDestruksjon:
@@ -3420,11 +4035,17 @@ components:
         id:
           type: string
         pakkenummer:
-          type: string
+          type:
+          - string
+          - "null"
         sikkerhetskontrollert:
-          type: boolean
+          type:
+          - boolean
+          - "null"
         kontrollertAv:
-          type: string
+          type:
+          - string
+          - "null"
         lokasjon:
           type: string
         pakkestatus:
@@ -3441,11 +4062,15 @@ components:
           - FERDIGBEHANDLET_KRIPOS
           - INAKTIVT
         lagerplassering:
-          type: string
+          type:
+          - string
+          - "null"
         tilUtlaan:
           type: boolean
         merknad:
-          type: string
+          type:
+          - string
+          - "null"
         innkomstmaate:
           type: string
           enum:
@@ -3460,17 +4085,27 @@ components:
           - DESTRUKSJON
           - TILBAKELEVERING
         besluttetAv:
-          type: string
+          type:
+          - string
+          - "null"
         annetVaapen:
-          $ref: "#/components/schemas/AnnetVaapen"
+          oneOf:
+          - $ref: "#/components/schemas/AnnetVaapen"
+          - type: "null"
         skyteVaapen:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         vaapendel:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         saksreferanse:
-          type: string
+          type:
+          - string
+          - "null"
       required:
       - besluttetHandtering
       - id
@@ -3561,13 +4196,19 @@ components:
         id:
           type: string
         pallnummer:
-          type: string
+          type:
+          - string
+          - "null"
         lokasjon:
           type: string
         avsender:
-          type: string
+          type:
+          - string
+          - "null"
         mottaker:
-          type: string
+          type:
+          - string
+          - "null"
         forseglet:
           type: boolean
         status:
@@ -3606,9 +4247,13 @@ components:
         id:
           type: string
         hyllebeskrivelse:
-          type: string
+          type:
+          - string
+          - "null"
         samlingskode:
-          type: string
+          type:
+          - string
+          - "null"
         tilleggsinformasjon:
           type: array
           items:
@@ -3683,14 +4328,22 @@ components:
         tilHvem:
           type: string
         kvittertInnAv:
-          type: string
+          type:
+          - string
+          - "null"
         kvittertUtAv:
-          type: string
+          type:
+          - string
+          - "null"
         datoUtlaant:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
         datoTil:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
         pakke:
           $ref: "#/components/schemas/Pakke"
