@@ -1842,6 +1842,13 @@ components:
             type: array
             items:
               type: string
+          operator:
+            type:
+            - string
+            - "null"
+            enum:
+            - IN
+            - NOT_IN
       - $ref: "#/components/schemas/LoyveSearchFilter"
       - type: object
         properties:
@@ -3355,22 +3362,6 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
-          modell:
-            type:
-            - string
-            - "null"
-          serienummer:
-            type:
-            - string
-            - "null"
-          fabrikkmerke:
-            oneOf:
-            - $ref: "#/components/schemas/Fabrikkmerke"
-            - type: "null"
-          annetFabrikkmerke:
-            type:
-            - string
-            - "null"
           skytevaapentype:
             type: string
             enum:
@@ -3386,16 +3377,6 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
-            - UKJENT
-          vaapendeltype:
-            type:
-            - string
-            - "null"
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type:
@@ -3426,6 +3407,32 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
           id:
             type:
             - integer
@@ -3458,32 +3465,6 @@ components:
             type:
             - string
             - "null"
-          modell:
-            type:
-            - string
-            - "null"
-          serienummer:
-            type:
-            - string
-            - "null"
-          fabrikkmerke:
-            oneOf:
-            - $ref: "#/components/schemas/Fabrikkmerke"
-            - type: "null"
-          annetFabrikkmerke:
-            type:
-            - string
-            - "null"
-          vaapendeltype:
-            type:
-            - string
-            - "null"
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
           vaapenstatus:
             type:
             - string
@@ -3502,6 +3483,32 @@ components:
             - TAPT_FRA_DODSBO
             - STJAALET
             - SLETTET
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          modell:
+            type:
+            - string
+            - "null"
           id:
             type:
             - integer
@@ -4739,6 +4746,10 @@ components:
           SKYTEVAAPEN: "#/components/schemas/VaapenLinje"
           VAAPENDEL: "#/components/schemas/VaapendelLinje"
           AMMUNISJON: "#/components/schemas/AmmunisjonsLinje"
+          PATRON: "#/components/schemas/PatronLinje"
+          PROSJEKTIL: "#/components/schemas/ProsjektilLinje"
+          TENNHETTE: "#/components/schemas/TennhetteLinje"
+          KRUTT: "#/components/schemas/KruttLinje"
       properties:
         type:
           type: string
@@ -4746,8 +4757,44 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
           - AMMUNISJON
+          - PATRON
+          - PROSJEKTIL
+          - TENNHETTE
+          - KRUTT
       required:
       - type
+    KruttLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kruttType:
+            type: string
+            enum:
+            - SVARTKRUTT
+            - ROYKSVAKT
+          vektIGram:
+            type: integer
+            format: int32
+      description: Linje for krutt i import
+      required:
+      - kruttType
+      - merke
+      - type
+      - vektIGram
+    Kulediameter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
+      - navn
     Laaneloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -4868,6 +4915,10 @@ components:
             items:
               oneOf:
               - $ref: "#/components/schemas/AmmunisjonsLinje"
+              - $ref: "#/components/schemas/KruttLinje"
+              - $ref: "#/components/schemas/PatronLinje"
+              - $ref: "#/components/schemas/ProsjektilLinje"
+              - $ref: "#/components/schemas/TennhetteLinje"
               - $ref: "#/components/schemas/VaapenLinje"
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:
@@ -4889,6 +4940,25 @@ components:
       - status
       - totalVerdi
       - vedtaksdato
+    PatronLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kaliber:
+            oneOf:
+            - $ref: "#/components/schemas/Kaliber"
+            - type: "null"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for patroner i import
+      required:
+      - antall
+      - merke
+      - type
     Piratbeskyttelsesloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -4928,6 +4998,39 @@ components:
       - saksreferanse
       - status
       - vedtaksdato
+    ProsjektilLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kulediameter:
+            $ref: "#/components/schemas/Kulediameter"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for prosjektiler i import
+      required:
+      - antall
+      - kulediameter
+      - merke
+      - type
+    TennhetteLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          antall:
+            type: integer
+            format: int32
+      description: Linje for tennhetter i import
+      required:
+      - antall
+      - merke
+      - type
     Utforrselsloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"

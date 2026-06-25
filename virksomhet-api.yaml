@@ -5166,6 +5166,10 @@ components:
           SKYTEVAAPEN: "#/components/schemas/VaapenLinje"
           VAAPENDEL: "#/components/schemas/VaapendelLinje"
           AMMUNISJON: "#/components/schemas/AmmunisjonsLinje"
+          PATRON: "#/components/schemas/PatronLinje"
+          PROSJEKTIL: "#/components/schemas/ProsjektilLinje"
+          TENNHETTE: "#/components/schemas/TennhetteLinje"
+          KRUTT: "#/components/schemas/KruttLinje"
       properties:
         type:
           type: string
@@ -5173,8 +5177,44 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
           - AMMUNISJON
+          - PATRON
+          - PROSJEKTIL
+          - TENNHETTE
+          - KRUTT
       required:
       - type
+    KruttLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kruttType:
+            type: string
+            enum:
+            - SVARTKRUTT
+            - ROYKSVAKT
+          vektIGram:
+            type: integer
+            format: int32
+      description: Linje for krutt i import
+      required:
+      - kruttType
+      - merke
+      - type
+      - vektIGram
+    Kulediameter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
+      - navn
     LaaneloyveBeviskontrollView:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyveBeviskontrollView"
@@ -5319,6 +5359,10 @@ components:
             items:
               oneOf:
               - $ref: "#/components/schemas/AmmunisjonsLinje"
+              - $ref: "#/components/schemas/KruttLinje"
+              - $ref: "#/components/schemas/PatronLinje"
+              - $ref: "#/components/schemas/ProsjektilLinje"
+              - $ref: "#/components/schemas/TennhetteLinje"
               - $ref: "#/components/schemas/VaapenLinje"
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:
@@ -5329,6 +5373,25 @@ components:
       - importlinjer
       - leverandor
       - totalVerdi
+    PatronLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kaliber:
+            oneOf:
+            - $ref: "#/components/schemas/Kaliber"
+            - type: "null"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for patroner i import
+      required:
+      - antall
+      - merke
+      - type
     PipeBeviskontrollView:
       allOf:
       - $ref: "#/components/schemas/VaapendelBeviskontrollView"
@@ -5393,6 +5456,24 @@ components:
       description: Løyve for innførsel av våpen som ikke er ervervsmessig
       required:
       - annetloyveLoyvetype
+    ProsjektilLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kulediameter:
+            $ref: "#/components/schemas/Kulediameter"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for prosjektiler i import
+      required:
+      - antall
+      - kulediameter
+      - merke
+      - type
     RevolvertonneBeviskontrollView:
       allOf:
       - $ref: "#/components/schemas/VaapendelBeviskontrollView"
@@ -5567,6 +5648,21 @@ components:
       required:
       - registreringsobjektType
       - skytevaapentype
+    TennhetteLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          antall:
+            type: integer
+            format: int32
+      description: Linje for tennhetter i import
+      required:
+      - antall
+      - merke
+      - type
     UkjentDelBeviskontrollView:
       allOf:
       - $ref: "#/components/schemas/VaapendelBeviskontrollView"
@@ -6207,6 +6303,10 @@ components:
             items:
               oneOf:
               - $ref: "#/components/schemas/AmmunisjonsLinje"
+              - $ref: "#/components/schemas/KruttLinje"
+              - $ref: "#/components/schemas/PatronLinje"
+              - $ref: "#/components/schemas/ProsjektilLinje"
+              - $ref: "#/components/schemas/TennhetteLinje"
               - $ref: "#/components/schemas/VaapenLinje"
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:

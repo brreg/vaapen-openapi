@@ -62,6 +62,38 @@ paths:
             '*/*':
               schema:
                 type: string
+  /blink-hendelse/kulediameter/{id}:
+    put:
+      tags:
+      - kulediameter-controller
+      summary: Oppdater eksisterende kulediameter
+      description: Oppdaterer en eksisterende kulediameter identifisert av ID. Returnerer
+        den oppdaterte kulediameteren.
+      operationId: updateKulediameter
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int32
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KulediameterRequest"
+        required: true
+      responses:
+        "200":
+          description: Kulediameter oppdatert
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KulediameterDetailed"
+        "400":
+          description: Ugyldig request-body
+        "404":
+          description: Kulediameter ikke funnet
   /blink-hendelse/kaliber/{id}:
     put:
       tags:
@@ -225,6 +257,52 @@ paths:
             '*/*':
               schema:
                 type: string
+  /blink-hendelse/kulediameter:
+    get:
+      tags:
+      - kulediameter-controller
+      summary: Hent kulediameter
+      description: "Henter alle kulediametere, returnerer en liste med kulediametere,\
+        \ Benytt kunAktive for å fltrere på aktive/inaktive"
+      operationId: hentKulediameter
+      parameters:
+      - name: kunAktive
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+      responses:
+        "200":
+          description: Kulediameter Hentet
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KulediameterDetailed"
+    post:
+      tags:
+      - kulediameter-controller
+      summary: Opprett nye kulediameter
+      description: Oppretter ny kulediameter i kodelisten basert på innsendt request-body.
+        returnerer den nye kulediameteren med ny ID
+      operationId: createKulediameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/KulediameterRequest"
+        required: true
+      responses:
+        "201":
+          description: Kulediameter opprettet
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/KulediameterDetailed"
+        "400":
+          description: Ugyldig request-body
+        "409":
+          description: Kulediameter finnes allerede
   /blink-hendelse/korrigeringer/mottatt:
     post:
       tags:
@@ -980,6 +1058,34 @@ components:
       - innehaver
       - saksreferanse
       - status
+    KulediameterRequest:
+      type: object
+      properties:
+        navn:
+          type: string
+          minLength: 1
+        aktiv:
+          type:
+          - boolean
+          - "null"
+      required:
+      - navn
+    KulediameterDetailed:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+        slettetDato:
+          type:
+          - string
+          - "null"
+          format: date
+      required:
+      - id
+      - navn
     KaliberRequest:
       type: object
       properties:
@@ -3304,6 +3410,10 @@ components:
           SKYTEVAAPEN: "#/components/schemas/VaapenLinje"
           VAAPENDEL: "#/components/schemas/VaapendelLinje"
           AMMUNISJON: "#/components/schemas/AmmunisjonsLinje"
+          PATRON: "#/components/schemas/PatronLinje"
+          PROSJEKTIL: "#/components/schemas/ProsjektilLinje"
+          TENNHETTE: "#/components/schemas/TennhetteLinje"
+          KRUTT: "#/components/schemas/KruttLinje"
       properties:
         type:
           type: string
@@ -3311,8 +3421,44 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
           - AMMUNISJON
+          - PATRON
+          - PROSJEKTIL
+          - TENNHETTE
+          - KRUTT
       required:
       - type
+    KruttLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kruttType:
+            type: string
+            enum:
+            - SVARTKRUTT
+            - ROYKSVAKT
+          vektIGram:
+            type: integer
+            format: int32
+      description: Linje for krutt i import
+      required:
+      - kruttType
+      - merke
+      - type
+      - vektIGram
+    Kulediameter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
+      - navn
     Laaneloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -3433,6 +3579,10 @@ components:
             items:
               oneOf:
               - $ref: "#/components/schemas/AmmunisjonsLinje"
+              - $ref: "#/components/schemas/KruttLinje"
+              - $ref: "#/components/schemas/PatronLinje"
+              - $ref: "#/components/schemas/ProsjektilLinje"
+              - $ref: "#/components/schemas/TennhetteLinje"
               - $ref: "#/components/schemas/VaapenLinje"
               - $ref: "#/components/schemas/VaapendelLinje"
           totalVerdi:
@@ -3464,6 +3614,25 @@ components:
       required:
       - changeType
       - naeringsloyve
+    PatronLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kaliber:
+            oneOf:
+            - $ref: "#/components/schemas/Kaliber"
+            - type: "null"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for patroner i import
+      required:
+      - antall
+      - merke
+      - type
     Piratbeskyttelsesloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"
@@ -3503,6 +3672,24 @@ components:
       - saksreferanse
       - status
       - vedtaksdato
+    ProsjektilLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          kulediameter:
+            $ref: "#/components/schemas/Kulediameter"
+          antall:
+            type: integer
+            format: int32
+      description: Linje for prosjektiler i import
+      required:
+      - antall
+      - kulediameter
+      - merke
+      - type
     SaksbehandlerEndringLoyve:
       type: object
       discriminator:
@@ -3517,6 +3704,21 @@ components:
           - ANNET_LOYVE
       required:
       - changeType
+    TennhetteLinje:
+      allOf:
+      - $ref: "#/components/schemas/ImportLinje"
+      - type: object
+        properties:
+          merke:
+            type: string
+          antall:
+            type: integer
+            format: int32
+      description: Linje for tennhetter i import
+      required:
+      - antall
+      - merke
+      - type
     Utforrselsloyve:
       allOf:
       - $ref: "#/components/schemas/AnnetLoyve"

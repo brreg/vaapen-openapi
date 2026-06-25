@@ -148,6 +148,27 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Kodeliste"
+  /api/kodelister/kulediameter:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findKulediameter
+      parameters:
+      - name: kunAktive
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kulediameter"
   /api/kodelister/kaliber:
     get:
       tags:
@@ -335,6 +356,17 @@ components:
             - UKJENT
       required:
       - arrangertAv
+      - navn
+    Kulediameter:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int32
+        navn:
+          type: string
+      required:
+      - id
       - navn
     Kaliber:
       type: object
