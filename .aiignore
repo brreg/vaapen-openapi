@@ -1,0 +1,95 @@
+### Team Våpen sin .aiignore-fil ###
+
+# Secrets, nøkler og sertifikater
+local-secrets/*
+!local-secrets/.gitkeep
+*secret*.txt
+/secret*/
+.env
+.env.*
+*.env
+secrets/
+certs/
+
+## Sertifikater
+*.pem
+*.crt
+*.cer
+*.der
+*.p7b
+*.p7c
+*.csr
+
+## Private nøkler
+*.key
+*.p8
+*.pk8
+
+## Java keystores / truststores (Maskinporten, Altinn, mTLS)
+*.jks
+*.keystore
+*.truststore
+*.p12
+*.pfx
+
+# Konfigurasjon med mulig sensitivt innhold
+config/local*
+application-local.*
+application-prod.*
+
+# Lokale filer og IDE
+.idea/
+.run/
+.settings/
+*.iml
+*.ipr
+*.iws
+.classpath
+.project
+
+# Logger og midlertidige filer
+logs/
+*.log
+*.tmp
+npm-debug.log*
+isolate-*.log
+.gitattributes
+.eslintcache
+.stylelintcache
+
+# Data og dump-filer
+data/
+testdata/
+fixtures/
+coverage/
+allure-results/
+allure-report/
+*.csv
+*.dump
+*.bak
+
+# Deployment og infrastruktur
+deploy/
+deployment/
+infra/
+terraform/
+k8s/
+helm/
+docker-compose*.yml
+.tekton
+
+# Bygg og avhengigheter
+target/
+build/
+dist/
+out/
+node_modules/
+lib/
+src/main/frontend/generated/
+.kotlin
+
+# Do not gitignore __mocks__/**/lib
+!/packages/**/__mocks__/**/lib
+
+# misc
+.DS_Store

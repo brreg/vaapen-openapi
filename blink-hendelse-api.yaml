@@ -500,6 +500,9 @@ components:
     DigitalPerson:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         personidentifikator:
           type: string
         eiertype:
@@ -515,15 +518,15 @@ components:
         foedselsdato:
           type: string
           format: date
-        id:
-          type: integer
-          format: int64
       required:
       - eiertype
       - personidentifikator
     DigitalVirksomhet:
       type: object
       properties:
+        id:
+          type: integer
+          format: int64
         organisasjonsnummer:
           type: string
         eiertype:
@@ -536,9 +539,6 @@ components:
           - POLITI
         navn:
           type: string
-        id:
-          type: integer
-          format: int64
       required:
       - eiertype
       - organisasjonsnummer
@@ -552,6 +552,9 @@ components:
           UKJENT_INNEHAVER: "#/components/schemas/UkjentInnehaver"
           POLITI: "#/components/schemas/PolitiInnehaver"
       properties:
+        id:
+          type: integer
+          format: int64
         eiertype:
           type: string
           description: Type eier
@@ -560,9 +563,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        id:
-          type: integer
-          format: int64
       required:
       - eiertype
     EierPerson:
@@ -856,15 +856,15 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          lokasjon:
-            type: string
-          importertKategori:
-            type: boolean
           id:
             type:
             - integer
             - "null"
             format: int64
+          lokasjon:
+            type: string
+          importertKategori:
+            type: boolean
       required:
       - eiertype
       - importertKategori
@@ -874,6 +874,11 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
           personidentifikator:
             type: string
           navn:
@@ -894,11 +899,6 @@ components:
             type:
             - string
             - "null"
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       required:
       - eiertype
       - personidentifikator
@@ -2176,8 +2176,6 @@ components:
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
           UTEN_EIERSKAP: "#/components/schemas/UtenEierskap"
       properties:
-        loyveidIfEier:
-          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -2188,6 +2186,8 @@ components:
           - NAERINGSLOYVE
           - ANNET_LOYVE
           - UTEN_EIERSKAP
+        loyveidIfEier:
+          type: string
       required:
       - loyvetype
     Minneverdegrunnlag:
@@ -2923,6 +2923,9 @@ components:
           SLUTTSTYKKE: "#/components/schemas/Sluttstykke"
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
+        id:
+          type: integer
+          format: int64
         vaapendeltype:
           type: string
           enum:
@@ -2979,17 +2982,14 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        modell:
+          type: string
         serienummer:
           type: string
         fabrikkmerke:
           $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
           type: string
-        modell:
-          type: string
-        id:
-          type: integer
-          format: int64
       required:
       - innehavsloyve
       - korrigeringsstatus
@@ -3008,6 +3008,11 @@ components:
             type:
             - string
             - "null"
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
           vaapendeltype:
             type:
             - string
@@ -3036,6 +3041,10 @@ components:
             - TAPT_FRA_DODSBO
             - STJAALET
             - SLETTET
+          modell:
+            type:
+            - string
+            - "null"
           serienummer:
             type:
             - string
@@ -3048,15 +3057,6 @@ components:
             type:
             - string
             - "null"
-          modell:
-            type:
-            - string
-            - "null"
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       required:
       - innehavsloyve
       - kaliber
@@ -3192,6 +3192,9 @@ components:
           - $ref: "#/components/schemas/ManuellUkjentPerson"
           - $ref: "#/components/schemas/ExistingPolitiInnehaver"
           - $ref: "#/components/schemas/ExistingUkjentInnehaver"
+        vedtaksdato:
+          type: string
+          format: date
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -3209,9 +3212,6 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
-        vedtaksdato:
-          type: string
-          format: date
         loyvetype:
           type: string
           description: Type løyve

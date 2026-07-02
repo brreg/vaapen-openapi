@@ -330,14 +330,18 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int32
         navn:
           type: string
         arrangertAv:
           type: string
         skytevaapentyper:
-          type: array
+          type:
+          - array
+          - "null"
           items:
             type: string
             enum:

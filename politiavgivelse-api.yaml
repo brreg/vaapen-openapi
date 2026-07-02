@@ -1033,6 +1033,11 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
           personidentifikator:
             type: string
           navn:
@@ -1044,11 +1049,6 @@ components:
             - string
             - "null"
             format: date
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       required:
       - eiertype
       - personidentifikator
@@ -1057,17 +1057,17 @@ components:
       - $ref: "#/components/schemas/DigitalEier"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
           organisasjonsnummer:
             type: string
           navn:
             type:
             - string
             - "null"
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       required:
       - eiertype
       - organisasjonsnummer
@@ -1081,6 +1081,9 @@ components:
           UKJENT_INNEHAVER: "#/components/schemas/UkjentInnehaver"
           POLITI: "#/components/schemas/PolitiInnehaver"
       properties:
+        id:
+          type: integer
+          format: int64
         eiertype:
           type: string
           description: Type eier
@@ -1089,9 +1092,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        id:
-          type: integer
-          format: int64
       required:
       - eiertype
     EierPerson:
@@ -1387,15 +1387,15 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
-          lokasjon:
-            type: string
-          importertKategori:
-            type: boolean
           id:
             type:
             - integer
             - "null"
             format: int64
+          lokasjon:
+            type: string
+          importertKategori:
+            type: boolean
       required:
       - eiertype
       - importertKategori
@@ -1405,6 +1405,11 @@ components:
       - $ref: "#/components/schemas/ManuellEier"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
           personidentifikator:
             type: string
           navn:
@@ -1425,11 +1430,6 @@ components:
             type:
             - string
             - "null"
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       required:
       - eiertype
       - personidentifikator
@@ -3362,6 +3362,27 @@ components:
       - $ref: "#/components/schemas/Registreringsobjekt"
       - type: object
         properties:
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          modell:
+            type:
+            - string
+            - "null"
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
           skytevaapentype:
             type: string
             enum:
@@ -3377,6 +3398,16 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
+            - UKJENT
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type:
@@ -3407,37 +3438,6 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
-          vaapendeltype:
-            type:
-            - string
-            - "null"
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          serienummer:
-            type:
-            - string
-            - "null"
-          fabrikkmerke:
-            oneOf:
-            - $ref: "#/components/schemas/Fabrikkmerke"
-            - type: "null"
-          annetFabrikkmerke:
-            type:
-            - string
-            - "null"
-          modell:
-            type:
-            - string
-            - "null"
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3465,6 +3465,37 @@ components:
             type:
             - string
             - "null"
+          id:
+            type:
+            - integer
+            - "null"
+            format: int64
+          modell:
+            type:
+            - string
+            - "null"
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
           vaapenstatus:
             type:
             - string
@@ -3483,37 +3514,6 @@ components:
             - TAPT_FRA_DODSBO
             - STJAALET
             - SLETTET
-          vaapendeltype:
-            type:
-            - string
-            - "null"
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
-          serienummer:
-            type:
-            - string
-            - "null"
-          fabrikkmerke:
-            oneOf:
-            - $ref: "#/components/schemas/Fabrikkmerke"
-            - type: "null"
-          annetFabrikkmerke:
-            type:
-            - string
-            - "null"
-          modell:
-            type:
-            - string
-            - "null"
-          id:
-            type:
-            - integer
-            - "null"
-            format: int64
       required:
       - innehavsloyve
       - kaliber
@@ -5329,14 +5329,14 @@ components:
           SkyteVaapen: "#/components/schemas/Skytevaapen"
           Vaapendel: "#/components/schemas/Vaapendel"
       properties:
+        id:
+          type: integer
+          format: int64
         registreringsobjektType:
           type: string
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        id:
-          type: integer
-          format: int64
       required:
       - registreringsobjektType
     PersonMedFolkeregisterStatus:
@@ -5566,6 +5566,14 @@ components:
       - $ref: "#/components/schemas/HistoryRowErvervsloyve"
       - $ref: "#/components/schemas/HistoryRowAnnetLoyve"
       properties:
+        type:
+          type: string
+          enum:
+          - SKYTEVAAPEN
+          - VAAPENDEL
+          - NAERINGSLOYVE
+          - ERVERVSLOYVE
+          - ANNET_LOYVE
         saksreferanse:
           type: string
         historyId:
@@ -5590,14 +5598,6 @@ components:
           - string
           - "null"
           format: date-time
-        type:
-          type: string
-          enum:
-          - SKYTEVAAPEN
-          - VAAPENDEL
-          - NAERINGSLOYVE
-          - ERVERVSLOYVE
-          - ANNET_LOYVE
       required:
       - changeType
       - endringsaarsak
