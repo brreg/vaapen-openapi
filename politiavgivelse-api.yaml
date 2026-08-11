@@ -516,6 +516,181 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Proposal"
+  /avgivelse/kodelister/vaapendeltyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findVaapendeltype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/sluttstykketyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSluttstykketype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/skytterorganisasjoner:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSkytterorganisasjoner
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/skytevaapentyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSkytevaapentype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/skyteprogram:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findSkyteprogram
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Skyteprogram"
+  /avgivelse/kodelister/lademekanismer:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findLademekanisme
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/laaskassetyper:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findLaaskassetype
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/kulediameter:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findKulediameter
+      parameters:
+      - name: kunAktive
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: true
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kulediameter"
+  /avgivelse/kodelister/kaliber:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findKaliber
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kaliber"
+  /avgivelse/kodelister/funksjonsmaater:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findFunksjonsmaate
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
+  /avgivelse/kodelister/fabrikkmerker:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findFabrikkmerke
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Fabrikkmerke"
+  /avgivelse/kodelister/avfyringsmekanismer:
+    get:
+      tags:
+      - kodeliste-controller
+      operationId: findAvfyringmekanisme
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Kodeliste"
   /avgivelse/innehaver/person/personermedugyldigstatus:
     get:
       tags:
@@ -3367,22 +3542,6 @@ components:
             - integer
             - "null"
             format: int64
-          modell:
-            type:
-            - string
-            - "null"
-          serienummer:
-            type:
-            - string
-            - "null"
-          fabrikkmerke:
-            oneOf:
-            - $ref: "#/components/schemas/Fabrikkmerke"
-            - type: "null"
-          annetFabrikkmerke:
-            type:
-            - string
-            - "null"
           skytevaapentype:
             type: string
             enum:
@@ -3398,16 +3557,6 @@ components:
             - LUFTFJAER
             - MUSKETT
             - ARMBROST
-            - UKJENT
-          vaapendeltype:
-            type:
-            - string
-            - "null"
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
             - UKJENT
           vaapenstatus:
             type:
@@ -3438,6 +3587,32 @@ components:
             - OK
             - TRENGER_GJENNOMGANG
             - UNDER_KORRIGERING
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          modell:
+            type:
+            - string
+            - "null"
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
       description: Våpendel-modellene
       discriminator:
         propertyName: vaapendeltype
@@ -3470,32 +3645,6 @@ components:
             - integer
             - "null"
             format: int64
-          modell:
-            type:
-            - string
-            - "null"
-          serienummer:
-            type:
-            - string
-            - "null"
-          fabrikkmerke:
-            oneOf:
-            - $ref: "#/components/schemas/Fabrikkmerke"
-            - type: "null"
-          annetFabrikkmerke:
-            type:
-            - string
-            - "null"
-          vaapendeltype:
-            type:
-            - string
-            - "null"
-            enum:
-            - LAASKASSE
-            - PIPE
-            - REVOLVERTONNE
-            - SLUTTSTYKKE
-            - UKJENT
           vaapenstatus:
             type:
             - string
@@ -3514,6 +3663,32 @@ components:
             - TAPT_FRA_DODSBO
             - STJAALET
             - SLETTET
+          vaapendeltype:
+            type:
+            - string
+            - "null"
+            enum:
+            - LAASKASSE
+            - PIPE
+            - REVOLVERTONNE
+            - SLUTTSTYKKE
+            - UKJENT
+          modell:
+            type:
+            - string
+            - "null"
+          serienummer:
+            type:
+            - string
+            - "null"
+          fabrikkmerke:
+            oneOf:
+            - $ref: "#/components/schemas/Fabrikkmerke"
+            - type: "null"
+          annetFabrikkmerke:
+            type:
+            - string
+            - "null"
       required:
       - innehavsloyve
       - kaliber
@@ -5339,6 +5514,23 @@ components:
           - VAAPENDEL
       required:
       - registreringsobjektType
+    Kodeliste:
+      type: object
+      properties:
+        key:
+          type: string
+        displayValue:
+          $ref: "#/components/schemas/KodelisteNavn"
+      required:
+      - displayValue
+      - key
+    KodelisteNavn:
+      type: object
+      properties:
+        nb:
+          type: string
+      required:
+      - nb
     PersonMedFolkeregisterStatus:
       type: object
       properties:
