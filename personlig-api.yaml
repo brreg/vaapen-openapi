@@ -2915,8 +2915,10 @@ components:
         id:
           type: integer
           format: int64
-        mottakersLoyve:
-          $ref: "#/components/schemas/LoyveForErverv"
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
         eieroverforingType:
           type: string
           enum:
@@ -2924,10 +2926,8 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        vaapeneier:
-          oneOf:
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
+        mottakersLoyve:
+          $ref: "#/components/schemas/LoyveForErverv"
     EieroverforingsforslagWithValidation:
       type: object
       properties:
@@ -4069,6 +4069,19 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        saksreferanse:
+          type: string
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -4086,19 +4099,6 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        saksreferanse:
-          type: string
         loyvetype:
           type: string
           description: Type løyve

@@ -1364,6 +1364,8 @@ components:
           format: int64
         navn:
           type: string
+        personidentifikator:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -1372,8 +1374,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        personidentifikator:
-          type: string
         foedselsdato:
           type: string
           format: date
@@ -3775,8 +3775,6 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
-        mottakersLoyve:
-          $ref: "#/components/schemas/LoyveForErverv"
         eieroverforingType:
           type: string
           enum:
@@ -3784,6 +3782,8 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        mottakersLoyve:
+          $ref: "#/components/schemas/LoyveForErverv"
     EieroverforingsforslagWithValidation:
       type: object
       properties:
