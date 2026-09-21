@@ -39,6 +39,6 @@ git commit -m "Oppdaterte til siste versjon av OpenAPI-specs"
 git push
 ```
 
-### 3. GitHub Actions feiler?
+### GitHub Actions feiler?
 
 Prøv å [re-run jobben](https://github.com/brreg/vaapen-openapi/actions) via GitHub UI
