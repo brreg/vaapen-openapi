@@ -17,6 +17,7 @@ jobs:
           current_tag=$(<swagger-ui.version)
           swagger_url=$(<swagger-ui.url)
           echo "current_tag=$current_tag" >> $GITHUB_OUTPUT
+          echo "swagger_url=$swagger_url" >> $GITHUB_OUTPUT
       - name: Update Swagger UI
         if: steps.swagger-ui.outputs.current_tag != steps.swagger-ui.outputs.release_tag
         env:

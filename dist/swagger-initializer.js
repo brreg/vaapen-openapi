@@ -3,7 +3,7 @@ window.onload = function() {
 
   // the following lines will be replaced by docker/configurator, when it runs in a docker-container
   window.ui = SwaggerUIBundle({
-    url: "",
+    url: new URLSearchParams(window.location.search).get('url') || "blink-hendelse-api.yaml",
     dom_id: '#swagger-ui',
     deepLinking: true,
     presets: [
@@ -13,7 +13,9 @@ window.onload = function() {
     plugins: [
       SwaggerUIBundle.plugins.DownloadUrl
     ],
-    layout: "StandaloneLayout"
+    layout: "StandaloneLayout",
+    defaultModelsExpandDepth: -1,
+    defaultModelExpandDepth: 1
   });
 
   //</editor-fold>
