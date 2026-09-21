@@ -42,6 +42,8 @@ jobs:
           sed -i "s|href=\"./|href=\"dist/|g" index.html
           sed -i "s|src=\"./|src=\"dist/|g" index.html
           sed -i "s|href=\"index|href=\"dist/index|g" index.html
+          # Re-add noindex tag removed by the fresh swagger-ui index.html
+          sed -i "s|<title>Swagger UI</title>|<title>Swagger UI</title>\n    <meta name=\"robots\" content=\"noindex, nofollow\">|" index.html
           # Update current release
           echo ${{ steps.swagger-ui.outputs.release_tag }} > swagger-ui.version
       - name: Create Pull Request
