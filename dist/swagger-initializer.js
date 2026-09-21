@@ -13,9 +13,7 @@ window.onload = function() {
     plugins: [
       SwaggerUIBundle.plugins.DownloadUrl
     ],
-    layout: "StandaloneLayout",
-    defaultModelsExpandDepth: -1,
-    defaultModelExpandDepth: 1
+    layout: "StandaloneLayout"
   });
 
   //</editor-fold>

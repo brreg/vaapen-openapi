@@ -67,17 +67,38 @@ paths:
     post:
       tags:
       - search
-      summary: Search for vaapendeler using SearchQuery
+      summary: Søk etter våpendeler med SearchQuery
+      description: "Cursor-paginering: send `fromId` (start `0`), bruk `lastId` fra\
+        \ svaret som neste `fromId`. Tomt resultat er siste side."
       operationId: findVaapendelBySearch
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/VaapenSearchQuery"
+            examples:
+              Hent alle våpendeler:
+                summary: Hent alle våpendeler med cursor-paginering (anbefalt metode)
+                description: Hent alle våpendeler
+                value:
+                  fromId: 0
+                  limit: 50
+              Filtrert søk:
+                summary: Filtrer på våpenstatus
+                description: Filtrert søk
+                value:
+                  filters:
+                  - type: TYPE
+                    field: VAAPENSTATUS
+                    values:
+                    - AKTIV
+                  combineWith: AND
+                  fromId: 0
+                  limit: 50
         required: true
       responses:
         "200":
-          description: Alle vaapendeler filtrert i henhold til VaapenSearchQuery
+          description: Alle våpendeler filtrert i henhold til VaapenSearchQuery
           content:
             application/json:
               schema:
@@ -92,17 +113,38 @@ paths:
     post:
       tags:
       - search
-      summary: Search for vaapen using SearchQuery
+      summary: Søk etter skytevåpen med SearchQuery
+      description: "Cursor-paginering: send `fromId` (start `0`), bruk `lastId` fra\
+        \ svaret som neste `fromId`. Tomt resultat er siste side."
       operationId: findVaapenBySearch
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/VaapenSearchQuery"
+            examples:
+              Hent alle skytevåpen:
+                summary: Hent alle skytevåpen med cursor-paginering (anbefalt metode)
+                description: Hent alle skytevåpen
+                value:
+                  fromId: 0
+                  limit: 50
+              Filtrert søk:
+                summary: Filtrer på våpenstatus
+                description: Filtrert søk
+                value:
+                  filters:
+                  - type: TYPE
+                    field: VAAPENSTATUS
+                    values:
+                    - AKTIV
+                  combineWith: AND
+                  fromId: 0
+                  limit: 50
         required: true
       responses:
         "200":
-          description: Alle skytevaapen filtrert i henhold til VaapenSearchQuery
+          description: Alle skytevåpen filtrert i henhold til VaapenSearchQuery
           content:
             application/json:
               schema:
@@ -117,8 +159,11 @@ paths:
     post:
       tags:
       - history-controller
-      summary: "Get eieroverforingslogg for vaapendel. Filter by involvert eier, vaapendelId,\
-        \ and paginate by offset and limit"
+      summary: "Hent eieroverføringslogg for våpendel. Filtrer på involvert eier,\
+        \ vaapendelId, og paginer med offset og limit"
+      description: '`nyttObjekt` og `tidligereObjekt` er objektet etter/før overføringen.
+        `tilInnehaver`/`fraInnehaver` er ny og forrige innehaver. `tidligereHistorikkId`
+        peker til historyId for forrige tilstand.'
       operationId: findEieroverforingsloggVaapendel
       requestBody:
         content:
@@ -145,8 +190,11 @@ paths:
     post:
       tags:
       - history-controller
-      summary: "Get eieroverforingslogg for skytevåpen. Filter by involvert eier,\
-        \ vaapenId, and paginate by offset and limit"
+      summary: "Hent eieroverføringslogg for skytevåpen. Filtrer på involvert eier,\
+        \ vaapenId, og paginer med offset og limit"
+      description: '`nyttObjekt` og `tidligereObjekt` er objektet etter/før overføringen.
+        `tilInnehaver`/`fraInnehaver` er ny og forrige innehaver. `tidligereHistorikkId`
+        peker til historyId for forrige tilstand.'
       operationId: findEieroverforingsloggSkytevaapen
       requestBody:
         content:
@@ -173,13 +221,34 @@ paths:
     post:
       tags:
       - search
-      summary: Search for ervervsloyve using LoyveSearchQuery
+      summary: Søk etter ervervsløyve med LoyveSearchQuery
+      description: Paginering med `offset`/`limit`. Nye og endrede løyver dukker også
+        opp via `/avgivelse/history/loyve`.
       operationId: findErvervsloyveBySearch
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/LoyveSearchQuery"
+            examples:
+              Hent alle ervervsløyver:
+                summary: Hent alle uten filter
+                description: Hent alle ervervsløyver
+                value:
+                  limit: 50
+                  offset: 0
+              Filtrert søk:
+                summary: Filtrer på ervervstype
+                description: Filtrert søk
+                value:
+                  filters:
+                  - type: TYPE
+                    field: ERVERVSTYPE
+                    values:
+                    - SKYTEVAAPEN
+                  combineWith: AND
+                  limit: 50
+                  offset: 0
         required: true
       responses:
         "200":
@@ -752,7 +821,8 @@ paths:
     get:
       tags:
       - history-controller
-      summary: Get history for våpendel by id.
+      summary: Hent historikk for våpendel basert på id.
+      description: Hele historikken for en id.
       operationId: findEndringsloggVaapendel
       parameters:
       - name: vaapendelId
@@ -780,8 +850,17 @@ paths:
     get:
       tags:
       - history-controller
-      summary: "Get våpen and våpendel-history. Filter by Endringsaarsak, fromTime,\
-        \ toTime, and page by offset and limit"
+      summary: "Hent historikk for våpen og våpendel. Filtrer på endringsaarsak, fromTime,\
+        \ toTime, og paginer med offset og limit"
+      description: |-
+        Returnerer en rad per endringshendelse.
+
+        Filtrering: `Endringsaarsak`, `fromTime`, `toTime`
+        Paginering: `offset`, `limit`
+
+        `historyId` er id for raden i historikktabellen, `id` er id for objektet det er gjort endring på.
+
+        `changeType` angir type endring: `C` (opprettet) eller `U` (oppdatert). Slettinger har ikke egen changeType, men vises som en status på objektet, f.eks. `vaapenstatus: SLETTET`.
       operationId: findVaapenAndDelHistory
       parameters:
       - name: endringsaarsak
@@ -801,16 +880,20 @@ paths:
           - MASKINELL
       - name: fromTime
         in: query
+        description: "Lokal tid i Europe/Oslo, format `yyyy-MM-ddTHH:mm:ss`."
         required: false
         schema:
           type: string
           format: date-time
+        example: 2026-08-31T12:00:00
       - name: toTime
         in: query
+        description: "Lokal tid i Europe/Oslo, format `yyyy-MM-ddTHH:mm:ss`."
         required: false
         schema:
           type: string
           format: date-time
+        example: 2026-08-31T12:00:00
       - name: offset
         in: query
         required: false
@@ -828,10 +911,21 @@ paths:
           description: HistoryRowRegistreringsobjekt
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
+              example: "\n                                [\n                    \
+                \              {\n                                    \"type\": \"\
+                SKYTEVAAPEN\",\n                                    \"historyId\"\
+                : 1042,\n                                    \"id\": 501,\n      \
+                \                              \"changeType\": \"U\",\n          \
+                \                          \"endringsaarsak\": \"SAKSBEHANDLERENDRING\"\
+                ,\n                                    \"saksreferanse\": \"2026/12345\"\
+                ,\n                                    \"endringstidspunkt\": \"2026-08-31T12:00:00\"\
+                ,\n                                    \"objekt\": {\n           \
+                \                           \"id\": 501,\n                       \
+                \               \"skytevaapentype\": \"RIFLE\",\n                \
+                \                      \"vaapenstatus\": \"AKTIV\"\n             \
+                \                         ...\n                                  \
+                \  }\n                                  }\n                      \
+                \          ]\n                                "
         "400":
           description: Bad request
           content:
@@ -842,7 +936,8 @@ paths:
     get:
       tags:
       - history-controller
-      summary: Get history for skytevåpen by id.
+      summary: Hent historikk for skytevåpen basert på id.
+      description: Hele historikken for en id.
       operationId: findEndringsloggSkytevaapen
       parameters:
       - name: vaapenId
@@ -870,8 +965,17 @@ paths:
     get:
       tags:
       - history-controller
-      summary: "Get Loyve-history. Filter by Endringsaarsak, fromTime, toTime, and\
-        \ page by offset and limit"
+      summary: "Hent historikk for løyve. Filtrer på endringsaarsak, fromTime, toTime,\
+        \ og paginer med offset og limit"
+      description: |-
+        Returnerer en rad per endringshendelse.
+
+        Filtrering: `Endringsaarsak`, `fromTime`, `toTime`
+        Paginering: `offset`, `limit`
+
+        `historyId` er id for raden i historikktabellen, `id` er id for objektet det er gjort endring på.
+
+        `changeType` angir type endring: `C` (opprettet) eller `U` (oppdatert). Slettinger har ikke egen changeType, men vises som en status på objektet, f.eks. `vaapenstatus: SLETTET`.
       operationId: findLoyveHistory
       parameters:
       - name: endringsaarsak
@@ -891,16 +995,20 @@ paths:
           - MASKINELL
       - name: fromTime
         in: query
+        description: "Lokal tid i Europe/Oslo, format `yyyy-MM-ddTHH:mm:ss`."
         required: false
         schema:
           type: string
           format: date-time
+        example: 2026-08-31T12:00:00
       - name: toTime
         in: query
+        description: "Lokal tid i Europe/Oslo, format `yyyy-MM-ddTHH:mm:ss`."
         required: false
         schema:
           type: string
           format: date-time
+        example: 2026-08-31T12:00:00
       - name: offset
         in: query
         required: false
@@ -932,8 +1040,17 @@ paths:
     get:
       tags:
       - history-controller
-      summary: "Get all history. Filter by Endringsaarsak, fromTime, toTime and page\
-        \ by offset and limit"
+      summary: "Hent all historikk. Filtrer på endringsaarsak, fromTime, toTime og\
+        \ paginer med offset og limit"
+      description: |-
+        Returnerer en rad per endringshendelse.
+
+        Filtrering: `Endringsaarsak`, `fromTime`, `toTime`
+        Paginering: `offset`, `limit`
+
+        `historyId` er id for raden i historikktabellen, `id` er id for objektet det er gjort endring på.
+
+        `changeType` angir type endring: `C` (opprettet) eller `U` (oppdatert). Slettinger har ikke egen changeType, men vises som en status på objektet, f.eks. `vaapenstatus: SLETTET`.
       operationId: findAll
       parameters:
       - name: endringsaarsak
@@ -953,16 +1070,20 @@ paths:
           - MASKINELL
       - name: fromTime
         in: query
+        description: "Lokal tid i Europe/Oslo, format `yyyy-MM-ddTHH:mm:ss`."
         required: false
         schema:
           type: string
           format: date-time
+        example: 2026-08-31T12:00:00
       - name: toTime
         in: query
+        description: "Lokal tid i Europe/Oslo, format `yyyy-MM-ddTHH:mm:ss`."
         required: false
         schema:
           type: string
           format: date-time
+        example: 2026-08-31T12:00:00
       - name: offset
         in: query
         required: false
@@ -1567,10 +1688,10 @@ components:
             - integer
             - "null"
             format: int64
-          importertKategori:
-            type: boolean
           lokasjon:
             type: string
+          importertKategori:
+            type: boolean
       required:
       - eiertype
       - importertKategori
@@ -5564,7 +5685,7 @@ components:
       - statusGyldighetstidspunkt
     HistoryRowVaapendel:
       allOf:
-      - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
+      - $ref: "#/components/schemas/HistoryRow"
       - type: object
         properties:
           id:
@@ -5583,7 +5704,6 @@ components:
             - string
             - "null"
             format: date-time
-      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -5592,30 +5712,9 @@ components:
       - objekt
       - saksreferanse
       - type
-    HistoryRowRegistreringsobjekt:
-      allOf:
-      - $ref: "#/components/schemas/HistoryRow"
-      - type: object
-        properties:
-          endringstidspunkt:
-            type:
-            - string
-            - "null"
-            format: date-time
-      discriminator:
-        propertyName: type
-        mapping:
-          SKYTEVAAPEN: "#/components/schemas/HistoryRowSkytevaapen"
-          VAAPENDEL: "#/components/schemas/HistoryRowVaapendel"
-      required:
-      - changeType
-      - endringsaarsak
-      - historyId
-      - saksreferanse
-      - type
     HistoryRowSkytevaapen:
       allOf:
-      - $ref: "#/components/schemas/HistoryRowRegistreringsobjekt"
+      - $ref: "#/components/schemas/HistoryRow"
       - type: object
         properties:
           id:
@@ -5628,7 +5727,6 @@ components:
             - string
             - "null"
             format: date-time
-      - $ref: "#/components/schemas/HistoryRow"
       required:
       - changeType
       - endringsaarsak
@@ -5768,13 +5866,6 @@ components:
           - ANNET_LOYVE
         saksreferanse:
           type: string
-        changeType:
-          type: string
-        endringstidspunkt:
-          type:
-          - string
-          - "null"
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -5790,6 +5881,13 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
+        changeType:
+          type: string
+        endringstidspunkt:
+          type:
+          - string
+          - "null"
+          format: date-time
       required:
       - changeType
       - endringsaarsak

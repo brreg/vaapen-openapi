@@ -2826,6 +2826,8 @@ components:
           $ref: "#/components/schemas/LoyveForInnehav"
         serienummer:
           type: string
+        modell:
+          type: string
         skytevaapentype:
           type: string
           enum:
@@ -2842,8 +2844,8 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        modell:
-          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
           type: string
         vaapenstatus:
@@ -2867,8 +2869,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
     Vaapendelgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -3775,6 +3775,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
+        mottakersLoyve:
+          $ref: "#/components/schemas/LoyveForErverv"
         eieroverforingType:
           type: string
           enum:
@@ -3782,8 +3784,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          $ref: "#/components/schemas/LoyveForErverv"
     EieroverforingsforslagWithValidation:
       type: object
       properties:
@@ -4151,6 +4151,8 @@ components:
         properties:
           skytevaapen:
             $ref: "#/components/schemas/SkytevaapenBeviskontrollView"
+          accessToHKM:
+            type: boolean
     BeviskontrollVaapendel:
       allOf:
       - $ref: "#/components/schemas/Beviskontroll"
@@ -4852,6 +4854,8 @@ components:
           - UKJENT
         serienummer:
           type: string
+        modell:
+          type: string
         skytevaapentype:
           type: string
           enum:
@@ -4868,8 +4872,8 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        modell:
-          type: string
+        fabrikkmerke:
+          $ref: "#/components/schemas/Fabrikkmerke"
         annetFabrikkmerke:
           type: string
         registreringsobjektType:
@@ -4877,8 +4881,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
     VaapendelLinje:
       allOf:
       - $ref: "#/components/schemas/ImportLinje"

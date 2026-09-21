@@ -29,6 +29,8 @@ Hent specs:
 ./fetch-specs.sh
 ```
 
+Teste lokalt: i f.eks. IntelliJ, åpne `index.html` og klikk nettleser-ikonet i editor → "Open in Browser".
+
 Commit og push:
 
 ```sh
