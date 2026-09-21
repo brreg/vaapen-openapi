@@ -42,3 +42,15 @@ git push
 ### GitHub Actions feiler?
 
 Prøv å [re-run jobben](https://github.com/brreg/vaapen-openapi/actions) via GitHub UI
+
+### Automatisk oppdatering av swagger-ui
+
+`update-swagger`-workflowen ([.github/workflows/update-swagger.yml](.github/workflows/update-swagger.yml)) kjører periodisk og sjekker om det finnes en nyere release av [swagger-ui](https://github.com/swagger-api/swagger-ui). Hvis versjonen i `swagger-ui.version` er utdatert, laster den ned den nye releasen, oppdaterer `dist/` og `index.html`, og oppretter en PR med endringene.
+
+Som maintainer er du ansvarlig for å:
+
+* Sjekke PR-en som blir opprettet
+* Verifisere at `index.html` fortsatt fungerer lokalt (samme test som over: "Open in Browser")
+* Merge PR-en ned til `master` når den er godkjent
+
+Workflowen kan også trigges manuelt via [workflow_dispatch](https://github.com/brreg/vaapen-openapi/actions/workflows/update-swagger.yml).
