@@ -538,7 +538,9 @@ components:
           POLITI: "#/components/schemas/PolitiInnehaver"
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         eiertype:
           type: string
@@ -550,7 +552,7 @@ components:
           - POLITI
     EierPerson:
       allOf:
-      - $ref: "#/components/schemas/DigitalPerson"
+      - $ref: "#/components/schemas/Eier"
       - type: object
         properties:
           id:
@@ -591,7 +593,7 @@ components:
       - eiertype
     EierVirksomhet:
       allOf:
-      - $ref: "#/components/schemas/DigitalVirksomhet"
+      - $ref: "#/components/schemas/Eier"
       - type: object
         properties:
           id:
@@ -1084,11 +1086,10 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
-        foedselsdato:
-          type: string
-          format: date
         personidentifikator:
           type: string
         eiertype:
@@ -1100,12 +1101,21 @@ components:
           - UKJENT_INNEHAVER
           - POLITI
         navn:
-          type: string
+          type:
+          - string
+          - "null"
+        foedselsdato:
+          type:
+          - string
+          - "null"
+          format: date
     DigitalVirksomhet:
       type: object
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         organisasjonsnummer:
           type: string
@@ -1118,7 +1128,9 @@ components:
           - UKJENT_INNEHAVER
           - POLITI
         navn:
-          type: string
+          type:
+          - string
+          - "null"
     ErvervUtenLoyve:
       type: object
       properties:
@@ -1258,21 +1270,18 @@ components:
           - $ref: "#/components/schemas/ErvervsloyveSpesifikt"
           - type: "null"
         paaVegneAv:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
         brukesAv:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
           - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
@@ -1554,14 +1563,12 @@ components:
           - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
           - $ref: "#/components/schemas/Vaapendelgrunnlag"
         paaVegneAv:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
@@ -1740,13 +1747,11 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/ExistingVirksomhet"
         loyvehaver:
-          type: "null"
           description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
         dagligAnsvarshavende:
-          type: "null"
           description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
@@ -1982,7 +1987,9 @@ components:
         ervervsloyveId:
           type: string
         ikkeervervsmessigInnforselsloyveId:
-          type: string
+          type:
+          - string
+          - "null"
         opprettelseType:
           type: string
           enum:
@@ -2339,12 +2346,14 @@ components:
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
-        innehavsloyve:
-          $ref: "#/components/schemas/LoyveForInnehav"
         vaapendeltype:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - LAASKASSE
           - PIPE
@@ -2367,8 +2376,12 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        innehavsloyve:
+          $ref: "#/components/schemas/LoyveForInnehav"
         vaapenstatus:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - AKTIV
           - SKAL_DESTRUERES
@@ -2395,13 +2408,21 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
         modell:
-          type: string
+          type:
+          - string
+          - "null"
         serienummer:
-          type: string
+          type:
+          - string
+          - "null"
         fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
         annetFabrikkmerke:
-          type: string
+          type:
+          - string
+          - "null"
     Vaapendelgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2483,16 +2504,16 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
+        loyveId:
+          type: string
+        saksreferanse:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
-        saksreferanse:
-          type: string
         vedtaksdato:
           type: string
           format: date
@@ -3063,14 +3084,14 @@ components:
           ERVERV_UTEN_LOYVE: "#/components/schemas/ErvervUtenLoyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
+        loyveId:
+          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -3424,6 +3445,8 @@ components:
           - string
           - "null"
         annetVaapen:
+          description: '''Annet våpen'' Fylles ut hvis skyteVaapen og vaapendel er
+            null.'
           oneOf:
           - $ref: "#/components/schemas/AnnetVaapen"
           - type: "null"

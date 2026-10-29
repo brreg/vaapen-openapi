@@ -926,14 +926,20 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         personidentifikator:
           type: string
         navn:
-          type: string
+          type:
+          - string
+          - "null"
         foedselsdato:
-          type: string
+          type:
+          - string
+          - "null"
           format: date
         eiertype:
           type: string
@@ -947,10 +953,14 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         navn:
-          type: string
+          type:
+          - string
+          - "null"
         organisasjonsnummer:
           type: string
         eiertype:
@@ -972,7 +982,9 @@ components:
           POLITI: "#/components/schemas/PolitiInnehaver"
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         eiertype:
           type: string
@@ -1020,6 +1032,7 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: PERSON
+      - $ref: "#/components/schemas/Eier"
       description: Representerer en person
       required:
       - eiertype
@@ -1054,6 +1067,7 @@ components:
             - UKJENT_INNEHAVER
             - POLITI
             example: VIRKSOMHET
+      - $ref: "#/components/schemas/Eier"
       description: Representerer en virksomhet
       required:
       - eiertype
@@ -1196,21 +1210,18 @@ components:
           - $ref: "#/components/schemas/ErvervsloyveSpesifikt"
           - type: "null"
         paaVegneAv:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
         brukesAv:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
           - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
@@ -1463,14 +1474,12 @@ components:
           - $ref: "#/components/schemas/UtenBehovsprovingGrunnlag"
           - $ref: "#/components/schemas/Vaapendelgrunnlag"
         paaVegneAv:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
-          type: "null"
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
@@ -1525,7 +1534,9 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
         meldingTilSaksbehandler:
-          type: string
+          type:
+          - string
+          - "null"
     Laaskasse:
       allOf:
       - $ref: "#/components/schemas/Vaapendel"
@@ -1661,13 +1672,11 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/ExistingVirksomhet"
         loyvehaver:
-          type: "null"
           description: Løyvehaver for næringsløyvet - Kan kun være midlertidig null
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
         dagligAnsvarshavende:
-          type: "null"
           description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
@@ -2357,7 +2366,9 @@ components:
           UKJENT: "#/components/schemas/UkjentDel"
       properties:
         id:
-          type: integer
+          type:
+          - integer
+          - "null"
           format: int64
         korrigeringsstatus:
           type: string
@@ -2382,7 +2393,9 @@ components:
           - ARMBROST
           - UKJENT
         vaapenstatus:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - AKTIV
           - SKAL_DESTRUERES
@@ -2405,21 +2418,31 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
         vaapendeltype:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - LAASKASSE
           - PIPE
           - REVOLVERTONNE
           - SLUTTSTYKKE
           - UKJENT
-        modell:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         serienummer:
-          type: string
+          type:
+          - string
+          - "null"
+        modell:
+          type:
+          - string
+          - "null"
+        fabrikkmerke:
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
+        annetFabrikkmerke:
+          type:
+          - string
+          - "null"
     Vaapendelgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2470,6 +2493,10 @@ components:
             type: string
             maxLength: 100
             minLength: 0
+          ervervsloyveForesporselId:
+            type: integer
+            format: int64
+            exclusiveMinimum: 0
     Loyvedeling:
       type: object
       discriminator:
@@ -2490,6 +2517,12 @@ components:
     RejectLoyvedeling:
       allOf:
       - $ref: "#/components/schemas/Loyvedeling"
+      - type: object
+        properties:
+          ervervsloyveForesporselId:
+            type: integer
+            format: int64
+            exclusiveMinimum: 0
     DelLoyveAlleredeDeltError:
       allOf:
       - $ref: "#/components/schemas/DelLoyveStatus"
@@ -2580,6 +2613,7 @@ components:
           skytevaapenId:
             type: integer
             format: int64
+            exclusiveMinimum: 0
           vaapendeler:
             type: array
             items:
@@ -2597,6 +2631,7 @@ components:
           skytevaapenId:
             type: integer
             format: int64
+            exclusiveMinimum: 0
           vaapendeler:
             type: array
             items:
@@ -2614,6 +2649,7 @@ components:
           vaapendelId:
             type: integer
             format: int64
+            exclusiveMinimum: 0
     VaapendelEieroverforingsforslagRequest:
       allOf:
       - $ref: "#/components/schemas/EieroverforingsforslagRequest"
@@ -2626,6 +2662,7 @@ components:
           vaapendelId:
             type: integer
             format: int64
+            exclusiveMinimum: 0
     VaapendelUtenLoyveForslagRequest:
       allOf:
       - $ref: "#/components/schemas/EieroverforingsforslagRequest"
@@ -2640,6 +2677,7 @@ components:
           vaapendelId:
             type: integer
             format: int64
+            exclusiveMinimum: 0
           vaapendelReturSerienummer:
             type:
             - string
@@ -2709,6 +2747,7 @@ components:
         eieroverforingId:
           type: integer
           format: int64
+          exclusiveMinimum: 0
         svar:
           type: string
           enum:
@@ -2806,6 +2845,7 @@ components:
           type: string
           description: Alle våpenrom som innvilges må ha en saksreferanse i websak
         adresse:
+          description: adresse for fast eiendom i Norge hvor våpenrommet er
           oneOf:
           - $ref: "#/components/schemas/VegadresseRespons"
           - type: "null"
@@ -3030,7 +3070,6 @@ components:
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
           vaapendelRetur:
-            type: "null"
             oneOf:
             - $ref: "#/components/schemas/Laaskasse"
             - $ref: "#/components/schemas/Pipe"
@@ -3059,13 +3098,17 @@ components:
         propertyName: type
       properties:
         id:
-          type: string
+          type:
+          - string
+          - "null"
           format: uuid
         beviseierId:
           type: integer
           format: int64
         qrKode:
-          type: string
+          type:
+          - string
+          - "null"
         type:
           type: string
           enum:
@@ -3235,6 +3278,8 @@ components:
         properties:
           skytevaapen:
             $ref: "#/components/schemas/SkytevaapenBeviskontrollView"
+          accessToHKM:
+            type: boolean
     BeviskontrollVaapendel:
       allOf:
       - $ref: "#/components/schemas/Beviskontroll"
@@ -3256,7 +3301,9 @@ components:
           PERSON: "#/components/schemas/EierPersonBeviskontrollView"
       properties:
         navn:
-          type: string
+          type:
+          - string
+          - "null"
         eiertype:
           type: string
           description: Type eier
@@ -3948,21 +3995,31 @@ components:
           - SKYTEVAAPEN
           - VAAPENDEL
         vaapendeltype:
-          type: string
+          type:
+          - string
+          - "null"
           enum:
           - LAASKASSE
           - PIPE
           - REVOLVERTONNE
           - SLUTTSTYKKE
           - UKJENT
-        modell:
-          type: string
-        fabrikkmerke:
-          $ref: "#/components/schemas/Fabrikkmerke"
-        annetFabrikkmerke:
-          type: string
         serienummer:
-          type: string
+          type:
+          - string
+          - "null"
+        modell:
+          type:
+          - string
+          - "null"
+        fabrikkmerke:
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
+        annetFabrikkmerke:
+          type:
+          - string
+          - "null"
     VaapendelLinje:
       allOf:
       - $ref: "#/components/schemas/ImportLinje"
@@ -4059,16 +4116,6 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
@@ -4076,11 +4123,6 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
         loyveId:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
-        saksreferanse:
           type: string
         annetloyveLoyvetype:
           type: string
@@ -4099,6 +4141,21 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
+        vedtaksdato:
+          type: string
+          format: date
+        saksreferanse:
+          type: string
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         loyvetype:
           type: string
           description: Type løyve
