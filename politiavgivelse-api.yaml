@@ -369,6 +369,48 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorResponse"
+  /avgivelse/andreloyver/search:
+    post:
+      tags:
+      - search
+      summary: Search for annetLoyve using AnnetLoyveSearchQuery
+      description: Returns annetLoyve of the given types. `filters` cannot be empty.
+        Paging with `limit` (default 50) and `offset` (default 0).
+      operationId: findAndreLoyver
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnnetLoyveSearchQuery"
+            examples:
+              Filter by type:
+                summary: Get all active piratbeskyttelse annetLoyve
+                description: Filter by type
+                value:
+                  filters:
+                  - PIRATBESKYTTELSE
+                  inkluderInaktive: false
+                  limit: 50
+                  offset: 0
+              Filter by more types:
+                summary: Get all active piratbeskyttelse annetLoyve
+                description: Filter by more types
+                value: "{\"filters\": [\"PIRATBESKYTTELSE\", \"HOYKAPASITETSMAGASIN],\
+                  \ \"inkluderInaktive\": false, \"limit\": 50, \"offset\": 0}"
+        required: true
+      responses:
+        "200":
+          description: All annetLoyve filtered by AnnetLoyveSearchQuery
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnnetLoyveSearchResponseAnnetLoyve"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
   /avgivelse/andreloyver/person:
     post:
       tags:
@@ -417,43 +459,6 @@ paths:
                   - $ref: "#/components/schemas/Piratbeskyttelsesloyve"
                   - $ref: "#/components/schemas/Privatimportloyve"
                   - $ref: "#/components/schemas/Utforrselsloyve"
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/ErrorResponse"
-  /avgivelse/andreloyver:
-    post:
-      tags:
-      - search
-      summary: Search for annetLoyve using AnnetLoyveSearchQuery
-      description: Returns annetLoyve of the given types. `filters` cannot be empty.
-        Paging with `limit` (default 50) and `offset` (default 0).
-      operationId: findAndreLoyver
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/AnnetLoyveSearchQuery"
-            examples:
-              Filter by type:
-                summary: Get all active piratbeskyttelse annetLoyve
-                description: Filter by type
-                value:
-                  filters:
-                  - PIRATBESKYTTELSE
-                  inkluderInaktive: false
-                  limit: 50
-                  offset: 0
-        required: true
-      responses:
-        "200":
-          description: All annetLoyve filtered by AnnetLoyveSearchQuery
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AnnetLoyveSearchResponseAnnetLoyve"
         "400":
           description: Bad request
           content:

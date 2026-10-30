@@ -2427,10 +2427,6 @@ components:
           - REVOLVERTONNE
           - SLUTTSTYKKE
           - UKJENT
-        serienummer:
-          type:
-          - string
-          - "null"
         modell:
           type:
           - string
@@ -2440,6 +2436,10 @@ components:
           - $ref: "#/components/schemas/Fabrikkmerke"
           - type: "null"
         annetFabrikkmerke:
+          type:
+          - string
+          - "null"
+        serienummer:
           type:
           - string
           - "null"
@@ -2955,6 +2955,8 @@ components:
         id:
           type: integer
           format: int64
+        mottakersLoyve:
+          $ref: "#/components/schemas/LoyveForErverv"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
@@ -2966,8 +2968,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          $ref: "#/components/schemas/LoyveForErverv"
     EieroverforingsforslagWithValidation:
       type: object
       properties:
@@ -3102,13 +3102,13 @@ components:
           - string
           - "null"
           format: uuid
-        beviseierId:
-          type: integer
-          format: int64
         qrKode:
           type:
           - string
           - "null"
+        beviseierId:
+          type: integer
+          format: int64
         type:
           type: string
           enum:
@@ -4004,10 +4004,6 @@ components:
           - REVOLVERTONNE
           - SLUTTSTYKKE
           - UKJENT
-        serienummer:
-          type:
-          - string
-          - "null"
         modell:
           type:
           - string
@@ -4017,6 +4013,10 @@ components:
           - $ref: "#/components/schemas/Fabrikkmerke"
           - type: "null"
         annetFabrikkmerke:
+          type:
+          - string
+          - "null"
+        serienummer:
           type:
           - string
           - "null"
@@ -4116,6 +4116,16 @@ components:
           GODKJENT_SKYTTERFORENING: "#/components/schemas/GodkjentSkytterforeningsloyve"
           HOYKAPASITETSMAGASIN: "#/components/schemas/Hoykapasitetsmagasinloyve"
       properties:
+        status:
+          type: string
+          enum:
+          - AKTIV
+          - BENYTTET
+          - TILBAKEKALT
+          - FRYST
+          - DELVIS_BENYTTET
+          - AVSLAATT
+          - AVSLUTTET
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
@@ -4123,6 +4133,11 @@ components:
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
         loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        saksreferanse:
           type: string
         annetloyveLoyvetype:
           type: string
@@ -4141,21 +4156,6 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
-        vedtaksdato:
-          type: string
-          format: date
-        saksreferanse:
-          type: string
-        status:
-          type: string
-          enum:
-          - AKTIV
-          - BENYTTET
-          - TILBAKEKALT
-          - FRYST
-          - DELVIS_BENYTTET
-          - AVSLAATT
-          - AVSLUTTET
         loyvetype:
           type: string
           description: Type løyve

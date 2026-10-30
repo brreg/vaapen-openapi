@@ -1368,11 +1368,8 @@ components:
           type:
           - string
           - "null"
-        foedselsdato:
-          type:
-          - string
-          - "null"
-          format: date
+        personidentifikator:
+          type: string
         eiertype:
           type: string
           description: Type eier
@@ -1381,8 +1378,11 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        personidentifikator:
-          type: string
+        foedselsdato:
+          type:
+          - string
+          - "null"
+          format: date
     DigitalVirksomhet:
       type: object
       properties:
@@ -2859,10 +2859,6 @@ components:
           type:
           - string
           - "null"
-        annetFabrikkmerke:
-          type:
-          - string
-          - "null"
         vaapenstatus:
           type:
           - string
@@ -2886,6 +2882,10 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        annetFabrikkmerke:
+          type:
+          - string
+          - "null"
         fabrikkmerke:
           oneOf:
           - $ref: "#/components/schemas/Fabrikkmerke"
@@ -4927,15 +4927,15 @@ components:
           type:
           - string
           - "null"
-        annetFabrikkmerke:
-          type:
-          - string
-          - "null"
         registreringsobjektType:
           type: string
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        annetFabrikkmerke:
+          type:
+          - string
+          - "null"
         fabrikkmerke:
           oneOf:
           - $ref: "#/components/schemas/Fabrikkmerke"
@@ -5054,6 +5054,11 @@ components:
           - $ref: "#/components/schemas/UkjentInnehaver"
         loyveId:
           type: string
+        saksreferanse:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -5071,11 +5076,6 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
-        saksreferanse:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         loyvetype:
           type: string
           description: Type løyve
