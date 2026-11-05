@@ -383,20 +383,28 @@ paths:
             schema:
               $ref: "#/components/schemas/AnnetLoyveSearchQuery"
             examples:
-              Filter by type:
-                summary: Get all active piratbeskyttelse annetLoyve
-                description: Filter by type
+              Filter by one loyvetype:
+                summary: Get all active andre loyver with loyvetype piratbeskyttelse
+                description: Filter by one loyvetype
                 value:
                   filters:
-                  - PIRATBESKYTTELSE
+                    loyveTyper:
+                    - PIRATBESKYTTELSE
                   inkluderInaktive: false
                   limit: 50
                   offset: 0
-              Filter by more types:
-                summary: Get all active piratbeskyttelse annetLoyve
-                description: Filter by more types
-                value: "{\"filters\": [\"PIRATBESKYTTELSE\", \"HOYKAPASITETSMAGASIN],\
-                  \ \"inkluderInaktive\": false, \"limit\": 50, \"offset\": 0}"
+              Filter by many loyvetyper at once:
+                summary: Get all andre loyver (not filtering on status and including
+                  expired) with loyvetype piratbeskyttelse OR hoykapastitetsmagasin
+                description: Filter by many loyvetyper at once
+                value:
+                  filters:
+                    loyveTyper:
+                    - PIRATBESKYTTELSE
+                    - HOYKAPASITETSMAGASIN
+                  inkluderInaktive: true
+                  limit: 50
+                  offset: 0
         required: true
       responses:
         "200":
@@ -4789,6 +4797,19 @@ components:
       type: object
       properties:
         filters:
+          $ref: "#/components/schemas/typeFilter"
+        inkluderInaktive:
+          type: boolean
+        limit:
+          type: integer
+          format: int32
+        offset:
+          type: integer
+          format: int32
+    typeFilter:
+      type: object
+      properties:
+        loyveTyper:
           type: array
           items:
             type: string
@@ -4807,14 +4828,6 @@ components:
             - GODKJENT_SKYTEBANE
             - GODKJENT_SKYTTERFORENING
             - HOYKAPASITETSMAGASIN
-        inkluderInaktive:
-          type: boolean
-        limit:
-          type: integer
-          format: int32
-        offset:
-          type: integer
-          format: int32
     AnnetLoyveSearchResponseAnnetLoyve:
       type: object
       properties:

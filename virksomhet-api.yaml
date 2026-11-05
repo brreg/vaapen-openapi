@@ -2839,6 +2839,10 @@ components:
           type:
           - string
           - "null"
+        modell:
+          type:
+          - string
+          - "null"
         skytevaapentype:
           type: string
           enum:
@@ -2855,7 +2859,11 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        modell:
+        fabrikkmerke:
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
+        annetFabrikkmerke:
           type:
           - string
           - "null"
@@ -2882,14 +2890,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        annetFabrikkmerke:
-          type:
-          - string
-          - "null"
-        fabrikkmerke:
-          oneOf:
-          - $ref: "#/components/schemas/Fabrikkmerke"
-          - type: "null"
     Vaapendelgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -3819,6 +3819,8 @@ components:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
+        mottakersLoyve:
+          $ref: "#/components/schemas/LoyveForErverv"
         eieroverforingType:
           type: string
           enum:
@@ -3826,8 +3828,6 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
-        mottakersLoyve:
-          $ref: "#/components/schemas/LoyveForErverv"
     EieroverforingsforslagWithValidation:
       type: object
       properties:
@@ -4022,13 +4022,13 @@ components:
           - string
           - "null"
           format: uuid
+        beviseierId:
+          type: integer
+          format: int64
         qrKode:
           type:
           - string
           - "null"
-        beviseierId:
-          type: integer
-          format: int64
         type:
           type: string
           enum:
@@ -4907,6 +4907,10 @@ components:
           type:
           - string
           - "null"
+        modell:
+          type:
+          - string
+          - "null"
         skytevaapentype:
           type: string
           enum:
@@ -4923,7 +4927,11 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        modell:
+        fabrikkmerke:
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
+        annetFabrikkmerke:
           type:
           - string
           - "null"
@@ -4932,14 +4940,6 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
-        annetFabrikkmerke:
-          type:
-          - string
-          - "null"
-        fabrikkmerke:
-          oneOf:
-          - $ref: "#/components/schemas/Fabrikkmerke"
-          - type: "null"
     VaapendelLinje:
       allOf:
       - $ref: "#/components/schemas/ImportLinje"

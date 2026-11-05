@@ -3102,13 +3102,13 @@ components:
           - string
           - "null"
           format: uuid
+        beviseierId:
+          type: integer
+          format: int64
         qrKode:
           type:
           - string
           - "null"
-        beviseierId:
-          type: integer
-          format: int64
         type:
           type: string
           enum:
