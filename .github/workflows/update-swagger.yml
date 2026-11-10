@@ -32,8 +32,8 @@ jobs:
           rm -fr dist index.html
           # Download the release
           curl -sL -o $RELEASE_TAG https://api.github.com/repos/swagger-api/swagger-ui/tarball/$RELEASE_TAG
-          # Extract the dist directory
-          tar -xzf $RELEASE_TAG --strip-components=1 $(tar -tzf $RELEASE_TAG | head -1 | cut -f1 -d"/")/dist
+          # Extract the dist directory          
+          tar -xzf $RELEASE_TAG --strip-components=1 $(tar -tzf $RELEASE_TAG 2>/dev/null | head -1 | cut -f1 -d"/")/dist
           rm $RELEASE_TAG
           # Move index.html to the root
           mv dist/index.html .
