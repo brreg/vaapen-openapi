@@ -410,8 +410,7 @@ paths:
                 description: Filter by one loyvetype
                 value:
                   filters:
-                    loyveTyper:
-                    - PIRATBESKYTTELSE
+                  - type: PIRATBESKYTTELSE
                   inkluderInaktive: false
                   limit: 50
                   offset: 0
@@ -421,9 +420,8 @@ paths:
                 description: Filter by many loyvetyper at once
                 value:
                   filters:
-                    loyveTyper:
-                    - PIRATBESKYTTELSE
-                    - HOYKAPASITETSMAGASIN
+                  - type: PIRATBESKYTTELSE
+                  - type: HOYKAPASITETSMAGASIN
                   inkluderInaktive: true
                   limit: 50
                   offset: 0
@@ -4828,7 +4826,9 @@ components:
       type: object
       properties:
         filters:
-          $ref: "#/components/schemas/typeFilter"
+          type: array
+          items:
+            $ref: "#/components/schemas/AnnetLoyveTypeEntries"
         inkluderInaktive:
           type: boolean
         limit:
@@ -4837,28 +4837,26 @@ components:
         offset:
           type: integer
           format: int32
-    typeFilter:
+    AnnetLoyveTypeEntries:
       type: object
       properties:
-        loyveTyper:
-          type: array
-          items:
-            type: string
-            description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
-            enum:
-            - AMMUNISJONSKJOP_IKKEREGPLIKTIG
-            - AMMUNISJONSSAMLER
-            - GODKJENT_SAMLER
-            - PIRATBESKYTTELSE
-            - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
-            - LAANELOYVE
-            - IKKE_ERVERVSMESSIG_INNFORSEL
-            - ERVERVSMESSIG_INNFORSEL
-            - MIDLERTIDIG_INNFORSEL
-            - UTFORSEL
-            - GODKJENT_SKYTEBANE
-            - GODKJENT_SKYTTERFORENING
-            - HOYKAPASITETSMAGASIN
+        type:
+          type: string
+          description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
+          enum:
+          - AMMUNISJONSKJOP_IKKEREGPLIKTIG
+          - AMMUNISJONSSAMLER
+          - GODKJENT_SAMLER
+          - PIRATBESKYTTELSE
+          - ERVERV_AV_VAAPEN_SOM_IKKE_ER_SKYTEVAAPEN
+          - LAANELOYVE
+          - IKKE_ERVERVSMESSIG_INNFORSEL
+          - ERVERVSMESSIG_INNFORSEL
+          - MIDLERTIDIG_INNFORSEL
+          - UTFORSEL
+          - GODKJENT_SKYTEBANE
+          - GODKJENT_SKYTTERFORENING
+          - HOYKAPASITETSMAGASIN
     AnnetLoyveSearchResponseAnnetLoyve:
       type: object
       properties:
@@ -5215,6 +5213,13 @@ components:
           - ANNET_LOYVE
         saksreferanse:
           type: string
+        changeType:
+          type: string
+        endringstidspunkt:
+          type:
+          - string
+          - "null"
+          format: date-time
         historyId:
           type: integer
           format: int64
@@ -5230,10 +5235,3 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
-        changeType:
-          type: string
-        endringstidspunkt:
-          type:
-          - string
-          - "null"
-          format: date-time
