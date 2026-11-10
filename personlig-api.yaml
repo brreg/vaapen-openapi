@@ -930,12 +930,12 @@ components:
           - integer
           - "null"
           format: int64
-        personidentifikator:
-          type: string
         navn:
           type:
           - string
           - "null"
+        personidentifikator:
+          type: string
         foedselsdato:
           type:
           - string
@@ -2490,9 +2490,9 @@ components:
       - type: object
         properties:
           loyveId:
-            type: string
-            maxLength: 100
-            minLength: 0
+            type: array
+            items:
+              type: string
           ervervsloyveForesporselId:
             type: integer
             format: int64
@@ -2957,10 +2957,6 @@ components:
           format: int64
         mottakersLoyve:
           $ref: "#/components/schemas/LoyveForErverv"
-        vaapeneier:
-          oneOf:
-          - $ref: "#/components/schemas/ExistingPerson"
-          - $ref: "#/components/schemas/ExistingVirksomhet"
         eieroverforingType:
           type: string
           enum:
@@ -2968,6 +2964,10 @@ components:
           - VAAPENDEL
           - VAAPENDEL_UTEN_LOYVE
           - MASSEOVERFORING
+        vaapeneier:
+          oneOf:
+          - $ref: "#/components/schemas/ExistingPerson"
+          - $ref: "#/components/schemas/ExistingVirksomhet"
     EieroverforingsforslagWithValidation:
       type: object
       properties:

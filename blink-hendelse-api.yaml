@@ -1090,6 +1090,10 @@ components:
           - integer
           - "null"
           format: int64
+        navn:
+          type:
+          - string
+          - "null"
         personidentifikator:
           type: string
         eiertype:
@@ -1100,10 +1104,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        navn:
-          type:
-          - string
-          - "null"
         foedselsdato:
           type:
           - string
@@ -1117,6 +1117,10 @@ components:
           - integer
           - "null"
           format: int64
+        navn:
+          type:
+          - string
+          - "null"
         organisasjonsnummer:
           type: string
         eiertype:
@@ -1127,10 +1131,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        navn:
-          type:
-          - string
-          - "null"
     ErvervUtenLoyve:
       type: object
       properties:
@@ -1984,17 +1984,17 @@ components:
       properties:
         arkivreferanse:
           type: string
+        opprettelseType:
+          type: string
+          enum:
+          - IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN
+          - IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL
         ervervsloyveId:
           type: string
         ikkeervervsmessigInnforselsloyveId:
           type:
           - string
           - "null"
-        opprettelseType:
-          type: string
-          enum:
-          - IKKE_ERVERVSMESSIG_INNFORSEL_SKYTEVAAPEN
-          - IKKE_ERVERVSMESSIG_INNFORSEL_VAAPENDEL
     Samlergrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -2350,6 +2350,8 @@ components:
           - integer
           - "null"
           format: int64
+        innehavsloyve:
+          $ref: "#/components/schemas/LoyveForInnehav"
         vaapendeltype:
           type:
           - string
@@ -2376,8 +2378,6 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        innehavsloyve:
-          $ref: "#/components/schemas/LoyveForInnehav"
         vaapenstatus:
           type:
           - string
@@ -2504,8 +2504,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        loyveId:
-          type: string
         saksreferanse:
           type: string
         innehaver:
@@ -2514,6 +2512,8 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         vedtaksdato:
           type: string
           format: date
@@ -3084,14 +3084,14 @@ components:
           ERVERV_UTEN_LOYVE: "#/components/schemas/ErvervUtenLoyve"
           NAERINGSLOYVE: "#/components/schemas/Naeringsloyve"
       properties:
-        loyveId:
-          type: string
         innehaver:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
         loyvetype:
           type: string
           description: Type løyve
@@ -3134,8 +3134,6 @@ components:
       - $ref: "#/components/schemas/EIEROVERFORING_VAAPEN_SAKSBEHANDLER"
       - $ref: "#/components/schemas/EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER"
       properties:
-        arkivreferanse:
-          type: string
         changeType:
           type: string
           enum:
@@ -3145,6 +3143,8 @@ components:
           - VAAPENDELKORREKSJON
           - EIEROVERFORING_VAAPEN_SAKSBEHANDLER
           - EIEROVERFORING_VAAPENDEL_SAKSBEHANDLER
+        arkivreferanse:
+          type: string
         melding:
           type:
           - string

@@ -1364,12 +1364,15 @@ components:
           - integer
           - "null"
           format: int64
+        foedselsdato:
+          type:
+          - string
+          - "null"
+          format: date
         navn:
           type:
           - string
           - "null"
-        personidentifikator:
-          type: string
         eiertype:
           type: string
           description: Type eier
@@ -1378,11 +1381,8 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        foedselsdato:
-          type:
-          - string
-          - "null"
-          format: date
+        personidentifikator:
+          type: string
     DigitalVirksomhet:
       type: object
       properties:
@@ -2817,12 +2817,6 @@ components:
           - integer
           - "null"
           format: int64
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
         vaapendeltype:
           type:
           - string
@@ -2835,11 +2829,13 @@ components:
           - UKJENT
         innehavsloyve:
           $ref: "#/components/schemas/LoyveForInnehav"
+        korrigeringsstatus:
+          type: string
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
         serienummer:
-          type:
-          - string
-          - "null"
-        modell:
           type:
           - string
           - "null"
@@ -2859,10 +2855,10 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        fabrikkmerke:
-          oneOf:
-          - $ref: "#/components/schemas/Fabrikkmerke"
-          - type: "null"
+        modell:
+          type:
+          - string
+          - "null"
         annetFabrikkmerke:
           type:
           - string
@@ -2890,6 +2886,10 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        fabrikkmerke:
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
     Vaapendelgrunnlag:
       allOf:
       - $ref: "#/components/schemas/Grunnlag"
@@ -3075,9 +3075,9 @@ components:
       - type: object
         properties:
           loyveId:
-            type: string
-            maxLength: 100
-            minLength: 0
+            type: array
+            items:
+              type: string
           ervervsloyveForesporselId:
             type: integer
             format: int64
@@ -3815,12 +3815,12 @@ components:
         id:
           type: integer
           format: int64
+        mottakersLoyve:
+          $ref: "#/components/schemas/LoyveForErverv"
         vaapeneier:
           oneOf:
           - $ref: "#/components/schemas/ExistingPerson"
           - $ref: "#/components/schemas/ExistingVirksomhet"
-        mottakersLoyve:
-          $ref: "#/components/schemas/LoyveForErverv"
         eieroverforingType:
           type: string
           enum:
@@ -4022,13 +4022,13 @@ components:
           - string
           - "null"
           format: uuid
-        beviseierId:
-          type: integer
-          format: int64
         qrKode:
           type:
           - string
           - "null"
+        beviseierId:
+          type: integer
+          format: int64
         type:
           type: string
           enum:
@@ -4907,10 +4907,6 @@ components:
           type:
           - string
           - "null"
-        modell:
-          type:
-          - string
-          - "null"
         skytevaapentype:
           type: string
           enum:
@@ -4927,10 +4923,10 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
-        fabrikkmerke:
-          oneOf:
-          - $ref: "#/components/schemas/Fabrikkmerke"
-          - type: "null"
+        modell:
+          type:
+          - string
+          - "null"
         annetFabrikkmerke:
           type:
           - string
@@ -4940,6 +4936,10 @@ components:
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        fabrikkmerke:
+          oneOf:
+          - $ref: "#/components/schemas/Fabrikkmerke"
+          - type: "null"
     VaapendelLinje:
       allOf:
       - $ref: "#/components/schemas/ImportLinje"
@@ -5046,19 +5046,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
-        saksreferanse:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -5076,6 +5063,19 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
+        saksreferanse:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
         loyvetype:
           type: string
           description: Type løyve

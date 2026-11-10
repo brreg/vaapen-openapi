@@ -14,12 +14,15 @@ paths:
       tags:
       - vaapenoppbevaring-controller
       summary: Search for vaapenskap using personidentifikator
+      description: '`personidentifikator` er fødselsnummer eller D-nummer. '
       operationId: findVaapenskapByPerson
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/RequestPerson"
+            example:
+              personidentifikator: "12345678901"
         required: true
       responses:
         "200":
@@ -41,16 +44,21 @@ paths:
       tags:
       - vaapenoppbevaring-controller
       summary: Search for vaapenrom using personidentifikator
+      description: '`personidentifikator` er fødselsnummer eller D-nummer. '
       operationId: findVaapenromBySearch
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/RequestPerson"
+            example:
+              personidentifikator: "12345678901"
         required: true
       responses:
         "200":
-          description: "Alle vaapenrom til person, både godkjente og ikke"
+          description: "Alle vaapenrom til person: godkjente, ikke godkjente og slettede\
+            \ (status SLETTET). Tom liste betyr at personen ikke har vaapenrom eller\
+            \ ikke finnes som innehaver."
           content:
             application/json:
               schema:
@@ -268,6 +276,9 @@ paths:
       tags:
       - avslag
       summary: Hent avslag på eier
+      description: '`eiertype` må oppgis. Oppslaget gjøres på `personidentifikator`
+        (eiertype PERSON) eller `organisasjonsnummer` (eiertype VIRKSOMHET). Tom liste
+        returneres hvis eieren ikke finnes eller eier ikke har noen avslåtte søknader.'
       operationId: findAvslagVaapensoknad
       requestBody:
         content:
@@ -278,6 +289,17 @@ paths:
               - $ref: "#/components/schemas/EierVirksomhet"
               - $ref: "#/components/schemas/PolitiInnehaver"
               - $ref: "#/components/schemas/UkjentInnehaver"
+            examples:
+              Person:
+                description: Person
+                value:
+                  eiertype: PERSON
+                  personidentifikator: "12345678901"
+              Virksomhet:
+                description: Virksomhet
+                value:
+                  eiertype: VIRKSOMHET
+                  organisasjonsnummer: "123456789"
         required: true
       responses:
         "200":
@@ -478,12 +500,15 @@ paths:
       tags:
       - aksjon-controller
       summary: Get aksjoner for virksomhet
+      description: '`organisasjonsnummer` for virksomheten.'
       operationId: getAksjonerOnVirksomhet
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/RequestVirksomhet"
+            example:
+              organisasjonsnummer: "123456789"
         required: true
       responses:
         "200":
@@ -499,12 +524,15 @@ paths:
       tags:
       - aksjon-controller
       summary: Get aksjoner for person
+      description: '`personidentifikator` og er enten et fødselsnummer eller et D-nummer'
       operationId: getAksjonerOnPerson
       requestBody:
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/RequestPerson"
+            example:
+              personidentifikator: "12345678901"
         required: true
       responses:
         "200":
@@ -539,6 +567,9 @@ paths:
     get:
       tags:
       - naeringsloyve-controller
+      summary: Hent næringsløyver
+      description: Returnerer aktive næringsløyver uten paginering. `organisasjonsnummer`
+        er et valgfritt filter.
       operationId: findAllNaeringsloyver
       parameters:
       - name: organisasjonsnummer
