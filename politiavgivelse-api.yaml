@@ -1873,6 +1873,7 @@ components:
           - $ref: "#/components/schemas/SkytevaapenFieldNumber"
           - $ref: "#/components/schemas/SkytevaapenFieldString"
           - $ref: "#/components/schemas/SkytevaapenFieldType"
+          - type: "null"
         sortDir:
           type: string
           enum:
@@ -2254,6 +2255,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
@@ -2262,12 +2264,14 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+          - type: "null"
         brukesAv:
           oneOf:
           - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
           - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
           - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
           - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
+          - type: "null"
         saksreferanse:
           type: string
         loyvetype:
@@ -2518,6 +2522,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
@@ -2526,6 +2531,7 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+          - type: "null"
         ervervsloyve:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
@@ -2703,11 +2709,13 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         dagligAnsvarshavende:
           description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         typeNaeringsvirksomhet:
           type: array
           items:
@@ -3490,6 +3498,7 @@ components:
           - $ref: "#/components/schemas/Revolvertonne"
           - $ref: "#/components/schemas/Sluttstykke"
           - $ref: "#/components/schemas/UkjentDel"
+          - type: "null"
     EieroverforingsloggVaapen:
       type: object
       properties:
@@ -3607,6 +3616,7 @@ components:
           - $ref: "#/components/schemas/SkytevaapenFieldNumber"
           - $ref: "#/components/schemas/SkytevaapenFieldString"
           - $ref: "#/components/schemas/SkytevaapenFieldType"
+          - type: "null"
         sortDir:
           type: string
           enum:
@@ -5008,15 +5018,15 @@ components:
           - $ref: "#/components/schemas/Revolvertonne"
           - $ref: "#/components/schemas/Sluttstykke"
           - $ref: "#/components/schemas/UkjentDel"
-        messageToCaseworker:
-          type:
-          - string
-          - "null"
         proposalType:
           type: string
           enum:
           - SKYTEVAAPEN
           - VAAPENDEL
+        messageToCaseworker:
+          type:
+          - string
+          - "null"
     Registreringsobjekt:
       type: object
       description: En korreksjon kan enten være et skytevåpen eller en våpendel
@@ -5213,13 +5223,6 @@ components:
           - ANNET_LOYVE
         saksreferanse:
           type: string
-        changeType:
-          type: string
-        endringstidspunkt:
-          type:
-          - string
-          - "null"
-          format: date-time
         historyId:
           type: integer
           format: int64
@@ -5235,3 +5238,10 @@ components:
           - POLITIETS_BESITTELSE
           - IMPORT
           - MASKINELL
+        changeType:
+          type: string
+        endringstidspunkt:
+          type:
+          - string
+          - "null"
+          format: date-time

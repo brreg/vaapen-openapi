@@ -1090,6 +1090,11 @@ components:
           - integer
           - "null"
           format: int64
+        foedselsdato:
+          type:
+          - string
+          - "null"
+          format: date
         navn:
           type:
           - string
@@ -1104,11 +1109,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        foedselsdato:
-          type:
-          - string
-          - "null"
-          format: date
     DigitalVirksomhet:
       type: object
       properties:
@@ -1273,6 +1273,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
@@ -1281,12 +1282,14 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+          - type: "null"
         brukesAv:
           oneOf:
           - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
           - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
           - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
           - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
+          - type: "null"
         saksreferanse:
           type: string
         loyvetype:
@@ -1566,6 +1569,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
@@ -1574,6 +1578,7 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+          - type: "null"
         ervervsloyve:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
@@ -1751,11 +1756,13 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         dagligAnsvarshavende:
           description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         typeNaeringsvirksomhet:
           type: array
           items:

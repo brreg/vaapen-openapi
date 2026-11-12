@@ -1364,6 +1364,11 @@ components:
           - integer
           - "null"
           format: int64
+        foedselsdato:
+          type:
+          - string
+          - "null"
+          format: date
         navn:
           type:
           - string
@@ -1378,11 +1383,6 @@ components:
           - VIRKSOMHET
           - UKJENT_INNEHAVER
           - POLITI
-        foedselsdato:
-          type:
-          - string
-          - "null"
-          format: date
     DigitalVirksomhet:
       type: object
       properties:
@@ -1647,6 +1647,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
@@ -1655,12 +1656,14 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+          - type: "null"
         brukesAv:
           oneOf:
           - $ref: "#/components/schemas/BrukesAvErvervsloyveExpanded"
           - $ref: "#/components/schemas/BrukesAvErvervsloyvePeker"
           - $ref: "#/components/schemas/BrukesAvSkytevaapenExpanded"
           - $ref: "#/components/schemas/BrukesAvSkytevaapenPeker"
+          - type: "null"
         saksreferanse:
           type: string
         loyvetype:
@@ -1911,6 +1914,7 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         fritakFraAlderskrav:
           type: boolean
         oppbevaringsansvarlig:
@@ -1919,6 +1923,7 @@ components:
           - $ref: "#/components/schemas/EierVirksomhet"
           - $ref: "#/components/schemas/PolitiInnehaver"
           - $ref: "#/components/schemas/UkjentInnehaver"
+          - type: "null"
         ervervsloyve:
           oneOf:
           - $ref: "#/components/schemas/Ervervsloyve"
@@ -2134,11 +2139,13 @@ components:
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         dagligAnsvarshavende:
           description: Den daglige utførende ansvarshavende - Ikke obligatorisk
           oneOf:
           - $ref: "#/components/schemas/EierPerson"
           - $ref: "#/components/schemas/ExistingPerson"
+          - type: "null"
         typeNaeringsvirksomhet:
           type: array
           items:
@@ -2817,6 +2824,12 @@ components:
           - integer
           - "null"
           format: int64
+        korrigeringsstatus:
+          type: string
+          enum:
+          - OK
+          - TRENGER_GJENNOMGANG
+          - UNDER_KORRIGERING
         vaapendeltype:
           type:
           - string
@@ -2829,17 +2842,7 @@ components:
           - UKJENT
         innehavsloyve:
           $ref: "#/components/schemas/LoyveForInnehav"
-        korrigeringsstatus:
-          type: string
-          enum:
-          - OK
-          - TRENGER_GJENNOMGANG
-          - UNDER_KORRIGERING
         serienummer:
-          type:
-          - string
-          - "null"
-        modell:
           type:
           - string
           - "null"
@@ -2859,6 +2862,10 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        modell:
+          type:
+          - string
+          - "null"
         fabrikkmerke:
           oneOf:
           - $ref: "#/components/schemas/Fabrikkmerke"
@@ -3960,6 +3967,7 @@ components:
             - $ref: "#/components/schemas/Revolvertonne"
             - $ref: "#/components/schemas/Sluttstykke"
             - $ref: "#/components/schemas/UkjentDel"
+            - type: "null"
     DigitalEier:
       type: object
       discriminator:
@@ -4022,13 +4030,13 @@ components:
           - string
           - "null"
           format: uuid
+        beviseierId:
+          type: integer
+          format: int64
         qrKode:
           type:
           - string
           - "null"
-        beviseierId:
-          type: integer
-          format: int64
         type:
           type: string
           enum:
@@ -4907,10 +4915,6 @@ components:
           type:
           - string
           - "null"
-        modell:
-          type:
-          - string
-          - "null"
         skytevaapentype:
           type: string
           enum:
@@ -4927,6 +4931,10 @@ components:
           - MUSKETT
           - ARMBROST
           - UKJENT
+        modell:
+          type:
+          - string
+          - "null"
         fabrikkmerke:
           oneOf:
           - $ref: "#/components/schemas/Fabrikkmerke"
@@ -5046,19 +5054,6 @@ components:
           - DELVIS_BENYTTET
           - AVSLAATT
           - AVSLUTTET
-        innehaver:
-          oneOf:
-          - $ref: "#/components/schemas/EierPerson"
-          - $ref: "#/components/schemas/EierVirksomhet"
-          - $ref: "#/components/schemas/PolitiInnehaver"
-          - $ref: "#/components/schemas/UkjentInnehaver"
-        loyveId:
-          type: string
-        saksreferanse:
-          type: string
-        vedtaksdato:
-          type: string
-          format: date
         annetloyveLoyvetype:
           type: string
           description: Type løyve for andre formål enn erverv eller innehav av skytevåpen
@@ -5076,6 +5071,19 @@ components:
           - GODKJENT_SKYTEBANE
           - GODKJENT_SKYTTERFORENING
           - HOYKAPASITETSMAGASIN
+        innehaver:
+          oneOf:
+          - $ref: "#/components/schemas/EierPerson"
+          - $ref: "#/components/schemas/EierVirksomhet"
+          - $ref: "#/components/schemas/PolitiInnehaver"
+          - $ref: "#/components/schemas/UkjentInnehaver"
+        loyveId:
+          type: string
+        vedtaksdato:
+          type: string
+          format: date
+        saksreferanse:
+          type: string
         loyvetype:
           type: string
           description: Type løyve
